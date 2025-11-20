@@ -1,0 +1,59 @@
+package com.urbanbites.service;
+
+import com.urbanbites.domain.Rol;
+import com.urbanbites.domain.Usuario;
+import com.urbanbites.repository.RolRepository;
+import com.urbanbites.repository.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@Transactional
+public class UsuarioService {
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+    
+    @Autowired
+    private RolRepository rolRepository;
+    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    public Usuario registrarCliente(String nombre, String apellidos, String correo, 
+                                   String password, String telefono) {
+        if (usuarioRepository.existsByUsernameOrCorreo(correo, correo)) {
+            throw new RuntimeException("El correo ya está registrado");
+        }
+        
+        Usuario usuario = new Usuario();
+        usuario.setNombre(nombre);
+        usuario.setApellidos(apellidos);
+        usuario.setCorreo(correo);
+        usuario.setUsername(correo); // Usar correo como username
+        usuario.setPassword(passwordEncoder.encode(password));
+        usuario.setTelefono(telefono);
+        usuario.setActivo(true);
+        
+        Rol rolCliente = rolRepository.findByNombre("cliente");
+        if (rolCliente == null) {
+            throw new RuntimeException("Rol cliente no encontrado");
+        }
+        if (usuario.getRoles() == null) {
+            usuario.setRoles(new java.util.ArrayList<>());
+        }
+        usuario.getRoles().add(rolCliente);
+        
+        return usuarioRepository.save(usuario);
+    }
+
+    public Usuario buscarPorCorreo(String correo) {
+        return usuarioRepository.findByCorreo(correo);
+    }
+    
+    public Usuario buscarPorUsername(String username) {
+        return usuarioRepository.findByUsername(username);
+    }
+}
+

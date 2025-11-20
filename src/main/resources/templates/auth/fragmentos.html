@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Fragmentos Auth</title>
+    </head>
+    <body>
+        <div th:fragment="authStyles">
+            <style>
+                :root {
+                    --urban-primary: #104E43;
+                    --urban-secondary: #FFE5B4;
+                    --urban-cta: #ED3101;
+                    --urban-light: #F4F4F4;
+                    --urban-ink: #1C1C1C;
+                }
+                body.auth-page {
+                    font-family: 'Poppins', sans-serif;
+                    min-height: 100vh;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    position: relative;
+                    overflow: hidden;
+                }
+                .auth-background {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-image: url('/images/login image.png');
+                    background-size: cover;
+                    background-position: center;
+                    background-repeat: no-repeat;
+                    filter: blur(8px);
+                    transform: scale(1.1);
+                    z-index: -1;
+                }
+                .auth-background::after {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: rgba(16, 78, 67, 0.3);
+                }
+                .auth-card {
+                    background: rgba(255, 255, 255, 0.98);
+                    border-radius: 1.5rem;
+                    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+                    padding: 3rem;
+                    max-width: 450px;
+                    width: 100%;
+                    margin: 2rem;
+                }
+                .auth-logo {
+                    text-align: center;
+                    margin-bottom: 2rem;
+                }
+                .auth-logo-text {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 0.5rem;
+                    font-weight: 700;
+                    font-size: 1.5rem;
+                }
+                .auth-logo-text .logo-circle {
+                    width: 50px;
+                    height: 50px;
+                    background-color: var(--urban-cta);
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                    font-weight: 700;
+                    font-size: 1.2rem;
+                }
+                .auth-logo-text .text-urban {
+                    color: var(--urban-ink);
+                }
+                .auth-logo-text .text-bites {
+                    color: var(--urban-cta);
+                }
+                .auth-title {
+                    font-size: 2rem;
+                    font-weight: 700;
+                    color: var(--urban-ink);
+                    text-align: center;
+                    margin-bottom: 2rem;
+                }
+                .auth-form-label {
+                    font-weight: 600;
+                    color: var(--urban-ink);
+                    margin-bottom: 0.5rem;
+                }
+                .auth-form-control {
+                    border: 2px solid #e0e0e0;
+                    border-radius: 0.75rem;
+                    padding: 0.75rem 1rem;
+                    font-size: 1rem;
+                    transition: border-color 0.3s ease;
+                }
+                .auth-form-control:focus {
+                    border-color: var(--urban-primary);
+                    box-shadow: 0 0 0 0.2rem rgba(16, 78, 67, 0.15);
+                }
+                .btn-auth-primary {
+                    background-color: var(--urban-cta);
+                    color: white;
+                    border: none;
+                    border-radius: 0.75rem;
+                    padding: 0.75rem 2rem;
+                    font-weight: 600;
+                    font-size: 1.1rem;
+                    width: 100%;
+                    margin-top: 1rem;
+                    transition: background-color 0.3s ease, transform 0.2s ease;
+                }
+                .btn-auth-primary:hover {
+                    background-color: #c42901;
+                    transform: translateY(-2px);
+                    color: white;
+                }
+                .btn-auth-secondary {
+                    background-color: white;
+                    color: var(--urban-cta);
+                    border: 2px solid var(--urban-cta);
+                    border-radius: 0.75rem;
+                    padding: 0.75rem 2rem;
+                    font-weight: 600;
+                    font-size: 1.1rem;
+                    width: 100%;
+                    margin-top: 0.75rem;
+                    transition: background-color 0.3s ease, color 0.3s ease;
+                }
+                .btn-auth-secondary:hover {
+                    background-color: var(--urban-cta);
+                    color: white;
+                }
+                .btn-auth-outline {
+                    background-color: white;
+                    color: var(--urban-ink);
+                    border: 2px solid var(--urban-ink);
+                    border-radius: 0.75rem;
+                    padding: 0.75rem 2rem;
+                    font-weight: 600;
+                    font-size: 1.1rem;
+                    width: 100%;
+                    margin-top: 0.75rem;
+                    transition: background-color 0.3s ease, color 0.3s ease;
+                }
+                .btn-auth-outline:hover {
+                    background-color: var(--urban-ink);
+                    color: white;
+                }
+                .auth-link {
+                    text-align: center;
+                    margin-top: 1.5rem;
+                }
+                .auth-link a {
+                    color: var(--urban-primary);
+                    text-decoration: none;
+                    font-weight: 500;
+                    transition: color 0.3s ease;
+                }
+                .auth-link a:hover {
+                    color: var(--urban-cta);
+                    text-decoration: underline;
+                }
+                .auth-link-small {
+                    text-align: center;
+                    margin-top: 1.5rem;
+                }
+                .auth-link-small a {
+                    color: #999;
+                    text-decoration: none;
+                    font-size: 0.9rem;
+                    transition: color 0.3s ease;
+                }
+                .auth-link-small a:hover {
+                    color: var(--urban-primary);
+                }
+            </style>
+        </div>
+
+        <div th:fragment="authBackground">
+            <div class="auth-background"></div>
+        </div>
+
+        <div th:fragment="authLogo">
+            <div class="auth-logo">
+                <img th:src="@{/images/Logo Urban Bites.png}" alt="Urban Bites" class="img-fluid" style="max-width: 200px; height: auto;">
+            </div>
+        </div>
+
+        <div th:fragment="authCard(content)">
+            <div class="auth-card">
+                <th:block th:replace="auth/fragmentos :: authLogo"></th:block>
+                <th:block th:replace="${content}"></th:block>
+            </div>
+        </div>
+    </body>
+</html>
+

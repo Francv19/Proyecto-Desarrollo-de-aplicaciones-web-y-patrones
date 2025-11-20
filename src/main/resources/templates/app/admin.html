@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Urban Bites · Admin</title>
+        <th:block th:replace="app/fragmentos :: appHead"></th:block>
+    </head>
+    <body class="bg-light" th:with="currentPage=${page} ?: 'dashboard'">
+        <div class="d-flex min-vh-100">
+            <th:block th:replace="general/fragmentos :: sidebarAdmin(${currentPage})"></th:block>
+
+            <main class="flex-grow-1 p-4">
+                <section class="mb-4">
+                    <p class="text-uppercase fw-semibold text-secondary mb-1">Panel Administrador</p>
+                    <h1 class="display-6 fw-bold text-dark">Gestión avanzada</h1>
+                    <p class="text-muted mb-0">Destinado a monitorear usuarios, roles, reportes y configuraciones globales.</p>
+                </section>
+
+                <section class="bg-white rounded-4 p-4 shadow-sm">
+                    <p class="mb-0 text-muted">Contenido de ejemplo</p>
+                    <div class="border rounded-4 p-3 mt-3">
+                        <p class="mb-0">Integra aquí tablas de usuarios, gráficas o dashboards administrativos según lo necesites.</p>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script th:src="@{/js/rutinas.js}"></script>
+    </body>
+</html>
+

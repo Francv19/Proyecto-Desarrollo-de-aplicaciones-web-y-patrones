@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Mis Pedidos · Urban Bites</title>
+        <th:block th:replace="app/fragmentos :: appHead"></th:block>
+        <style>
+            .order-card {
+                border: 1px solid #ddd;
+                border-radius: 12px;
+                padding: 1.5rem;
+                background: white;
+                transition: all 0.3s ease;
+            }
+            .order-card:hover {
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            }
+            .status-badge {
+                padding: 0.5rem 1rem;
+                border-radius: 20px;
+                font-size: 0.85rem;
+                font-weight: 600;
+            }
+        </style>
+    </head>
+    <body class="bg-light" th:with="currentPage='pedidos'">
+        <div class="d-flex min-vh-100">
+            <th:block th:replace="general/fragmentos :: sidebarCliente(${currentPage})"></th:block>
+
+            <main class="flex-grow-1 p-4" style="overflow-y: auto;">
+                <h2 class="fw-bold mb-4">Mis Pedidos</h2>
+
+                <div class="row g-3" th:if="${pedidos != null and !pedidos.isEmpty()}">
+                    <div class="col-md-6" th:each="pedido : ${pedidos}">
+                        <div class="order-card">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h5 class="fw-bold mb-1" th:text="'Orden #' + ${pedido.idPedido}">Orden #000</h5>
+                                    <p class="text-muted small mb-0" th:text="${pedido.foodtruck.nombre}">Food Truck</p>
+                                    <p class="text-muted small mb-0" th:text="${#dates.format(pedido.fechaCreacion, 'dd MMM yyyy, hh:mm a')}">23 Oct 2025, 05:27 PM</p>
+                                </div>
+                                <span class="status-badge"
+                                      th:classappend="${pedido.estado == T(com.urbanbites.domain.Pedido.EstadoPedido).entregado} ? 'bg-success text-white' : 
+                                                      ${pedido.estado == T(com.urbanbites.domain.Pedido.EstadoPedido).listo} ? 'bg-info text-white' : 
+                                                      ${pedido.estado == T(com.urbanbites.domain.Pedido.EstadoPedido).en_preparacion} ? 'bg-warning text-dark' : 
+                                                      ${pedido.estado == T(com.urbanbites.domain.Pedido.EstadoPedido).recibido} ? 'bg-secondary text-white' : 
+                                                      'bg-danger text-white'"
+                                      th:text="${#strings.capitalize(#strings.replace(pedido.estado.toString(), '_', ' '))}">Estado</span>
+                            </div>
+
+                            <div class="mb-3" th:if="${pedido.etaMinutos != null}">
+                                <p class="mb-0">
+                                    <i class="bi bi-clock"></i>
+                                    <strong>Tiempo Estimado:</strong> 
+                                    <span th:text="${pedido.etaMinutos + ' minutos'}">XXX Minutos</span>
+                                </p>
+                            </div>
+
+                            <div class="mb-3" th:if="${pedido.detalles != null and !pedido.detalles.isEmpty()}">
+                                <h6 class="fw-bold mb-2">Productos:</h6>
+                                <div th:each="detalle : ${pedido.detalles}">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span th:text="${detalle.nombreProducto + ' x ' + detalle.cantidad}">Producto x 2</span>
+                                        <span th:text="${#numbers.formatDecimal(detalle.subtotal, 0, 'COMMA', 2, 'POINT')}">₡9,000.00</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                                <div>
+                                    <span class="text-muted small" th:text="${pedido.detalles != null ? pedido.detalles.size() + ' Artículos' : '0 Artículos'}">x Artículos</span>
+                                    <p class="fw-bold mb-0 mt-1" th:text="'Total: ' + ${#numbers.formatDecimal(pedido.totalNeto, 0, 'COMMA', 2, 'POINT')}">Total: ₡9,000.00</p>
+                                </div>
+                                <div th:if="${pedido.estado == T(com.urbanbites.domain.Pedido.EstadoPedido).entregado}">
+                                    <a th:href="@{/resenas/crear(idPedido=${pedido.idPedido})}" 
+                                       class="btn btn-sm" 
+                                       style="background-color: #ED3101; color: white;">
+                                        Dejar Reseña
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div th:if="${pedidos == null or pedidos.isEmpty()}">
+                    <div class="text-center py-5">
+                        <i class="bi bi-inbox" style="font-size: 4rem; color: #ddd;"></i>
+                        <p class="text-muted mt-3">No tienes pedidos aún</p>
+                        <a th:href="@{/menu}" class="btn" style="background-color: #ED3101; color: white;">
+                            Ver Menú
+                        </a>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script th:src="@{/js/rutinas.js}"></script>
+    </body>
+</html>
+

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Carrito · Urban Bites</title>
+        <th:block th:replace="app/fragmentos :: appHead"></th:block>
+        <style>
+            .cart-item {
+                border-bottom: 1px solid #eee;
+                padding: 1rem 0;
+            }
+            .order-card {
+                border: 1px solid #ddd;
+                border-radius: 12px;
+                padding: 1.5rem;
+                transition: all 0.3s ease;
+            }
+            .order-card:hover {
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            }
+            .order-card.selected {
+                border-color: #ED3101;
+            }
+            .btn-action {
+                width: 40px;
+                height: 40px;
+                border-radius: 8px;
+                border: none;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.2rem;
+            }
+            .btn-cancel {
+                background-color: #dc3545;
+                color: white;
+            }
+            .btn-confirm {
+                background-color: #104E43;
+                color: white;
+            }
+        </style>
+    </head>
+    <body class="bg-light" th:with="currentPage='carrito'">
+        <div class="d-flex min-vh-100">
+            <th:block th:replace="general/fragmentos :: sidebarCliente(${currentPage})"></th:block>
+
+            <main class="flex-grow-1 p-4" style="overflow-y: auto;">
+                <!-- Carrito Section -->
+                <section class="mb-5">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="fw-bold mb-0">Carrito</h2>
+                        <i class="bi bi-arrow-right" style="color: #ED3101; font-size: 1.5rem;"></i>
+                    </div>
+
+                    <div class="bg-white rounded-4 p-4 shadow-sm mb-4">
+                        <!-- Order Header -->
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h5 class="fw-bold mb-1" th:text="${carrito.foodtruck != null ? carrito.foodtruck.nombre : 'Sin restaurante'}">McDonalds San Pedro</h5>
+                                <p class="text-muted mb-0" style="color: #ED3101;" th:if="${carrito.direccion}">Envío a <span th:text="${carrito.direccion}">Sabanilla</span></p>
+                                <p class="text-muted small mb-0" th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy, hh:mm a')}">23 Oct 2025, 05:27 PM</p>
+                            </div>
+                            <div class="text-end">
+                                <p class="text-muted small mb-0" th:if="${pedidoActual != null and pedidoActual.etaMinutos != null}">
+                                    Tiempo Estimado: <span th:text="${pedidoActual.etaMinutos}">XXX</span> Minutos
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Cart Items -->
+                        <div th:if="${carrito != null and carrito.items != null and !carrito.items.isEmpty()}">
+                            <div class="cart-item" th:each="item : ${carrito.items}">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="flex-grow-1">
+                                        <h6 class="fw-bold mb-1" th:text="${item.producto.nombre}">Hamburguesa Fresh Tony</h6>
+                                        <div class="d-flex justify-content-between">
+                                            <span class="text-muted" th:text="${#numbers.formatDecimal(item.precioUnit, 0, 'COMMA', 2, 'POINT')}">€0000.00</span>
+                                            <span class="text-muted" th:text="${item.cantidad + ' Uds.'}">2 Uds.</span>
+                                        </div>
+                                    </div>
+                                    <button class="btn-action btn-sm ms-3" style="background-color: #ED3101; color: white; border-radius: 50%; width: 32px; height: 32px;">
+                                        <i class="bi bi-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div th:if="${carrito == null or carrito.items == null or carrito.items.isEmpty()}">
+                            <p class="text-muted text-center py-4">Tu carrito está vacío</p>
+                        </div>
+
+                        <!-- Cart Summary -->
+                        <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+                            <div>
+                                <span class="text-muted" th:text="${carrito != null and carrito.items != null ? carrito.items.size() + ' Artículos' : '0 Artículos'}">x Artículos</span>
+                                <p class="fw-bold mb-0 mt-1" th:text="${carrito != null and carrito.total != null ? 'Total: ' + #numbers.formatDecimal(carrito.total, 0, 'COMMA', 2, 'POINT') : 'Total: €0000.00'}">Total: €0000.00</p>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn-action btn-cancel" type="button">
+                                    <i class="bi bi-x"></i>
+                                </button>
+                                <button class="btn-action btn-confirm" type="button">
+                                    <i class="bi bi-check"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Pedidos Anteriores Section -->
+                <section>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="fw-bold mb-0">Pedidos anteriores</h2>
+                        <i class="bi bi-arrow-right" style="color: #ED3101; font-size: 1.5rem;"></i>
+                    </div>
+
+                    <div class="row g-3" th:if="${pedidosAnteriores != null and !pedidosAnteriores.isEmpty()}">
+                        <div class="col-md-4" th:each="pedido : ${pedidosAnteriores}">
+                            <div class="order-card">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h6 class="fw-bold mb-0" th:text="'Orden #' + ${pedido.idPedido}">Orden #000</h6>
+                                    <span class="badge" 
+                                          th:classappend="${pedido.estado == T(com.urbanbites.domain.Pedido.EstadoPedido).entregado} ? 'bg-success' : 
+                                                          ${pedido.estado == T(com.urbanbites.domain.Pedido.EstadoPedido).en_preparacion} ? 'bg-warning' : 
+                                                          ${pedido.estado == T(com.urbanbites.domain.Pedido.EstadoPedido).listo} ? 'bg-info' : 'bg-secondary'"
+                                          th:text="${pedido.estado}">Usuario</span>
+                                </div>
+                                <p class="text-muted small mb-2" th:text="${#dates.format(pedido.fechaCreacion, 'dd MMM yyyy, hh:mm a')}">23 Oct 2025, 05:27 PM</p>
+                                
+                                <div class="mb-2" th:each="detalle : ${pedido.detalles}">
+                                    <div class="d-flex justify-content-between">
+                                        <span th:text="${detalle.nombreProducto}">Hamburguesa Fresh Tony</span>
+                                        <span class="text-muted" th:text="${detalle.cantidad + ' Uds.'}">2 Uds.</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span class="text-muted" th:text="${#numbers.formatDecimal(detalle.precioUnit, 0, 'COMMA', 2, 'POINT')}">€0000.00</span>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
+                                    <div>
+                                        <span class="text-muted small" th:text="${pedido.detalles != null ? pedido.detalles.size() + ' Artículos' : '0 Artículos'}">x Artículos</span>
+                                        <p class="fw-bold mb-0 mt-1" th:text="'Total: ' + ${#numbers.formatDecimal(pedido.totalNeto, 0, 'COMMA', 2, 'POINT')}">Total: €0000.00</p>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn-action btn-cancel btn-sm" type="button">
+                                            <i class="bi bi-x"></i>
+                                        </button>
+                                        <button class="btn-action btn-confirm btn-sm" type="button">
+                                            <i class="bi bi-check"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:if="${pedidosAnteriores == null or pedidosAnteriores.isEmpty()}">
+                        <p class="text-muted text-center py-4">No tienes pedidos anteriores</p>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script th:src="@{/js/rutinas.js}"></script>
+    </body>
+</html>
+

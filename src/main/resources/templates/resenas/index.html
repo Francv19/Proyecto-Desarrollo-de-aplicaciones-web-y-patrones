@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Reseñas · Urban Bites</title>
+        <th:block th:replace="app/fragmentos :: appHead"></th:block>
+        <style>
+            .review-card {
+                border: 1px solid #104E43;
+                border-radius: 12px;
+                padding: 1.5rem;
+                background: white;
+                margin-bottom: 1.5rem;
+            }
+            .review-card-header {
+                border-bottom: 1px solid #eee;
+                padding-bottom: 1rem;
+                margin-bottom: 1rem;
+            }
+            .review-item-card {
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                padding: 1rem;
+                background: white;
+            }
+            .star-rating {
+                color: #ffc107;
+            }
+            .star-rating .bi-star {
+                color: #ddd;
+            }
+            .background-overlay {
+                position: relative;
+                background-image: url('/images/foodtruck-festival.jpg');
+                background-size: cover;
+                background-position: center;
+                background-attachment: fixed;
+                min-height: 100vh;
+            }
+            .background-overlay::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(255, 255, 255, 0.95);
+                z-index: 0;
+            }
+            .background-overlay > * {
+                position: relative;
+                z-index: 1;
+            }
+        </style>
+    </head>
+    <body class="bg-light" th:with="currentPage='resenas'">
+        <div class="d-flex min-vh-100">
+            <th:block th:replace="general/fragmentos :: sidebarCliente(${currentPage})"></th:block>
+
+            <main class="flex-grow-1 background-overlay p-4" style="overflow-y: auto;">
+                <!-- Crear Reseña Card -->
+                <div class="review-card">
+                    <div class="review-card-header">
+                        <h3 class="fw-bold mb-2" style="color: #104E43;">Crear Reseña</h3>
+                        <p class="text-muted mb-0">Crea Reseñas de los pedidos que hayas comprado para dar tu punto de opinión y mejora</p>
+                    </div>
+                    <div class="text-end">
+                        <a th:href="@{/pedidos}" class="btn" style="background-color: #ED3101; color: white;">
+                            Ver tus pedidos
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Ver tus Reseñas Card -->
+                <div class="review-card">
+                    <div class="review-card-header">
+                        <h3 class="fw-bold mb-2" style="color: #104E43;">Ver tus Reseñas</h3>
+                        <p class="text-muted mb-0">Ve los comentarios de tus Reseñas y dale seguimiento aquí mismo</p>
+                    </div>
+                    <div th:if="${misResenas != null and !misResenas.isEmpty()}">
+                        <div class="review-item-card mb-3" th:each="resena : ${misResenas}">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <h6 class="fw-bold mb-1" th:text="${resena.foodtruck.nombre}">Food Truck</h6>
+                                    <div class="star-rating mb-2">
+                                        <span th:each="i : ${#numbers.sequence(1, 5)}">
+                                            <i th:class="${i <= resena.calificacion} ? 'bi bi-star-fill' : 'bi bi-star'"></i>
+                                        </span>
+                                        <span class="ms-2" th:text="resena.calificacion + '.0'">0.0</span>
+                                    </div>
+                                </div>
+                                <span class="badge" 
+                                      th:classappend="${resena.estado == T(com.urbanbites.domain.Resena.EstadoResena).aprobada} ? 'bg-success' : 
+                                                      ${resena.estado == T(com.urbanbites.domain.Resena.EstadoResena).pendiente} ? 'bg-warning' : 'bg-secondary'"
+                                      th:text="${resena.estado}">Pendiente</span>
+                            </div>
+                            <p class="text-muted mb-0" th:text="${resena.comentario}">Horem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+                            <p class="text-muted small mt-2 mb-0" th:text="${#dates.format(resena.fechaCreacion, 'dd MMM yyyy')}">Fecha</p>
+                        </div>
+                    </div>
+                    <div th:if="${misResenas == null or misResenas.isEmpty()}">
+                        <p class="text-muted text-center py-3">No has creado ninguna reseña aún</p>
+                    </div>
+                </div>
+
+                <!-- Reseñas de otros clientes -->
+                <div class="review-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h3 class="fw-bold mb-0" style="color: #104E43;">Reseñas de otros clientes</h3>
+                        <i class="bi bi-arrow-right" style="color: #ED3101; font-size: 1.5rem;"></i>
+                    </div>
+
+                    <div class="row g-3" th:if="${resenasOtros != null and !resenasOtros.isEmpty()}">
+                        <div class="col-md-6 col-lg-3" th:each="resena : ${resenasOtros}">
+                            <div class="review-item-card">
+                                <h6 class="fw-bold mb-2">Usuario</h6>
+                                <div class="star-rating mb-2">
+                                    <span th:each="i : ${#numbers.sequence(1, 5)}">
+                                        <i th:class="${i <= resena.calificacion} ? 'bi bi-star-fill' : 'bi bi-star'"></i>
+                                    </span>
+                                    <span class="ms-2" th:text="resena.calificacion + '.0'">0.0</span>
+                                </div>
+                                <p class="text-muted small mb-0" th:text="${resena.comentario != null ? (#strings.length(resena.comentario) > 100 ? #strings.substring(resena.comentario, 0, 100) + '...' : resena.comentario) : 'Sin comentario'}">Horem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:if="${resenasOtros == null or resenasOtros.isEmpty()}">
+                        <p class="text-muted text-center py-3">No hay reseñas de otros clientes aún</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script th:src="@{/js/rutinas.js}"></script>
+    </body>
+</html>
+

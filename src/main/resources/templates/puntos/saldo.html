@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Saldo de Puntos · Urban Bites</title>
+        <th:block th:replace="app/fragmentos :: appHead"></th:block>
+        <style>
+            .saldo-card {
+                background: linear-gradient(135deg, #104E43 0%, #0b362f 100%);
+                color: white;
+                border-radius: 16px;
+                padding: 2rem;
+                margin-bottom: 2rem;
+            }
+            .saldo-amount {
+                font-size: 3rem;
+                font-weight: bold;
+            }
+            .movimiento-card {
+                border: 1px solid #ddd;
+                border-radius: 12px;
+                padding: 1rem;
+                background: white;
+                margin-bottom: 1rem;
+            }
+            .movimiento-positivo {
+                color: #28a745;
+            }
+            .movimiento-negativo {
+                color: #dc3545;
+            }
+        </style>
+    </head>
+    <body class="bg-light" th:with="currentPage='puntos'">
+        <div class="d-flex min-vh-100">
+            <th:block th:replace="general/fragmentos :: sidebarCliente(${currentPage})"></th:block>
+
+            <main class="flex-grow-1 p-4" style="overflow-y: auto;">
+                <h2 class="fw-bold mb-4">Saldo de Puntos</h2>
+
+                <!-- Saldo Card -->
+                <div class="saldo-card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="mb-2 opacity-75">Saldo Actual</p>
+                            <div class="saldo-amount" th:text="${saldo != null ? saldo : 0}">0</div>
+                            <p class="mt-2 mb-0 opacity-75">puntos disponibles</p>
+                        </div>
+                        <div class="text-end">
+                            <i class="bi bi-star-fill" style="font-size: 4rem; opacity: 0.3;"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Movimientos -->
+                <div class="mb-3">
+                    <h4 class="fw-bold mb-3">Historial de Movimientos</h4>
+                    
+                    <div th:if="${movimientos != null and !movimientos.isEmpty()}">
+                        <div class="movimiento-card" th:each="movimiento : ${movimientos}">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <h6 class="fw-bold mb-1" th:text="${movimiento.foodtruck.nombre}">Food Truck</h6>
+                                    <p class="text-muted small mb-1" th:text="${movimiento.motivo}">Acumulación por pedido</p>
+                                    <p class="text-muted small mb-0" th:text="${#dates.format(movimiento.fechaCreacion, 'dd MMM yyyy, hh:mm a')}">23 Oct 2025, 05:27 PM</p>
+                                </div>
+                                <div class="text-end">
+                                    <span class="fw-bold fs-5"
+                                          th:classappend="${movimiento.tipo == T(com.urbanbites.domain.PuntosCliente.TipoPunto).acumulados} ? 'movimiento-positivo' : 'movimiento-negativo'"
+                                          th:text="${movimiento.tipo == T(com.urbanbites.domain.PuntosCliente.TipoPunto).acumulados} ? '+' + movimiento.puntos : '-' + movimiento.puntos}">
+                                        +8
+                                    </span>
+                                    <p class="text-muted small mb-0 mt-1" th:text="${movimiento.tipo == T(com.urbanbites.domain.PuntosCliente.TipoPunto).acumulados} ? 'Acumulados' : 'Redimidos'">Acumulados</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:if="${movimientos == null or movimientos.isEmpty()}">
+                        <div class="text-center py-5">
+                            <i class="bi bi-inbox" style="font-size: 4rem; color: #ddd;"></i>
+                            <p class="text-muted mt-3">No tienes movimientos de puntos aún</p>
+                            <a th:href="@{/menu}" class="btn" style="background-color: #ED3101; color: white;">
+                                Ver Menú
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script th:src="@{/js/rutinas.js}"></script>
+    </body>
+</html>
+

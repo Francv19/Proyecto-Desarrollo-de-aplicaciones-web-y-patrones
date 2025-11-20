@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Fragmentos</title>
+    </head>
+    <body>
+        <div th:fragment="sidebarStyles">
+            <style>
+                :root {
+                    --urban-primary: #104E43;
+                    --urban-secondary: #FFE5B4;
+                    --urban-cta: #ED3101;
+                    --urban-light: #F4F4F4;
+                    --urban-ink: #1C1C1C;
+                }
+                .sidebar-urban {
+                    width: 280px;
+                    min-height: 100vh;
+                    background-color: var(--urban-primary);
+                    color: #fff;
+                    display: flex;
+                    flex-direction: column;
+                    padding: 2rem 1.5rem;
+                }
+                .sidebar-urban .sidebar-brand img {
+                    max-width: 160px;
+                }
+                .sidebar-urban .sidebar-brand-text {
+                    font-size: 1.1rem;
+                    font-weight: 600;
+                    letter-spacing: 0.05em;
+                    text-transform: uppercase;
+                    color: var(--urban-secondary);
+                    margin-top: 0.75rem;
+                }
+                .sidebar-urban nav {
+                    margin-top: 2rem;
+                }
+                .sidebar-urban .nav-link {
+                    color: #fff;
+                    border-radius: 999px;
+                    padding: 0.65rem 0.95rem;
+                    font-weight: 500;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.85rem;
+                    transition: background-color 0.2s ease, color 0.2s ease;
+                }
+                .sidebar-urban .nav-link .icon {
+                    flex-shrink: 0;
+                    width: 1.35rem;
+                    height: 1.35rem;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 1.15rem;
+                }
+                .sidebar-urban .nav-link:hover {
+                    background-color: rgba(255, 255, 255, 0.08);
+                }
+                .sidebar-urban .nav-link.active {
+                    background-color: var(--urban-cta);
+                    color: #fff;
+                }
+                .sidebar-urban .nav-link.active .icon {
+                    color: var(--urban-secondary);
+                }
+                .sidebar-urban .nav-section {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.5rem;
+                }
+                .sidebar-urban .nav-section + .nav-section {
+                    margin-top: 1.4rem;
+                }
+                .sidebar-urban .logout-link {
+                    margin-top: auto;
+                    border-top: 1px solid rgba(255, 255, 255, 0.12);
+                    padding-top: 1.5rem;
+                }
+                @media (max-width: 991px) {
+                    .sidebar-urban {
+                        width: 100%;
+                        min-height: auto;
+                        border-radius: 1.5rem;
+                    }
+                }
+            </style>
+        </div>
+
+        <div th:fragment="sidebarOwner (page)">
+            <aside class="sidebar-urban">
+                <div class="sidebar-brand text-center">
+                    <img th:src="@{/images/Logo Urban Bites.png}" alt="Urban Bites" class="img-fluid mb-2" style="max-width: 160px; height: auto;" />
+                    <div class="sidebar-brand-text">Urban Bites</div>
+                </div>
+
+                <nav class="nav flex-column nav-section">
+                    <a class="nav-link" th:classappend="${page} == 'cotizaciones' ? ' active'"
+                       th:href="@{/cotizaciones}">
+                        <i class="bi bi-chat-square-text icon"></i>
+                        <span>Cotizaciones</span>
+                    </a>
+                    <a class="nav-link" th:classappend="${page} == 'dashboard' ? ' active'"
+                       th:href="@{/dashboard}">
+                        <i class="bi bi-kanban icon"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a class="nav-link" th:classappend="${page} == 'menu' ? ' active'"
+                       th:href="@{/menu}">
+                        <i class="bi bi-journal-bookmark icon"></i>
+                        <span>Menú</span>
+                    </a>
+                    <a class="nav-link" th:classappend="${page} == 'pedidos' ? ' active'"
+                       th:href="@{/pedidos}">
+                        <i class="bi bi-receipt icon"></i>
+                        <span>Pedidos</span>
+                    </a>
+                    <a class="nav-link" th:classappend="${page} == 'promociones' ? ' active'"
+                       th:href="@{/promociones}">
+                        <i class="bi bi-ticket-detailed icon"></i>
+                        <span>Promociones</span>
+                    </a>
+                    <a class="nav-link" th:classappend="${page} == 'resenas' ? ' active'"
+                       th:href="@{/resenas}">
+                        <i class="bi bi-chat-left-dots icon"></i>
+                        <span>Reseñas</span>
+                    </a>
+                    <a class="nav-link" th:classappend="${page} == 'configuracion' ? ' active'"
+                       th:href="@{/configuracion}">
+                        <i class="bi bi-sliders icon"></i>
+                        <span>Configuración</span>
+                    </a>
+                </nav>
+
+                <div class="logout-link">
+                    <a class="nav-link" th:href="@{/logout}">
+                        <i class="bi bi-box-arrow-right icon"></i>
+                        <span>Cerrar sesión</span>
+                    </a>
+                </div>
+            </aside>
+        </div>
+
+        <div th:fragment="sidebarCliente (page)">
+            <aside class="sidebar-urban">
+                <div class="sidebar-brand text-center">
+                    <img th:src="@{/images/Logo Urban Bites.png}" alt="Urban Bites" class="img-fluid mb-2" style="max-width: 160px; height: auto;" />
+                    <div class="sidebar-brand-text">Urban Bites</div>
+                </div>
+
+                <nav class="nav flex-column nav-section">
+                    <a class="nav-link" th:classappend="${page} == 'menu' ? ' active'"
+                       th:href="@{/menu}">
+                        <i class="bi bi-journal icon"></i>
+                        <span>Menú</span>
+                    </a>
+                    <a class="nav-link" th:classappend="${page} == 'carrito' ? ' active'"
+                       th:href="@{/carrito}">
+                        <i class="bi bi-bag icon"></i>
+                        <span>Carrito</span>
+                    </a>
+                    <a class="nav-link" th:classappend="${page} == 'promociones' ? ' active'"
+                       th:href="@{/promociones}">
+                        <i class="bi bi-ticket icon"></i>
+                        <span>Promociones</span>
+                    </a>
+                    <a class="nav-link" th:classappend="${page} == 'resenas' ? ' active'"
+                       th:href="@{/resenas}">
+                        <i class="bi bi-chat-left-quote icon"></i>
+                        <span>Reseñas</span>
+                    </a>
+                    <a class="nav-link" th:classappend="${page} == 'configuracion' ? ' active'"
+                       th:href="@{/configuracion}">
+                        <i class="bi bi-gear icon"></i>
+                        <span>Configuración</span>
+                    </a>
+                    <a class="nav-link" th:classappend="${page} == 'puntos' ? ' active'"
+                       th:href="@{/puntos/saldo}">
+                        <i class="bi bi-star icon"></i>
+                        <span>Puntos</span>
+                    </a>
+                </nav>
+
+                <div class="logout-link">
+                    <a class="nav-link" th:href="@{/logout}">
+                        <i class="bi bi-box-arrow-right icon"></i>
+                        <span>Cerrar sesión</span>
+                    </a>
+                </div>
+            </aside>
+        </div>
+
+        <div th:fragment="sidebarAdmin (page)">
+            <aside class="sidebar-urban">
+                <div class="sidebar-brand text-center">
+                    <img th:src="@{/images/Logo Urban Bites.png}" alt="Urban Bites" class="img-fluid mb-2" style="max-width: 160px; height: auto;" />
+                    <div class="sidebar-brand-text">Urban Bites Admin</div>
+                </div>
+
+                <nav class="nav flex-column nav-section">
+                    <a class="nav-link" th:classappend="${page} == 'dashboard' ? ' active'"
+                       th:href="@{/admin}">
+                        <i class="bi bi-speedometer icon"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a class="nav-link" th:classappend="${page} == 'usuarios' ? ' active'"
+                       th:href="@{/admin/usuarios}">
+                        <i class="bi bi-people icon"></i>
+                        <span>Usuarios</span>
+                    </a>
+                    <a class="nav-link" th:classappend="${page} == 'roles' ? ' active'"
+                       th:href="@{/admin/roles}">
+                        <i class="bi bi-person-badge icon"></i>
+                        <span>Roles</span>
+                    </a>
+                    <a class="nav-link" th:classappend="${page} == 'foodtrucks' ? ' active'"
+                       th:href="@{/admin/food-trucks}">
+                        <i class="bi bi-truck icon"></i>
+                        <span>Food Trucks</span>
+                    </a>
+                    <a class="nav-link" th:classappend="${page} == 'promociones' ? ' active'"
+                       th:href="@{/admin/promociones}">
+                        <i class="bi bi-ticket icon"></i>
+                        <span>Promociones</span>
+                    </a>
+                    <a class="nav-link" th:classappend="${page} == 'reportes' ? ' active'"
+                       th:href="@{/admin/reportes}">
+                        <i class="bi bi-graph-up icon"></i>
+                        <span>Reportes</span>
+                    </a>
+                    <a class="nav-link" th:classappend="${page} == 'configuracion' ? ' active'"
+                       th:href="@{/admin/configuracion}">
+                        <i class="bi bi-gear icon"></i>
+                        <span>Configuración</span>
+                    </a>
+                </nav>
+
+                <div class="logout-link">
+                    <a class="nav-link" th:href="@{/logout}">
+                        <i class="bi bi-box-arrow-right icon"></i>
+                        <span>Cerrar sesión</span>
+                    </a>
+                </div>
+            </aside>
+        </div>
+
+        <div th:fragment="landingStyles">
+            <style>
+                :root {
+                    --urban-primary: #104E43;
+                    --urban-secondary: #FFE5B4;
+                    --urban-cta: #ED3101;
+                    --urban-light: #F4F4F4;
+                    --urban-ink: #1C1C1C;
+                }
+                body.landing-page {
+                    font-family: 'Poppins', 'Segoe UI', sans-serif;
+                    color: var(--urban-ink);
+                    margin: 0;
+                    background-color: #fff;
+                }
+                .landing-nav {
+                    background: rgba(255, 255, 255, 0.97);
+                    backdrop-filter: blur(8px);
+                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+                }
+                .landing-hero {
+                    background: linear-gradient(135deg, #0f4b41 0%, #0b362f 60%);
+                    color: #fff;
+                    border-bottom-left-radius: 60px;
+                    border-bottom-right-radius: 60px;
+                    padding: 4rem 0;
+                    position: relative;
+                    overflow: hidden;
+                }
+                .landing-hero .btn-cta {
+                    background-color: var(--urban-cta);
+                    color: #fff;
+                    border-radius: 999px;
+                    padding: 0.75rem 1.5rem;
+                    border: none;
+                    font-weight: 600;
+                }
+                .landing-section {
+                    padding: 4rem 0;
+                }
+                .landing-section h2 {
+                    font-weight: 700;
+                    color: var(--urban-primary);
+                }
+                .landing-card {
+                    border-radius: 1.25rem;
+                    box-shadow: 0 15px 40px rgba(16, 78, 67, 0.1);
+                    padding: 1.5rem;
+                    background-color: #fff;
+                }
+                .landing-footer {
+                    background-color: var(--urban-primary);
+                    color: #fff;
+                    padding: 3rem 0;
+                }
+            </style>
+        </div>
+
+        <header th:fragment="landingHeader">
+            <nav class="landing-nav navbar navbar-expand-lg py-3">
+                <div class="container">
+                    <a class="navbar-brand fw-bold text-uppercase" th:href="@{/}">
+                        <img th:src="@{/images/logo-urban-bites.svg}" alt="Urban Bites" height="36" class="me-2">
+                        Urban Bites
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#landingNav">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="landingNav">
+                        <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center gap-lg-3">
+                            <li class="nav-item"><a class="nav-link" th:href="@{/food-trucks}">Food Trucks</a></li>
+                            <li class="nav-item"><a class="nav-link" th:href="@{/promociones}">Promociones</a></li>
+                            <li class="nav-item"><a class="nav-link" th:href="@{/contacto}">Contacto</a></li>
+                            <li class="nav-item">
+                                <a class="btn btn-outline-dark rounded-pill px-4" th:href="@{/login}">Iniciar Sesión</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-cta text-white rounded-pill px-4" th:href="@{/registro}">Regístrate</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <footer th:fragment="landingFooter">
+            <div class="landing-footer">
+                <div class="container">
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <img th:src="@{/images/logo-urban-bites.svg}" alt="Urban Bites" height="40" class="mb-3">
+                            <p>Tu próxima experiencia foodie comienza aquí. Descubre, ordena y disfruta.</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="text-uppercase">Descubre más</h6>
+                            <ul class="list-unstyled">
+                                <li><a class="text-white text-decoration-none" th:href="@{/sobre-nosotros}">Sobre nosotros</a></li>
+                                <li><a class="text-white text-decoration-none" th:href="@{/terminos}">Términos y Condiciones</a></li>
+                                <li><a class="text-white text-decoration-none" th:href="@{/faqs}">Preguntas frecuentes</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="text-uppercase">Contacto</h6>
+                            <ul class="list-unstyled">
+                                <li>+506 0000-0000</li>
+                                <li>contacto@urbanbites.app</li>
+                                <li>@urbanbitesapp</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <hr class="border-light opacity-25 my-4">
+                    <div class="text-center small">© <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}"></span> Urban Bites. Todos los derechos reservados.</div>
+                </div>
+            </div>
+        </footer>
+    </body>
+</html>

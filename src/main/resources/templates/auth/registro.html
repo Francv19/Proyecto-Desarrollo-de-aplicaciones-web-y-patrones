@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es" th:classappend="auth-page">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Registrarse · Urban Bites</title>
+        <th:block th:replace="auth/head :: authHead"></th:block>
+    </head>
+    <body class="auth-page">
+        <th:block th:replace="auth/fragmentos :: authBackground"></th:block>
+        
+        <div class="auth-card">
+            <th:block th:replace="auth/fragmentos :: authLogo"></th:block>
+            
+            <h1 class="auth-title">Registrarse</h1>
+            
+            <form th:action="@{/registro/nuevo}" method="post">
+                <div class="mb-3">
+                    <label for="nombre" class="auth-form-label">Nombre</label>
+                    <input type="text" class="form-control auth-form-control" id="nombre" name="nombre" 
+                           placeholder="John Doe" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="correo" class="auth-form-label">Correo</label>
+                    <input type="email" class="form-control auth-form-control" id="correo" name="correo" 
+                           placeholder="usuario@email.com" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="contraseña" class="auth-form-label">Contraseña</label>
+                    <input type="password" class="form-control auth-form-control" id="contraseña" name="contraseña" 
+                           placeholder="Contraseña" required>
+                </div>
+                
+                <button type="submit" class="btn btn-auth-primary">Crear Cuenta</button>
+            </form>
+            
+            <a th:href="@{/login}" class="btn btn-auth-outline">Volver</a>
+        </div>
+        
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>
+

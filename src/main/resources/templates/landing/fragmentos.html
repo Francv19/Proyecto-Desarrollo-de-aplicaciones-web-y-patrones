@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Fragmentos Landing</title>
+    </head>
+    <body>
+        <div th:fragment="landingStyles">
+            <style>
+                :root {
+                    --urban-primary: #104E43;
+                    --urban-secondary: #FFE5B4;
+                    --urban-cta: #ED3101;
+                    --urban-light: #F4F4F4;
+                    --urban-ink: #1C1C1C;
+                }
+                body.landing-page {
+                    font-family: 'Poppins', 'Segoe UI', sans-serif;
+                    color: var(--urban-ink);
+                    margin: 0;
+                    background-color: #fff;
+                }
+                .landing-nav {
+                    background: rgba(255, 255, 255, 0.97);
+                    backdrop-filter: blur(8px);
+                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+                }
+                .landing-hero {
+                    background: linear-gradient(135deg, #0f4b41 0%, #0b362f 60%);
+                    color: #fff;
+                    border-bottom-left-radius: 60px;
+                    border-bottom-right-radius: 60px;
+                    padding: 4rem 0;
+                    position: relative;
+                    overflow: hidden;
+                }
+                .landing-hero .btn-cta {
+                    background-color: var(--urban-cta);
+                    color: #fff;
+                    border-radius: 999px;
+                    padding: 0.75rem 1.5rem;
+                    border: none;
+                    font-weight: 600;
+                }
+                .landing-section {
+                    padding: 4rem 0;
+                }
+                .landing-section h2 {
+                    font-weight: 700;
+                    color: var(--urban-primary);
+                }
+                .landing-card {
+                    border-radius: 1.25rem;
+                    box-shadow: 0 15px 40px rgba(16, 78, 67, 0.1);
+                    padding: 1.5rem;
+                    background-color: #fff;
+                }
+                .landing-footer {
+                    background-color: var(--urban-primary);
+                    color: #fff;
+                    padding: 3rem 0;
+                }
+            </style>
+        </div>
+
+        <header th:fragment="landingHeader">
+            <nav class="landing-nav navbar navbar-expand-lg py-3">
+                <div class="container">
+                    <a class="navbar-brand fw-bold text-uppercase" th:href="@{/}">
+                        <img th:src="@{/images/logo-urban-bites.svg}" alt="Urban Bites" height="36" class="me-2">
+                        Urban Bites
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#landingNav">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="landingNav">
+                        <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center gap-lg-3">
+                            <li class="nav-item"><a class="nav-link" th:href="@{/food-trucks}">Food Trucks</a></li>
+                            <li class="nav-item"><a class="nav-link" th:href="@{/promociones}">Promociones</a></li>
+                            <li class="nav-item"><a class="nav-link" th:href="@{/contacto}">Contacto</a></li>
+                            <li class="nav-item">
+                                <a class="btn btn-outline-dark rounded-pill px-4" th:href="@{/login}">Iniciar Sesión</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-cta text-white rounded-pill px-4" th:href="@{/registro}">Regístrate</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <footer th:fragment="landingFooter">
+            <div class="landing-footer">
+                <div class="container">
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <img th:src="@{/images/logo-urban-bites.svg}" alt="Urban Bites" height="40" class="mb-3">
+                            <p>Tu próxima experiencia foodie comienza aquí. Descubre, ordena y disfruta.</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="text-uppercase">Descubre más</h6>
+                            <ul class="list-unstyled">
+                                <li><a class="text-white text-decoration-none" th:href="@{/sobre-nosotros}">Sobre nosotros</a></li>
+                                <li><a class="text-white text-decoration-none" th:href="@{/terminos}">Términos y Condiciones</a></li>
+                                <li><a class="text-white text-decoration-none" th:href="@{/faqs}">Preguntas frecuentes</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="text-uppercase">Contacto</h6>
+                            <ul class="list-unstyled">
+                                <li>+506 0000-0000</li>
+                                <li>contacto@urbanbites.app</li>
+                                <li>@urbanbitesapp</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <hr class="border-light opacity-25 my-4">
+                    <div class="text-center small">© <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}"></span> Urban Bites. Todos los derechos reservados.</div>
+                </div>
+            </div>
+        </footer>
+    </body>
+</html>
+
