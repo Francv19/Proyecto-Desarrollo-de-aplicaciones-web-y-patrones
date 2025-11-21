@@ -34,5 +34,9 @@ public class PedidoService {
     public List<Pedido> obtenerPedidosPorDueno(Integer idDueno) {
         return pedidoRepository.findPedidosPorDueno(idDueno);
     }
+    
+    public Pedido obtenerPedidoPorId(Integer idPedido) {
+        return pedidoRepository.findById(idPedido).orElse(null);
+    }
 }
 

@@ -81,7 +81,7 @@ CREATE TABLE productos (
   id_menu        INT NOT NULL,
   nombre         VARCHAR(120) NOT NULL,
   descripcion    VARCHAR(400),
-  precio         DECIMAL(10,2) NOT NULL CHECK (precio > 0),
+  precio         DECIMAL(10,2) NOT NULL DEFAULT 0.01 CHECK (precio > 0),
   disponible     BOOLEAN NOT NULL DEFAULT TRUE,
   fecha_creacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id_producto),
@@ -119,13 +119,14 @@ CREATE TABLE detalle_carrito (
   id_detalle    INT NOT NULL AUTO_INCREMENT,
   id_carrito    INT NOT NULL,
   id_producto   INT NOT NULL,
-  cantidad      INT NOT NULL CHECK (cantidad > 0),
-  precio_unit   DECIMAL(10,2) NOT NULL CHECK (precio_unit >= 0),
+  cantidad      INT NOT NULL DEFAULT 1 CHECK (cantidad > 0),
+  precio_unit   DECIMAL(10,2) NOT NULL DEFAULT 0.01 CHECK (precio_unit >= 0),
   notas         VARCHAR(300),
   PRIMARY KEY (id_detalle),
   KEY ndx_dcart_carrito (id_carrito),
   KEY ndx_dcart_producto (id_producto),
-  CONSTRAINT fk_dcart_carrito FOREIGN KEY (id_carrito) REFERENCES carritos(id_carrito),
+  KEY idx_carrito_producto (id_carrito, id_producto),
+  CONSTRAINT fk_dcart_carrito FOREIGN KEY (id_carrito) REFERENCES carritos(id_carrito) ON DELETE CASCADE,
   CONSTRAINT fk_dcart_producto FOREIGN KEY (id_producto) REFERENCES productos(id_producto)
 ) ENGINE=InnoDB;
 

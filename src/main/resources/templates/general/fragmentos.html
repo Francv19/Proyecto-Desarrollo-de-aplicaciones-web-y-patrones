@@ -18,11 +18,15 @@
                 .sidebar-urban {
                     width: 280px;
                     min-height: 100vh;
+                    height: 100vh;
+                    position: sticky;
+                    top: 0;
                     background-color: var(--urban-primary);
                     color: #fff;
                     display: flex;
                     flex-direction: column;
                     padding: 2rem 1.5rem;
+                    overflow-y: auto;
                 }
                 .sidebar-urban .sidebar-brand img {
                     max-width: 160px;
@@ -104,17 +108,22 @@
                         <span>Cotizaciones</span>
                     </a>
                     <a class="nav-link" th:classappend="${page} == 'dashboard' ? ' active'"
-                       th:href="@{/dashboard}">
+                       th:href="@{/app/owner}">
                         <i class="bi bi-kanban icon"></i>
                         <span>Dashboard</span>
                     </a>
-                    <a class="nav-link" th:classappend="${page} == 'menu' ? ' active'"
-                       th:href="@{/menu}">
+                    <a class="nav-link" th:classappend="${page} == 'foodtrucks' ? ' active'"
+                       th:href="@{/owner/foodtrucks}">
+                        <i class="bi bi-truck icon"></i>
+                        <span>Food Trucks</span>
+                    </a>
+                    <a class="nav-link" th:classappend="${page} == 'productos' ? ' active'"
+                       th:href="@{/owner/productos}">
                         <i class="bi bi-journal-bookmark icon"></i>
-                        <span>Menú</span>
+                        <span>Gestión de Productos</span>
                     </a>
                     <a class="nav-link" th:classappend="${page} == 'pedidos' ? ' active'"
-                       th:href="@{/pedidos}">
+                       th:href="@{/pedidos/owner}">
                         <i class="bi bi-receipt icon"></i>
                         <span>Pedidos</span>
                     </a>
@@ -124,7 +133,7 @@
                         <span>Promociones</span>
                     </a>
                     <a class="nav-link" th:classappend="${page} == 'resenas' ? ' active'"
-                       th:href="@{/resenas}">
+                       th:href="@{/resenas/owner}">
                         <i class="bi bi-chat-left-dots icon"></i>
                         <span>Reseñas</span>
                     </a>
@@ -136,10 +145,12 @@
                 </nav>
 
                 <div class="logout-link">
-                    <a class="nav-link" th:href="@{/logout}">
-                        <i class="bi bi-box-arrow-right icon"></i>
-                        <span>Cerrar sesión</span>
-                    </a>
+                    <form th:action="@{/logout}" method="post" style="margin: 0;">
+                        <button type="submit" class="nav-link border-0 bg-transparent w-100 text-start" style="color: inherit; padding: 0.65rem 0.95rem;">
+                            <i class="bi bi-box-arrow-right icon"></i>
+                            <span>Cerrar sesión</span>
+                        </button>
+                    </form>
                 </div>
             </aside>
         </div>
@@ -185,10 +196,12 @@
                 </nav>
 
                 <div class="logout-link">
-                    <a class="nav-link" th:href="@{/logout}">
-                        <i class="bi bi-box-arrow-right icon"></i>
-                        <span>Cerrar sesión</span>
-                    </a>
+                    <form th:action="@{/logout}" method="post" style="margin: 0;">
+                        <button type="submit" class="nav-link border-0 bg-transparent w-100 text-start" style="color: inherit; padding: 0.65rem 0.95rem;">
+                            <i class="bi bi-box-arrow-right icon"></i>
+                            <span>Cerrar sesión</span>
+                        </button>
+                    </form>
                 </div>
             </aside>
         </div>
@@ -239,10 +252,12 @@
                 </nav>
 
                 <div class="logout-link">
-                    <a class="nav-link" th:href="@{/logout}">
-                        <i class="bi bi-box-arrow-right icon"></i>
-                        <span>Cerrar sesión</span>
-                    </a>
+                    <form th:action="@{/logout}" method="post" style="margin: 0;">
+                        <button type="submit" class="nav-link border-0 bg-transparent w-100 text-start" style="color: inherit; padding: 0.65rem 0.95rem;">
+                            <i class="bi bi-box-arrow-right icon"></i>
+                            <span>Cerrar sesión</span>
+                        </button>
+                    </form>
                 </div>
             </aside>
         </div>

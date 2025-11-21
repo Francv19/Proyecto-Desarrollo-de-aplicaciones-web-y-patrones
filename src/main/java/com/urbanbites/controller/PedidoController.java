@@ -25,24 +25,66 @@ public class PedidoController {
 
     @GetMapping
     public String verPedidosCliente(Model model) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Usuario usuario = usuarioRepository.findByUsername(auth.getName());
-        
-        List<Pedido> pedidos = pedidoService.obtenerPedidosPorUsuario(usuario.getIdUsuario());
-        model.addAttribute("pedidos", pedidos);
-        
-        return "pedidos/cliente";
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+                return "redirect:/login";
+            }
+            
+            Usuario usuario = usuarioRepository.findByUsername(auth.getName());
+            if (usuario == null) {
+                return "redirect:/login";
+            }
+            
+            List<Pedido> pedidos = pedidoService.obtenerPedidosPorUsuario(usuario.getIdUsuario());
+            model.addAttribute("pedidos", pedidos != null ? pedidos : new java.util.ArrayList<>());
+            
+            return "pedidos/cliente";
+        } catch (Exception e) {
+            model.addAttribute("error", "Error al cargar pedidos: " + e.getMessage());
+            model.addAttribute("pedidos", new java.util.ArrayList<>());
+            return "pedidos/cliente";
+        }
     }
 
     @GetMapping("/owner")
     public String verPedidosOwner(Model model) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Usuario usuario = usuarioRepository.findByUsername(auth.getName());
-        
-        List<Pedido> pedidos = pedidoService.obtenerPedidosPorDueno(usuario.getIdUsuario());
-        model.addAttribute("pedidos", pedidos);
-        
-        return "pedidos/owner";
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+                return "redirect:/login";
+            }
+            
+            Usuario usuario = usuarioRepository.findByUsername(auth.getName());
+            if (usuario == null) {
+                return "redirect:/login";
+            }
+            
+            System.out.println("Buscando pedidos para dueño con ID: " + usuario.getIdUsuario());
+            List<Pedido> pedidos = pedidoService.obtenerPedidosPorDueno(usuario.getIdUsuario());
+            System.out.println("Pedidos encontrados: " + (pedidos != null ? pedidos.size() : 0));
+            
+            if (pedidos != null && !pedidos.isEmpty()) {
+                for (Pedido p : pedidos) {
+                    System.out.println("Pedido ID: " + p.getIdPedido() + ", Food Truck: " + 
+                        (p.getFoodtruck() != null ? p.getFoodtruck().getNombre() : "null") + 
+                        ", Dueño: " + (p.getFoodtruck() != null && p.getFoodtruck().getDueno() != null ? 
+                        p.getFoodtruck().getDueno().getIdUsuario() : "null"));
+                }
+            }
+            
+            model.addAttribute("pedidos", pedidos != null ? pedidos : new java.util.ArrayList<>());
+            model.addAttribute("page", "pedidos");
+            
+            return "pedidos/owner";
+        } catch (Exception e) {
+            System.err.println("Error al cargar pedidos del owner: " + e.getMessage());
+            e.printStackTrace();
+            model.addAttribute("error", "Error al cargar los pedidos: " + (e.getMessage() != null ? e.getMessage() : "Error desconocido"));
+            model.addAttribute("pedidos", new java.util.ArrayList<>());
+            model.addAttribute("page", "pedidos");
+            return "pedidos/owner";
+        }
     }
 
     @PostMapping("/{idPedido}/estado")

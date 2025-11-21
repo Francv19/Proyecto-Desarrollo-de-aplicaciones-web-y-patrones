@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Configuración · Urban Bites</title>
+        <th:block th:replace="app/fragmentos :: appHead"></th:block>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+        <style>
+            .config-tabs {
+                display: flex;
+                gap: 0.5rem;
+                margin-bottom: 2rem;
+            }
+            .config-tab {
+                padding: 0.75rem 1.5rem;
+                border: 2px solid #104E43;
+                background: white;
+                color: #104E43;
+                border-radius: 50px;
+                text-decoration: none;
+                font-weight: 600;
+                transition: all 0.2s;
+            }
+            .config-tab.active {
+                background: #104E43;
+                color: white;
+            }
+            .config-tab:hover {
+                background: #104E43;
+                color: white;
+            }
+            .page-title {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                margin-bottom: 2rem;
+            }
+            .page-title h1 {
+                font-size: 2.5rem;
+                font-weight: bold;
+                color: #104E43;
+                margin: 0;
+            }
+            .config-section {
+                background: white;
+                border: 2px solid #104E43;
+                border-radius: 12px;
+                padding: 2rem;
+                margin-bottom: 1.5rem;
+            }
+            .config-section h3 {
+                color: #104E43;
+                font-weight: bold;
+                margin-bottom: 1rem;
+            }
+            .config-item {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 1rem 0;
+                border-bottom: 1px solid #eee;
+            }
+            .config-item:last-child {
+                border-bottom: none;
+            }
+            .config-label {
+                font-weight: 500;
+                color: #1C1C1C;
+            }
+            .config-value {
+                color: #666;
+            }
+        </style>
+    </head>
+    <body class="bg-light" th:with="currentPage='configuracion'">
+        <th:block th:replace="general/fragmentos :: sidebarStyles"></th:block>
+        <div class="d-flex min-vh-100">
+            <th:block th:replace="general/fragmentos :: sidebarAdmin(${currentPage})"></th:block>
+
+            <main class="flex-grow-1 p-4" style="background: white;">
+                <!-- Title -->
+                <div class="page-title">
+                    <h1>Configuración del Sistema</h1>
+                </div>
+
+                <!-- Messages -->
+                <div th:if="${mensaje}" class="alert alert-success" role="alert">
+                    <span th:text="${mensaje}"></span>
+                </div>
+                <div th:if="${error}" class="alert alert-danger" role="alert">
+                    <span th:text="${error}"></span>
+                </div>
+
+                <!-- Configuration Sections -->
+                <div class="config-section">
+                    <h3>Información General</h3>
+                    <div class="config-item">
+                        <span class="config-label">Nombre de la Aplicación</span>
+                        <span class="config-value">Urban Bites</span>
+                    </div>
+                    <div class="config-item">
+                        <span class="config-label">Versión</span>
+                        <span class="config-value">1.0.0</span>
+                    </div>
+                    <div class="config-item">
+                        <span class="config-label">Estado del Sistema</span>
+                        <span class="config-value text-success">Activo</span>
+                    </div>
+                </div>
+
+                <div class="config-section">
+                    <h3>Configuración de Base de Datos</h3>
+                    <div class="config-item">
+                        <span class="config-label">Estado de Conexión</span>
+                        <span class="config-value text-success">Conectado</span>
+                    </div>
+                    <div class="config-item">
+                        <span class="config-label">Base de Datos</span>
+                        <span class="config-value">foodplaza</span>
+                    </div>
+                </div>
+
+                <div class="config-section">
+                    <h3>Gestión de Usuarios y Roles</h3>
+                    <p class="text-muted mb-0">Administra usuarios, roles y permisos del sistema desde el menú de navegación.</p>
+                </div>
+            </main>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script th:src="@{/js/rutinas.js}"></script>
+    </body>
+</html>
+

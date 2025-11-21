@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Gestión de Food Trucks · Urban Bites</title>
+        <th:block th:replace="app/fragmentos :: appHead"></th:block>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+        <style>
+            .foodtruck-card {
+                border: 1px solid #ddd;
+                border-radius: 12px;
+                padding: 1.5rem;
+                background: white;
+                transition: all 0.3s ease;
+                height: 100%;
+            }
+            .foodtruck-card:hover {
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            }
+            .status-badge {
+                padding: 0.25rem 0.75rem;
+                border-radius: 20px;
+                font-size: 0.75rem;
+                font-weight: 600;
+            }
+        </style>
+    </head>
+    <body class="bg-light" th:with="currentPage='foodtrucks'">
+        <div class="d-flex min-vh-100">
+            <th:block th:replace="general/fragmentos :: sidebarOwner(${currentPage})"></th:block>
+
+            <main class="flex-grow-1 p-4" style="overflow-y: auto;">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="fw-bold mb-0">Gestión de Food Trucks</h2>
+                    <a th:href="@{/owner/foodtrucks/nuevo}" 
+                       class="btn" 
+                       style="background-color: #ED3101; color: white;">
+                        <i class="bi bi-plus-circle"></i> Nuevo Food Truck
+                    </a>
+                </div>
+
+                <div th:if="${mensaje}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <span th:text="${mensaje}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <span th:text="${error}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div th:if="${foodtrucks != null and !foodtrucks.isEmpty()}">
+                    <div class="row g-4">
+                        <div class="col-md-6 col-lg-4" th:each="foodtruck : ${foodtrucks}">
+                            <div class="foodtruck-card">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div class="flex-grow-1">
+                                        <h5 class="fw-bold mb-1" th:text="${foodtruck.nombre}">Nombre del Food Truck</h5>
+                                    </div>
+                                    <span class="status-badge ms-2"
+                                          th:classappend="${foodtruck.activo != null and foodtruck.activo} ? 'bg-success text-white' : 'bg-secondary text-white'"
+                                          th:text="${foodtruck.activo != null and foodtruck.activo} ? 'Activo' : 'Inactivo'">
+                                        Estado
+                                    </span>
+                                </div>
+
+                                <p class="text-muted small mb-2" 
+                                   th:text="${foodtruck.descripcion != null and !foodtruck.descripcion.isEmpty() ? foodtruck.descripcion : 'Sin descripción'}">
+                                    Descripción del food truck
+                                </p>
+
+                                <div class="mb-2" th:if="${foodtruck.telefono != null}">
+                                    <p class="text-muted small mb-0">
+                                        <i class="bi bi-telephone"></i> 
+                                        <span th:text="${foodtruck.telefono}">Teléfono</span>
+                                    </p>
+                                </div>
+
+                                <div class="mb-2" th:if="${foodtruck.email != null}">
+                                    <p class="text-muted small mb-0">
+                                        <i class="bi bi-envelope"></i> 
+                                        <span th:text="${foodtruck.email}">Email</span>
+                                    </p>
+                                </div>
+
+                                <div class="mb-3" th:if="${foodtruck.porcentajePuntos != null}">
+                                    <p class="text-muted small mb-0">
+                                        <i class="bi bi-star"></i> 
+                                        <span th:text="${'Puntos: ' + foodtruck.porcentajePuntos + '%'}">Puntos</span>
+                                    </p>
+                                </div>
+
+                                <div class="d-flex gap-2">
+                                    <a th:href="@{/owner/foodtrucks/{id}/editar(id=${foodtruck.idFoodtruck})}" 
+                                       class="btn btn-sm flex-grow-1" 
+                                       style="background-color: #104E43; color: white;">
+                                        <i class="bi bi-pencil"></i> Editar
+                                    </a>
+                                    <form th:action="@{/owner/foodtrucks/{id}/eliminar(id=${foodtruck.idFoodtruck})}" 
+                                          method="post" 
+                                          class="d-inline">
+                                        <button type="submit" 
+                                                class="btn btn-sm btn-danger"
+                                                onclick="return confirm('¿Estás seguro de eliminar este food truck? Esta acción no se puede deshacer.')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div th:if="${foodtrucks == null or foodtrucks.isEmpty()}">
+                    <div class="text-center py-5">
+                        <i class="bi bi-truck" style="font-size: 4rem; color: #ddd;"></i>
+                        <p class="text-muted mt-3">No tienes food trucks aún</p>
+                        <a th:href="@{/owner/foodtrucks/nuevo}" 
+                           class="btn" 
+                           style="background-color: #ED3101; color: white;">
+                            <i class="bi bi-plus-circle"></i> Crear Primer Food Truck
+                        </a>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script th:src="@{/js/rutinas.js}"></script>
+    </body>
+</html>

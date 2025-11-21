@@ -54,6 +54,16 @@
             <main class="flex-grow-1 p-4" style="overflow-y: auto; background-color: #f5f5f5;">
                 <h2 class="fw-bold mb-4">Lista de Pedidos</h2>
 
+                <div th:if="${mensaje}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <span th:text="${mensaje}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <span th:text="${error}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
                 <!-- Filter Buttons -->
                 <div class="d-flex flex-wrap gap-2 mb-4">
                     <button class="filter-btn active" data-filter="todos">Todos #00</button>
@@ -72,7 +82,7 @@
                                 <h6 class="fw-bold mb-0" th:text="'Orden #' + ${pedido.idPedido}">Orden #000</h6>
                                 <span class="badge" style="background-color: #ED3101; color: white;" th:text="${pedido.usuario.nombre + ' ' + pedido.usuario.apellidos}">Usuario</span>
                             </div>
-                            <p class="text-muted small mb-3" th:text="${#dates.format(pedido.fechaCreacion, 'dd MMM yyyy, hh:mm a')}">23 Oct 2025, 05:27 PM</p>
+                            <p class="text-muted small mb-3" th:text="${pedido.fechaCreacion != null ? #temporals.format(pedido.fechaCreacion, 'dd MMM yyyy, hh:mm a') : 'Fecha no disponible'}">23 Oct 2025, 05:27 PM</p>
                             
                             <div class="mb-3" th:if="${pedido.detalles != null and !pedido.detalles.isEmpty()}">
                                 <div th:each="detalle : ${pedido.detalles}">
@@ -96,35 +106,46 @@
                                 </div>
                             </div>
 
-                            <!-- Action Buttons -->
-                            <div class="d-flex gap-2 justify-content-end">
-                                <form th:action="@{/pedidos/{id}/estado(id=${pedido.idPedido})}" method="post" class="d-inline">
-                                    <input type="hidden" name="estado" value="cancelado">
-                                    <button type="submit" class="btn-action btn-cancel" title="Cancelar">
-                                        <i class="bi bi-x"></i>
-                                    </button>
-                                </form>
-                                <form th:action="@{/pedidos/{id}/estado(id=${pedido.idPedido})}" method="post" class="d-inline">
-                                    <input type="hidden" name="estado" th:value="${pedido.estado == T(com.urbanbites.domain.Pedido.EstadoPedido).recibido} ? 'en_preparacion' : 
-                                                                                ${pedido.estado == T(com.urbanbites.domain.Pedido.EstadoPedido).en_preparacion} ? 'listo' : 
-                                                                                ${pedido.estado == T(com.urbanbites.domain.Pedido.EstadoPedido).listo} ? 'entregado' : 'entregado'">
-                                    <button type="submit" class="btn-action btn-confirm" title="Aceptar/Actualizar">
-                                        <i class="bi bi-check"></i>
+                            <!-- Estado actual -->
+                            <div class="mb-3">
+                                <label class="form-label small text-muted mb-1">Estado actual:</label>
+                                <div>
+                                    <span class="badge" 
+                                          th:class="${pedido.estado != null and pedido.estado.name() == 'entregado'} ? 'bg-success' : (${pedido.estado != null and pedido.estado.name() == 'listo'} ? 'bg-info' : (${pedido.estado != null and pedido.estado.name() == 'en_preparacion'} ? 'bg-warning text-dark' : (${pedido.estado != null and pedido.estado.name() == 'recibido'} ? 'bg-secondary' : 'bg-danger')))"
+                                          th:text="${pedido.estado != null ? #strings.capitalize(#strings.replace(pedido.estado.name(), '_', ' ')) : 'Sin estado'}">
+                                        Estado
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Actualizar Estado -->
+                            <div class="mb-3">
+                                <form th:action="@{/pedidos/{id}/estado(id=${pedido.idPedido})}" method="post" class="d-flex gap-2">
+                                    <select name="estado" class="form-select form-select-sm" required>
+                                        <option value="">Seleccionar estado...</option>
+                                        <option value="recibido" th:selected="${pedido.estado != null and pedido.estado.name() == 'recibido'}">Recibido</option>
+                                        <option value="en_preparacion" th:selected="${pedido.estado != null and pedido.estado.name() == 'en_preparacion'}">En Preparación</option>
+                                        <option value="listo" th:selected="${pedido.estado != null and pedido.estado.name() == 'listo'}">Listo</option>
+                                        <option value="entregado" th:selected="${pedido.estado != null and pedido.estado.name() == 'entregado'}">Entregado</option>
+                                        <option value="cancelado" th:selected="${pedido.estado != null and pedido.estado.name() == 'cancelado'}">Cancelado</option>
+                                    </select>
+                                    <button type="submit" class="btn btn-sm" style="background-color: #104E43; color: white; white-space: nowrap;">
+                                        Actualizar
                                     </button>
                                 </form>
                             </div>
 
-                            <!-- ETA Input (solo para pedidos recibidos) -->
-                            <div class="mt-3" th:if="${pedido.estado == T(com.urbanbites.domain.Pedido.EstadoPedido).recibido}">
+                            <!-- ETA Input -->
+                            <div class="mt-3">
                                 <form th:action="@{/pedidos/{id}/eta(id=${pedido.idPedido})}" method="post" class="d-flex gap-2">
                                     <input type="number" 
                                            name="etaMinutos" 
                                            class="form-control form-control-sm" 
-                                           placeholder="ETA (min)" 
-                                           min="1" 
-                                           required>
-                                    <button type="submit" class="btn btn-sm" style="background-color: #ED3101; color: white;">
-                                        Establecer
+                                           placeholder="ETA (minutos)" 
+                                           th:value="${pedido.etaMinutos}"
+                                           min="1">
+                                    <button type="submit" class="btn btn-sm" style="background-color: #ED3101; color: white; white-space: nowrap;">
+                                        Establecer ETA
                                     </button>
                                 </form>
                             </div>

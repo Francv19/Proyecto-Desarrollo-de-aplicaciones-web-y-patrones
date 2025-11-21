@@ -45,7 +45,10 @@ public class UsuarioService {
         }
         usuario.getRoles().add(rolCliente);
         
-        return usuarioRepository.save(usuario);
+        Usuario usuarioGuardado = usuarioRepository.save(usuario);
+        usuarioRepository.flush();
+        
+        return usuarioGuardado;
     }
 
     public Usuario buscarPorCorreo(String correo) {
@@ -54,6 +57,36 @@ public class UsuarioService {
     
     public Usuario buscarPorUsername(String username) {
         return usuarioRepository.findByUsername(username);
+    }
+    
+    public Usuario registrarAdmin(String nombre, String apellidos, String correo, 
+                                  String password, String telefono) {
+        if (usuarioRepository.existsByUsernameOrCorreo(correo, correo)) {
+            throw new RuntimeException("El correo ya está registrado");
+        }
+        
+        Usuario usuario = new Usuario();
+        usuario.setNombre(nombre);
+        usuario.setApellidos(apellidos);
+        usuario.setCorreo(correo);
+        usuario.setUsername(correo);
+        usuario.setPassword(passwordEncoder.encode(password));
+        usuario.setTelefono(telefono);
+        usuario.setActivo(true);
+        
+        Rol rolAdmin = rolRepository.findByNombre("admin");
+        if (rolAdmin == null) {
+            throw new RuntimeException("Rol admin no encontrado");
+        }
+        if (usuario.getRoles() == null) {
+            usuario.setRoles(new java.util.ArrayList<>());
+        }
+        usuario.getRoles().add(rolAdmin);
+        
+        Usuario usuarioGuardado = usuarioRepository.save(usuario);
+        usuarioRepository.flush();
+        
+        return usuarioGuardado;
     }
 }
 

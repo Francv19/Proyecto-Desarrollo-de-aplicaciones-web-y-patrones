@@ -92,7 +92,7 @@ public class ProjectConfig implements WebMvcConfigurer {
         http
                 .authorizeHttpRequests((request) -> request
                 .requestMatchers("/", "/landing/**", "/errores/**",
-                        "/pruebas/**", "/registro/**", "/js/**", "/webjars/**", 
+                        "/pruebas/**", "/registro/**", "/setup/**", "/js/**", "/webjars/**", 
                         "/css/**", "/images/**", "/img/**", "/menu/**", 
                         "/promociones", "/food-trucks", "/login", "/logout")
                 .permitAll()
@@ -103,18 +103,27 @@ public class ProjectConfig implements WebMvcConfigurer {
                 .requestMatchers(
                         "/app/owner/**", "/pedidos/owner/**", 
                         "/pedidos/*/estado", "/pedidos/*/eta", 
-                        "/cotizaciones/**"
+                        "/cotizaciones/**", "/owner/productos/**", "/owner/foodtrucks/**"
                 ).hasAnyRole("dueno", "admin")
                 .requestMatchers(
-                        "/app/cliente/**", "/app/admin/**", "/carrito/**",
-                        "/resenas/**", "/puntos/**", "/pedidos"
+                        "/carrito", "/carrito/**",
+                        "/app/cliente/**", "/app/admin/**",
+                        "/resenas", "/resenas/**", "/puntos/**", "/pedidos"
                 ).authenticated()
+                .anyRequest().authenticated()
                 )
                 .formLogin((form) -> form
                 .loginPage("/login")
                 .successHandler(authenticationSuccessHandler)
                 .permitAll())
-                .logout((logout) -> logout.permitAll());
+                .logout((logout) -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+                .permitAll())
+                .exceptionHandling((ex) -> ex
+                .accessDeniedPage("/errores/403"));
         return http.build();
     }
 

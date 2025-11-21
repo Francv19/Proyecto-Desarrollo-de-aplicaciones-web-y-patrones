@@ -29,6 +29,16 @@
             <th:block th:replace="general/fragmentos :: sidebarCliente(${currentPage})"></th:block>
 
             <main class="flex-grow-1 p-4" style="overflow-y: auto;">
+                <div th:if="${mensaje}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <span th:text="${mensaje}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <span th:text="${error}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
                 <h2 class="fw-bold mb-4">Mis Pedidos</h2>
 
                 <div class="row g-3" th:if="${pedidos != null and !pedidos.isEmpty()}">
@@ -37,16 +47,12 @@
                             <div class="d-flex justify-content-between align-items-start mb-3">
                                 <div>
                                     <h5 class="fw-bold mb-1" th:text="'Orden #' + ${pedido.idPedido}">Orden #000</h5>
-                                    <p class="text-muted small mb-0" th:text="${pedido.foodtruck.nombre}">Food Truck</p>
-                                    <p class="text-muted small mb-0" th:text="${#dates.format(pedido.fechaCreacion, 'dd MMM yyyy, hh:mm a')}">23 Oct 2025, 05:27 PM</p>
+                                    <p class="text-muted small mb-0" th:text="${pedido.foodtruck != null ? pedido.foodtruck.nombre : 'Food Truck desconocido'}">Food Truck</p>
+                                    <p class="text-muted small mb-0" th:text="${#temporals.format(pedido.fechaCreacion, 'dd MMM yyyy, hh:mm a')}">23 Oct 2025, 05:27 PM</p>
                                 </div>
                                 <span class="status-badge"
-                                      th:classappend="${pedido.estado == T(com.urbanbites.domain.Pedido.EstadoPedido).entregado} ? 'bg-success text-white' : 
-                                                      ${pedido.estado == T(com.urbanbites.domain.Pedido.EstadoPedido).listo} ? 'bg-info text-white' : 
-                                                      ${pedido.estado == T(com.urbanbites.domain.Pedido.EstadoPedido).en_preparacion} ? 'bg-warning text-dark' : 
-                                                      ${pedido.estado == T(com.urbanbites.domain.Pedido.EstadoPedido).recibido} ? 'bg-secondary text-white' : 
-                                                      'bg-danger text-white'"
-                                      th:text="${#strings.capitalize(#strings.replace(pedido.estado.toString(), '_', ' '))}">Estado</span>
+                                      th:class="${pedido.estado != null ? ('status-badge ' + (pedido.estado.name() == 'entregado' ? 'bg-success text-white' : (pedido.estado.name() == 'listo' ? 'bg-info text-white' : (pedido.estado.name() == 'en_preparacion' ? 'bg-warning text-dark' : (pedido.estado.name() == 'recibido' ? 'bg-secondary text-white' : 'bg-danger text-white'))))) : 'status-badge bg-danger text-white'}"
+                                      th:text="${pedido.estado != null ? #strings.capitalize(#strings.replace(pedido.estado.toString(), '_', ' ')) : 'Sin estado'}">Estado</span>
                             </div>
 
                             <div class="mb-3" th:if="${pedido.etaMinutos != null}">
@@ -72,7 +78,7 @@
                                     <span class="text-muted small" th:text="${pedido.detalles != null ? pedido.detalles.size() + ' Artículos' : '0 Artículos'}">x Artículos</span>
                                     <p class="fw-bold mb-0 mt-1" th:text="'Total: ' + ${#numbers.formatDecimal(pedido.totalNeto, 0, 'COMMA', 2, 'POINT')}">Total: ₡9,000.00</p>
                                 </div>
-                                <div th:if="${pedido.estado == T(com.urbanbites.domain.Pedido.EstadoPedido).entregado}">
+                                <div th:if="${pedido.estado != null and pedido.estado.name() == 'entregado'}">
                                     <a th:href="@{/resenas/crear(idPedido=${pedido.idPedido})}" 
                                        class="btn btn-sm" 
                                        style="background-color: #ED3101; color: white;">

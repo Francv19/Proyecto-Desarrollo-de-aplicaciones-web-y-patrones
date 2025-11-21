@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Gestión de Productos · Urban Bites</title>
+        <th:block th:replace="app/fragmentos :: appHead"></th:block>
+        <style>
+            .product-card {
+                border: 1px solid #ddd;
+                border-radius: 12px;
+                padding: 1.5rem;
+                background: white;
+                transition: all 0.3s ease;
+                height: 100%;
+            }
+            .product-card:hover {
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            }
+            .status-badge {
+                padding: 0.25rem 0.75rem;
+                border-radius: 20px;
+                font-size: 0.75rem;
+                font-weight: 600;
+            }
+        </style>
+    </head>
+    <body class="bg-light" th:with="currentPage='productos'">
+        <div class="d-flex min-vh-100">
+            <th:block th:replace="general/fragmentos :: sidebarOwner(${currentPage})"></th:block>
+
+            <main class="flex-grow-1 p-4" style="overflow-y: auto;">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="fw-bold mb-0">Gestión de Productos</h2>
+                    <a th:href="@{/owner/productos/nuevo}" 
+                       class="btn" 
+                       style="background-color: #ED3101; color: white;">
+                        <i class="bi bi-plus-circle"></i> Nuevo Producto
+                    </a>
+                </div>
+
+                <div th:if="${mensaje}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <span th:text="${mensaje}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <span th:text="${error}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div th:if="${foodtruck != null}">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${foodtruck.nombre}">Food Truck</h5>
+                            <p class="card-text text-muted mb-0" th:text="${foodtruck.descripcion}">Descripción del food truck</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div th:if="${productos != null and !productos.isEmpty()}">
+                    <div class="row g-4">
+                        <div class="col-md-6 col-lg-4" th:each="producto : ${productos}">
+                            <div class="product-card">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div class="flex-grow-1">
+                                        <h5 class="fw-bold mb-1" th:text="${producto.nombre}">Nombre del Producto</h5>
+                                        <p class="text-muted small mb-2" th:text="${producto.menu != null ? producto.menu.nombre : 'Sin menú'}">
+                                            Menú
+                                        </p>
+                                    </div>
+                                    <span class="status-badge ms-2"
+                                          th:classappend="${producto.disponible} ? 'bg-success text-white' : 'bg-secondary text-white'"
+                                          th:text="${producto.disponible} ? 'Disponible' : 'No Disponible'">
+                                        Estado
+                                    </span>
+                                </div>
+
+                                <p class="text-muted small mb-2" 
+                                   th:text="${producto.descripcion != null and !producto.descripcion.isEmpty() ? producto.descripcion : 'Sin descripción'}">
+                                    Descripción del producto
+                                </p>
+
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="fw-bold fs-5" 
+                                          th:text="'₡' + ${#numbers.formatDecimal(producto.precio, 0, 'COMMA', 2, 'POINT')}">
+                                        ₡0.00
+                                    </span>
+                                </div>
+
+                                <div class="d-flex gap-2">
+                                    <a th:href="@{/owner/productos/{id}/editar(id=${producto.idProducto})}" 
+                                       class="btn btn-sm flex-grow-1" 
+                                       style="background-color: #104E43; color: white;">
+                                        <i class="bi bi-pencil"></i> Editar
+                                    </a>
+                                    <form th:action="@{/owner/productos/{id}/eliminar(id=${producto.idProducto})}" 
+                                          method="post" 
+                                          class="d-inline"
+                                          th:onclick="'return confirm(\'¿Estás seguro de eliminar este producto?\')'">
+                                        <button type="submit" 
+                                                class="btn btn-sm btn-danger">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div th:if="${productos == null or productos.isEmpty()}">
+                    <div class="text-center py-5">
+                        <i class="bi bi-inbox" style="font-size: 4rem; color: #ddd;"></i>
+                        <p class="text-muted mt-3">No tienes productos aún</p>
+                        <a th:href="@{/owner/productos/nuevo}" 
+                           class="btn" 
+                           style="background-color: #ED3101; color: white;">
+                            <i class="bi bi-plus-circle"></i> Crear Primer Producto
+                        </a>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script th:src="@{/js/rutinas.js}"></script>
+        <script>
+            // Confirmación de eliminación
+            document.querySelectorAll('form[action*="eliminar"]').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    if (!confirm('¿Estás seguro de eliminar este producto? Esta acción no se puede deshacer.')) {
+                        e.preventDefault();
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>
+

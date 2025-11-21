@@ -2,10 +2,6 @@
 src/main/resources/firebase/*.json
 src/main/resources/firebase/**/*.json
 
-# SQL files (schema and data)
-src/main/resources/*.sql
-src/main/resources/**/*.sql
-
 # Maven
 target/
 pom.xml.tag

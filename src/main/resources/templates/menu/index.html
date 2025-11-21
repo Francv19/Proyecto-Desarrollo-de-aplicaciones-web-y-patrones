@@ -60,6 +60,16 @@
             <th:block th:replace="general/fragmentos :: sidebarCliente(${currentPage})"></th:block>
 
             <main class="flex-grow-1 p-4" style="overflow-y: auto;">
+                <div th:if="${mensaje}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <span th:text="${mensaje}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <span th:text="${error}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
                 <!-- Food Trucks Section -->
                 <section class="mb-5">
                     <h2 class="fw-bold mb-3">Food Trucks</h2>
@@ -131,11 +141,14 @@
                                         <span class="fw-bold">Precio: <span th:text="${#numbers.formatDecimal(producto.precio, 0, 'COMMA', 2, 'POINT')}">₡3,500.00</span></span>
                                         <span class="text-muted small" th:text="${producto.foodtruck.nombre}">Grill & Go</span>
                                     </div>
-                                    <button class="btn w-100" 
-                                            style="background-color: #ED3101; color: white;"
-                                            th:onclick="'addToCart(' + ${producto.idProducto} + ')'">
-                                        Agregar al Carro
-                                    </button>
+                                    <form th:action="@{/carrito/agregar}" method="post" class="d-inline w-100">
+                                        <input type="hidden" name="idProducto" th:value="${producto.idProducto}">
+                                        <input type="hidden" name="cantidad" value="1">
+                                        <button type="submit" class="btn w-100" 
+                                                style="background-color: #ED3101; color: white;">
+                                            Agregar al Carro
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -164,11 +177,6 @@
                 window.location.href = '/menu?foodtruck=' + id;
             }
 
-            function addToCart(productoId) {
-                // Implementar lógica para agregar al carrito
-                console.log('Agregar producto ' + productoId + ' al carrito');
-                // Puedes hacer una petición AJAX aquí
-            }
 
             // Filtros de categoría
             document.querySelectorAll('.filter-btn').forEach(btn => {

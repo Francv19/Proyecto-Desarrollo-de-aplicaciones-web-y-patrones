@@ -2,6 +2,7 @@ package com.urbanbites.service;
 
 import com.urbanbites.domain.Rol;
 import com.urbanbites.domain.Usuario;
+import com.urbanbites.repository.RolRepository;
 import com.urbanbites.repository.UsuarioRepository;
 import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,9 @@ public class UsuarioDetailsService implements UserDetailsService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+    
+    @Autowired
+    private RolRepository rolRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -33,9 +37,27 @@ public class UsuarioDetailsService implements UserDetailsService {
 
         // Convertir roles a roles (con prefijo ROLE_)
         var roles = new ArrayList<GrantedAuthority>();
-        if (usuario.getRoles() != null) {
+        if (usuario.getRoles() != null && !usuario.getRoles().isEmpty()) {
             for (Rol rol : usuario.getRoles()) {
-                roles.add(new SimpleGrantedAuthority("ROLE_" + rol.getNombre()));
+                String roleName = "ROLE_" + rol.getNombre();
+                roles.add(new SimpleGrantedAuthority(roleName));
+            }
+        } else {
+            // Si no tiene roles, asignar rol de cliente por defecto
+            Rol rolCliente = rolRepository.findByNombre("cliente");
+            if (rolCliente != null) {
+                // Asignar el rol al usuario en la base de datos
+                if (usuario.getRoles() == null) {
+                    usuario.setRoles(new ArrayList<>());
+                }
+                usuario.getRoles().add(rolCliente);
+                usuarioRepository.save(usuario);
+                usuarioRepository.flush();
+                // Agregar el rol a la lista de authorities
+                roles.add(new SimpleGrantedAuthority("ROLE_cliente"));
+            } else {
+                // Si no existe el rol cliente, lanzar excepción
+                throw new UsernameNotFoundException("Rol cliente no encontrado en la base de datos");
             }
         }
 
@@ -46,4 +68,5 @@ public class UsuarioDetailsService implements UserDetailsService {
         );
     }
 }
+
 

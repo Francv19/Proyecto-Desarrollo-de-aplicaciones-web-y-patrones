@@ -41,12 +41,31 @@ public class ResenaService {
         resena.setCalificacion(calificacion);
         resena.setComentario(comentario);
         resena.setEstado(Resena.EstadoResena.pendiente);
+        resena.setFechaCreacion(java.time.LocalDateTime.now());
         
         return resenaRepository.save(resena);
     }
 
     public List<Resena> obtenerResenasAprobadasPorFoodtruck(Integer idFoodtruck) {
         return resenaRepository.findByFoodtruckIdFoodtruckAndEstado(idFoodtruck, Resena.EstadoResena.aprobada);
+    }
+    
+    public List<Resena> obtenerResenasPorDueno(Integer idDueno) {
+        return resenaRepository.findResenasPorDueno(idDueno);
+    }
+    
+    public Resena actualizarEstadoResena(Integer idResena, Resena.EstadoResena nuevoEstado, Integer idDueno) {
+        Resena resena = resenaRepository.findById(idResena)
+            .orElseThrow(() -> new RuntimeException("Reseña no encontrada"));
+        
+        if (resena.getFoodtruck() == null || 
+            resena.getFoodtruck().getDueno() == null || 
+            !resena.getFoodtruck().getDueno().getIdUsuario().equals(idDueno)) {
+            throw new RuntimeException("No tienes permiso para modificar esta reseña");
+        }
+        
+        resena.setEstado(nuevoEstado);
+        return resenaRepository.save(resena);
     }
 }
 

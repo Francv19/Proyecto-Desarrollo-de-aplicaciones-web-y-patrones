@@ -63,7 +63,7 @@
                                 <div class="flex-grow-1">
                                     <h6 class="fw-bold mb-1" th:text="${movimiento.foodtruck.nombre}">Food Truck</h6>
                                     <p class="text-muted small mb-1" th:text="${movimiento.motivo}">Acumulación por pedido</p>
-                                    <p class="text-muted small mb-0" th:text="${#dates.format(movimiento.fechaCreacion, 'dd MMM yyyy, hh:mm a')}">23 Oct 2025, 05:27 PM</p>
+                                    <p class="text-muted small mb-0" th:text="${#temporals.format(movimiento.fechaCreacion, 'dd MMM yyyy, hh:mm a')}">23 Oct 2025, 05:27 PM</p>
                                 </div>
                                 <div class="text-end">
                                     <span class="fw-bold fs-5"

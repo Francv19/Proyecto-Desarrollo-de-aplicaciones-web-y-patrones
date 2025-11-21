@@ -65,10 +65,29 @@
                         <h3 class="fw-bold mb-2" style="color: #104E43;">Crear Reseña</h3>
                         <p class="text-muted mb-0">Crea Reseñas de los pedidos que hayas comprado para dar tu punto de opinión y mejora</p>
                     </div>
-                    <div class="text-end">
-                        <a th:href="@{/pedidos}" class="btn" style="background-color: #ED3101; color: white;">
-                            Ver tus pedidos
-                        </a>
+                    <div th:if="${pedidosEntregados != null and !pedidosEntregados.isEmpty()}">
+                        <div class="review-item-card mb-3" th:each="pedido : ${pedidosEntregados}">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="fw-bold mb-1" th:text="${pedido.foodtruck.nombre}">Food Truck</h6>
+                                    <p class="text-muted small mb-0" th:text="'Pedido #' + ${pedido.idPedido}">Pedido #000</p>
+                                    <p class="text-muted small mb-0" th:text="${#temporals.format(pedido.fechaCreacion, 'dd MMM yyyy')}">Fecha</p>
+                                </div>
+                                <a th:href="@{/resenas/crear(idPedido=${pedido.idPedido})}" 
+                                   class="btn btn-sm" 
+                                   style="background-color: #ED3101; color: white;">
+                                    Crear Reseña
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:if="${pedidosEntregados == null or pedidosEntregados.isEmpty()}">
+                        <p class="text-muted text-center py-3">No tienes pedidos entregados sin reseña</p>
+                        <div class="text-center">
+                            <a th:href="@{/pedidos}" class="btn" style="background-color: #ED3101; color: white;">
+                                Ver tus pedidos
+                            </a>
+                        </div>
                     </div>
                 </div>
 
@@ -82,21 +101,26 @@
                         <div class="review-item-card mb-3" th:each="resena : ${misResenas}">
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <div>
-                                    <h6 class="fw-bold mb-1" th:text="${resena.foodtruck.nombre}">Food Truck</h6>
+                                    <h6 class="fw-bold mb-1" th:text="${resena.foodtruck?.nombre ?: 'Food Truck'}">Food Truck</h6>
                                     <div class="star-rating mb-2">
                                         <span th:each="i : ${#numbers.sequence(1, 5)}">
                                             <i th:class="${i <= resena.calificacion} ? 'bi bi-star-fill' : 'bi bi-star'"></i>
                                         </span>
-                                        <span class="ms-2" th:text="resena.calificacion + '.0'">0.0</span>
+                                        <span class="ms-2" th:text="${resena.calificacion} + '.0'">0.0</span>
                                     </div>
                                 </div>
                                 <span class="badge" 
-                                      th:classappend="${resena.estado == T(com.urbanbites.domain.Resena.EstadoResena).aprobada} ? 'bg-success' : 
-                                                      ${resena.estado == T(com.urbanbites.domain.Resena.EstadoResena).pendiente} ? 'bg-warning' : 'bg-secondary'"
-                                      th:text="${resena.estado}">Pendiente</span>
+                                      th:classappend="${resena.estado?.name() == 'aprobada'} ? 'bg-success' : 
+                                                      (${resena.estado?.name() == 'pendiente'} ? 'bg-warning' : 'bg-secondary')"
+                                      th:text="${resena.estado != null ? #strings.capitalize(resena.estado.name()) : 'Sin estado'}">Pendiente</span>
                             </div>
-                            <p class="text-muted mb-0" th:text="${resena.comentario}">Horem ipsum dolor sit amet, consectetur adipiscing elit...</p>
-                            <p class="text-muted small mt-2 mb-0" th:text="${#dates.format(resena.fechaCreacion, 'dd MMM yyyy')}">Fecha</p>
+                            <div th:if="${resena.comentario != null and !#strings.isEmpty(resena.comentario)}">
+                                <p class="text-muted mb-0" style="white-space: pre-wrap;" th:text="${resena.comentario}">Comentario de la reseña...</p>
+                            </div>
+                            <div th:if="${resena.comentario == null or #strings.isEmpty(resena.comentario)}">
+                                <p class="text-muted mb-0 fst-italic">Sin comentario</p>
+                            </div>
+                            <p class="text-muted small mt-2 mb-0" th:text="${resena.fechaCreacion != null ? #temporals.format(resena.fechaCreacion, 'dd MMM yyyy') : 'Fecha no disponible'}">Fecha</p>
                         </div>
                     </div>
                     <div th:if="${misResenas == null or misResenas.isEmpty()}">
@@ -114,14 +138,14 @@
                     <div class="row g-3" th:if="${resenasOtros != null and !resenasOtros.isEmpty()}">
                         <div class="col-md-6 col-lg-3" th:each="resena : ${resenasOtros}">
                             <div class="review-item-card">
-                                <h6 class="fw-bold mb-2">Usuario</h6>
+                                <h6 class="fw-bold mb-2" th:text="${resena.usuario?.nombre ?: 'Usuario'}">Usuario</h6>
                                 <div class="star-rating mb-2">
                                     <span th:each="i : ${#numbers.sequence(1, 5)}">
                                         <i th:class="${i <= resena.calificacion} ? 'bi bi-star-fill' : 'bi bi-star'"></i>
                                     </span>
-                                    <span class="ms-2" th:text="resena.calificacion + '.0'">0.0</span>
+                                    <span class="ms-2" th:text="${resena.calificacion} + '.0'">0.0</span>
                                 </div>
-                                <p class="text-muted small mb-0" th:text="${resena.comentario != null ? (#strings.length(resena.comentario) > 100 ? #strings.substring(resena.comentario, 0, 100) + '...' : resena.comentario) : 'Sin comentario'}">Horem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+                                <p class="text-muted small mb-0" th:text="${resena.comentario != null and !#strings.isEmpty(resena.comentario) ? (#strings.length(resena.comentario) > 100 ? #strings.substring(resena.comentario, 0, 100) + '...' : resena.comentario) : 'Sin comentario'}">Horem ipsum dolor sit amet, consectetur adipiscing elit...</p>
                             </div>
                         </div>
                     </div>

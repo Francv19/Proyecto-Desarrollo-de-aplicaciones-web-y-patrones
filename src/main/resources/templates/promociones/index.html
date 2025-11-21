@@ -102,7 +102,7 @@
                                         <h6 class="fw-bold mb-1" th:if="${cupon.tipoDescuento == T(com.urbanbites.domain.Promocion.TipoDescuento).porcentaje}">
                                             <span th:text="'DISCOUNT FOOD VOUCHER ' + ${cupon.valor.intValue() + '% OFF'}">DISCOUNT FOOD VOUCHER 50% OFF</span>
                                         </h6>
-                                        <p class="small mb-1" th:text="${#dates.format(cupon.fechaFin, 'dd MMM yyyy')}">Valid Until 14 July 2024</p>
+                                        <p class="small mb-1" th:text="${#temporals.format(cupon.fechaFin, 'dd MMM yyyy')}">Valid Until 14 July 2024</p>
                                     </div>
                                     <div class="discount-display" th:if="${cupon.tipoDescuento == T(com.urbanbites.domain.Promocion.TipoDescuento).porcentaje}">
                                         <span th:text="'¢' + ${cupon.valor.intValue() + '%'}">¢50%</span>
