@@ -6,52 +6,212 @@
         <title>Menú · Urban Bites</title>
         <th:block th:replace="app/fragmentos :: appHead"></th:block>
         <style>
+            :root {
+                --urban-primary: #104E43;
+                --urban-secondary: #FFE5B4;
+                --urban-cta: #ED3101;
+                --urban-light: #F4F4F4;
+                --urban-ink: #1C1C1C;
+            }
             .foodtruck-card {
-                border: 1px solid #ddd;
-                border-radius: 12px;
+                border: 2px solid #ddd;
+                border-radius: 16px;
                 transition: all 0.3s ease;
                 cursor: pointer;
+                background: white;
+                overflow: hidden;
+                position: relative;
             }
             .foodtruck-card:hover {
-                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-                transform: translateY(-2px);
+                box-shadow: 0 8px 24px rgba(16, 78, 67, 0.15);
+                transform: translateY(-4px);
+                border-color: var(--urban-primary);
             }
             .foodtruck-card.selected {
-                background-color: #FFE5B4;
-                border-color: #ED3101;
+                background-color: var(--urban-secondary);
+                border-color: var(--urban-cta);
+                border-width: 3px;
+            }
+            .foodtruck-image-wrapper {
+                width: 100%;
+                height: 180px;
+                overflow: hidden;
+                background: var(--urban-light);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .foodtruck-image {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.3s ease;
+            }
+            .foodtruck-card:hover .foodtruck-image {
+                transform: scale(1.05);
+            }
+            .foodtruck-info {
+                padding: 1.25rem;
+            }
+            .foodtruck-name {
+                color: var(--urban-primary);
+                font-weight: bold;
+                font-size: 1.1rem;
+                margin-bottom: 0.5rem;
+            }
+            .foodtruck-description {
+                color: #666;
+                font-size: 0.9rem;
+                margin: 0;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
             }
             .producto-card {
                 border: 1px solid #ddd;
                 border-radius: 12px;
                 overflow: hidden;
+                background: white;
+                transition: all 0.3s ease;
+            }
+            .producto-card:hover {
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                transform: translateY(-2px);
+            }
+            .producto-card.hidden {
+                display: none !important;
+            }
+            .producto-card.fade-out {
+                opacity: 0;
+                transform: scale(0.95);
+                transition: opacity 0.2s ease, transform 0.2s ease;
+            }
+            .producto-card.fade-in {
+                opacity: 1;
+                transform: scale(1);
+                transition: opacity 0.3s ease, transform 0.3s ease;
             }
             .producto-img {
                 width: 100%;
                 height: 200px;
                 object-fit: cover;
-                background-color: #f0f0f0;
+                background-color: var(--urban-light);
+            }
+            .producto-img-placeholder {
+                width: 100%;
+                height: 200px;
+                background-color: var(--urban-light);
+                background-image: url('/images/placeholder-truck.png');
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #999;
+                font-size: 0.9rem;
             }
             .filter-btn {
                 border-radius: 20px;
                 padding: 0.5rem 1.25rem;
-                border: 1px solid #ddd;
+                border: 2px solid #ddd;
                 background: white;
                 transition: all 0.2s;
+                font-weight: 500;
+            }
+            .filter-btn:hover {
+                border-color: var(--urban-primary);
+                color: var(--urban-primary);
             }
             .filter-btn.active {
-                background-color: #ED3101;
+                background-color: var(--urban-cta);
                 color: white;
-                border-color: #ED3101;
+                border-color: var(--urban-cta);
             }
             .search-input-group {
                 position: relative;
             }
             .search-btn {
-                background-color: #ED3101;
+                background-color: var(--urban-cta);
                 border: none;
                 border-radius: 0 8px 8px 0;
                 color: white;
                 padding: 0.5rem 1rem;
+                transition: background-color 0.3s ease;
+            }
+            .search-btn:hover {
+                background-color: #c02801;
+            }
+            .section-title {
+                color: var(--urban-primary);
+                font-weight: bold;
+                margin-bottom: 1.5rem;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+            .section-title i {
+                color: var(--urban-cta);
+            }
+            .btn-add-cart {
+                background-color: var(--urban-cta);
+                color: white;
+                border: none;
+                border-radius: 8px;
+                padding: 0.75rem;
+                font-weight: 600;
+                transition: background-color 0.3s ease;
+                width: 100%;
+            }
+            .btn-add-cart:hover {
+                background-color: #c02801;
+                color: white;
+            }
+            .quantity-controls {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+                margin-bottom: 1rem;
+            }
+            .quantity-btn {
+                width: 36px;
+                height: 36px;
+                border: 2px solid var(--urban-primary);
+                background: white;
+                color: var(--urban-primary);
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: bold;
+                font-size: 1.2rem;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+            .quantity-btn:hover {
+                background-color: var(--urban-primary);
+                color: white;
+            }
+            .quantity-btn:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+            .quantity-input {
+                width: 60px;
+                height: 36px;
+                text-align: center;
+                border: 2px solid var(--urban-primary);
+                border-radius: 8px;
+                font-weight: 600;
+                font-size: 1rem;
+            }
+            .quantity-input:focus {
+                outline: none;
+                border-color: var(--urban-cta);
+                box-shadow: 0 0 0 0.2rem rgba(237, 49, 1, 0.25);
             }
         </style>
     </head>
@@ -72,42 +232,41 @@
 
                 <!-- Food Trucks Section -->
                 <section class="mb-5">
-                    <h2 class="fw-bold mb-3">Food Trucks</h2>
+                    <h2 class="section-title">
+                        <i class="bi bi-truck"></i>
+                        Food Trucks
+                    </h2>
                     
                     <!-- Search Bar -->
                     <div class="search-input-group mb-3">
                         <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Buscar" id="searchFoodtruck">
+                            <input type="text" class="form-control" placeholder="Buscar food truck..." id="searchFoodtruck">
                             <button class="search-btn" type="button">
                                 <i class="bi bi-search"></i>
                             </button>
                         </div>
                     </div>
 
-                    <!-- Filter Buttons -->
-                    <div class="d-flex flex-wrap gap-2 mb-4">
-                        <button class="filter-btn active" data-filter="todos">Todos</button>
-                        <button class="filter-btn" data-filter="hamburguesas">Hamburguesas</button>
-                        <button class="filter-btn" data-filter="tacos">Tacos</button>
-                        <button class="filter-btn" data-filter="bbq">BBQ</button>
-                        <button class="filter-btn" data-filter="pizza">Pizza</button>
-                        <button class="filter-btn" data-filter="postres">Postres</button>
-                    </div>
-
                     <!-- Food Truck Cards -->
-                    <div class="row g-3" id="foodtrucksContainer">
-                        <div class="col-md-4" th:each="foodtruck : ${foodtrucks}">
-                            <div class="foodtruck-card p-3" 
+                    <div class="row g-4" id="foodtrucksContainer">
+                        <div class="col-md-4 col-lg-3" th:each="foodtruck : ${foodtrucks}">
+                            <div class="foodtruck-card" 
+                                 th:classappend="${selectedFoodtruck != null and selectedFoodtruck == foodtruck.idFoodtruck} ? 'selected' : ''"
                                  th:data-foodtruck-id="${foodtruck.idFoodtruck}"
                                  th:onclick="'selectFoodtruck(' + ${foodtruck.idFoodtruck} + ')'">
-                                <div class="text-center mb-2">
-                                    <img th:src="@{/images/placeholder-truck.png}" 
-                                         alt="Food Truck" 
-                                         class="img-fluid" 
-                                         style="max-height: 120px; object-fit: contain;">
+                                <div class="foodtruck-image-wrapper">
+                                    <img th:src="${foodtruck.rutaImagen != null and !#strings.isEmpty(foodtruck.rutaImagen)} ? ${foodtruck.rutaImagen} : '/images/placeholder-truck.png'" 
+                                         th:alt="${foodtruck.nombre}"
+                                         class="foodtruck-image"
+                                         onerror="this.src='/images/placeholder-truck.png'">
                                 </div>
-                                <h5 class="fw-bold mb-1" th:text="${foodtruck.nombre}">Grill & Go</h5>
-                                <p class="text-muted small mb-0" th:text="${foodtruck.descripcion}">Sector 1, Espacio 2</p>
+                                <div class="foodtruck-info">
+                                    <h5 class="foodtruck-name" th:text="${foodtruck.nombre}">Grill & Go</h5>
+                                    <p class="foodtruck-description" 
+                                       th:text="${foodtruck.descripcion != null and !#strings.isEmpty(foodtruck.descripcion)} ? foodtruck.descripcion : 'Deliciosa comida al instante'">
+                                        Sector 1, Espacio 2
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -115,12 +274,21 @@
 
                 <!-- Menú Section -->
                 <section>
-                    <h2 class="fw-bold mb-3">Menú</h2>
+                    <h2 class="section-title">
+                        <i class="bi bi-journal-text"></i>
+                        Menú
+                        <span id="selectedFoodtruckBadge" class="badge bg-secondary ms-2" style="display: none;">
+                            <span id="selectedFoodtruckName"></span>
+                        </span>
+                        <button id="clearFilterBtn" class="btn btn-sm btn-outline-secondary ms-2" style="display: none;" onclick="clearFoodtruckFilter()">
+                            <i class="bi bi-x-circle me-1"></i>Limpiar filtro
+                        </button>
+                    </h2>
                     
                     <!-- Search Bar -->
-                    <div class="search-input-group mb-3">
+                    <div class="search-input-group mb-4">
                         <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Buscar" id="searchProducto">
+                            <input type="text" class="form-control" placeholder="Buscar producto..." id="searchProducto">
                             <button class="search-btn" type="button">
                                 <i class="bi bi-search"></i>
                             </button>
@@ -128,30 +296,70 @@
                     </div>
 
                     <!-- Product Cards -->
-                    <div class="row g-3" id="productosContainer">
-                        <div class="col-md-4" th:each="producto : ${productos}">
+                    <div class="row g-4" id="productosContainer" th:if="${productos != null and !productos.isEmpty()}">
+                        <div class="col-md-6 col-lg-4 producto-item" 
+                             th:each="producto : ${productos}"
+                             th:data-foodtruck-id="${producto.foodtruck.idFoodtruck}">
                             <div class="producto-card">
-                                <img th:src="${producto.fotos != null and !producto.fotos.isEmpty() ? producto.fotos[0].url : '/images/placeholder-product.png'}" 
-                                     alt="Producto" 
-                                     class="producto-img">
+                                <img th:if="${producto.fotos != null and !producto.fotos.isEmpty()}" 
+                                     th:src="${producto.fotos[0].url}" 
+                                     th:alt="${producto.nombre}" 
+                                     class="producto-img"
+                                     onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div th:if="${producto.fotos == null or producto.fotos.isEmpty()}" 
+                                     class="producto-img-placeholder">
+                                    <i class="bi bi-image"></i>
+                                </div>
+                                <div class="producto-img-placeholder" style="display: none;">
+                                    <i class="bi bi-image"></i>
+                                </div>
                                 <div class="p-3">
                                     <h5 class="fw-bold mb-2" th:text="${producto.nombre}">Combo #1</h5>
-                                    <p class="text-muted small mb-2" th:text="${producto.descripcion}">Descripción del producto</p>
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <span class="fw-bold">Precio: <span th:text="${#numbers.formatDecimal(producto.precio, 0, 'COMMA', 2, 'POINT')}">₡3,500.00</span></span>
-                                        <span class="text-muted small" th:text="${producto.foodtruck.nombre}">Grill & Go</span>
+                                    <p class="text-muted small mb-3" 
+                                       th:text="${producto.descripcion != null and !#strings.isEmpty(producto.descripcion)} ? producto.descripcion : 'Delicioso producto'">
+                                        Descripción del producto
+                                    </p>
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <span class="fw-bold fs-5" style="color: var(--urban-primary);">
+                                            ₡<span th:text="${#numbers.formatDecimal(producto.precio, 0, 'COMMA', 2, 'POINT')}">3,500.00</span>
+                                        </span>
+                                        <span class="badge" style="background-color: var(--urban-secondary); color: var(--urban-ink);" 
+                                              th:text="${producto.foodtruck.nombre}">Grill & Go</span>
                                     </div>
-                                    <form th:action="@{/carrito/agregar}" method="post" class="d-inline w-100">
+                                    <form th:action="@{/carrito/agregar}" method="post" class="d-inline w-100" th:id="'form-producto-' + ${producto.idProducto}">
                                         <input type="hidden" name="idProducto" th:value="${producto.idProducto}">
-                                        <input type="hidden" name="cantidad" value="1">
-                                        <button type="submit" class="btn w-100" 
-                                                style="background-color: #ED3101; color: white;">
-                                            Agregar al Carro
+                                        <div class="quantity-controls">
+                                            <button type="button" class="quantity-btn" 
+                                                    th:onclick="'decreaseQuantity(' + ${producto.idProducto} + ')'"
+                                                    th:id="'btn-decrease-' + ${producto.idProducto}">-</button>
+                                            <input type="number" 
+                                                   class="quantity-input" 
+                                                   name="cantidad" 
+                                                   th:id="'quantity-' + ${producto.idProducto}"
+                                                   value="1" 
+                                                   min="1" 
+                                                   max="99"
+                                                   readonly>
+                                            <button type="button" class="quantity-btn" 
+                                                    th:onclick="'increaseQuantity(' + ${producto.idProducto} + ')'"
+                                                    th:id="'btn-increase-' + ${producto.idProducto}">+</button>
+                                        </div>
+                                        <button type="submit" class="btn btn-add-cart">
+                                            <i class="bi bi-cart-plus me-2"></i>
+                                            Agregar al Carrito
                                         </button>
                                     </form>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div id="noProductsMessage" class="text-center py-5" style="display: none;">
+                        <i class="bi bi-inbox" style="font-size: 3rem; color: #ccc;"></i>
+                        <p class="text-muted mt-3">No hay productos disponibles para este food truck.</p>
+                    </div>
+                    <div th:if="${productos == null or productos.isEmpty()}" class="text-center py-5">
+                        <i class="bi bi-inbox" style="font-size: 3rem; color: #ccc;"></i>
+                        <p class="text-muted mt-3">No hay productos disponibles en este momento.</p>
                     </div>
                 </section>
             </main>
@@ -161,30 +369,187 @@
         <script th:src="@{/js/rutinas.js}"></script>
         <script>
             let selectedFoodtruckId = null;
+            let currentProductSearch = '';
 
-            function selectFoodtruck(id) {
+            // Inicializar con food truck seleccionado desde la URL (si existe)
+            document.addEventListener('DOMContentLoaded', function() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const foodtruckParam = urlParams.get('foodtruck');
+                if (foodtruckParam) {
+                    selectFoodtruck(parseInt(foodtruckParam), false);
+                }
+            });
+
+            function selectFoodtruck(id, updateUrl = true) {
                 selectedFoodtruckId = id;
+                
+                // Actualizar selección visual en las tarjetas
+                document.querySelectorAll('.foodtruck-card').forEach(card => {
+                    const cardId = parseInt(card.getAttribute('data-foodtruck-id'));
+                    if (cardId === id) {
+                        card.classList.add('selected');
+                    } else {
+                        card.classList.remove('selected');
+                    }
+                });
+
+                // Obtener nombre del food truck seleccionado
+                const selectedCard = document.querySelector(`.foodtruck-card[data-foodtruck-id="${id}"]`);
+                const foodtruckName = selectedCard?.querySelector('.foodtruck-name')?.textContent || 'Food Truck';
+                
+                // Actualizar badge y botón de limpiar
+                const badge = document.getElementById('selectedFoodtruckBadge');
+                const badgeName = document.getElementById('selectedFoodtruckName');
+                const clearBtn = document.getElementById('clearFilterBtn');
+                
+                if (badge && badgeName && clearBtn) {
+                    badgeName.textContent = foodtruckName;
+                    badge.style.display = 'inline-block';
+                    clearBtn.style.display = 'inline-block';
+                }
+
+                // Filtrar productos
+                filterProductosByFoodtruck(id);
+                
+                // Actualizar URL sin recargar
+                if (updateUrl) {
+                    const newUrl = new URL(window.location);
+                    newUrl.searchParams.set('foodtruck', id);
+                    window.history.pushState({foodtruck: id}, '', newUrl);
+                }
+
+                // Scroll suave hacia la sección de productos
+                document.getElementById('productosContainer')?.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+            }
+
+            function clearFoodtruckFilter() {
+                selectedFoodtruckId = null;
+                
+                // Remover selección visual
                 document.querySelectorAll('.foodtruck-card').forEach(card => {
                     card.classList.remove('selected');
                 });
-                event.currentTarget.classList.add('selected');
-                // Filtrar productos por food truck
-                filterProductosByFoodtruck(id);
+
+                // Ocultar badge y botón
+                const badge = document.getElementById('selectedFoodtruckBadge');
+                const clearBtn = document.getElementById('clearFilterBtn');
+                if (badge) badge.style.display = 'none';
+                if (clearBtn) clearBtn.style.display = 'none';
+
+                // Mostrar todos los productos
+                filterProductosByFoodtruck(null);
+                
+                // Actualizar URL
+                const newUrl = new URL(window.location);
+                newUrl.searchParams.delete('foodtruck');
+                window.history.pushState({}, '', newUrl);
             }
 
             function filterProductosByFoodtruck(id) {
-                // Aquí puedes hacer una petición AJAX o recargar la página con el filtro
-                window.location.href = '/menu?foodtruck=' + id;
+                const productos = document.querySelectorAll('.producto-item');
+                const noProductsMessage = document.getElementById('noProductsMessage');
+                let visibleCount = 0;
+
+                productos.forEach(item => {
+                    const itemFoodtruckId = parseInt(item.getAttribute('data-foodtruck-id'));
+                    const productoCard = item.querySelector('.producto-card');
+                    
+                    // Aplicar filtro de food truck
+                    const matchesFoodtruck = id === null || itemFoodtruckId === id;
+                    
+                    // Aplicar filtro de búsqueda
+                    const matchesSearch = currentProductSearch === '' || 
+                        item.textContent.toLowerCase().includes(currentProductSearch.toLowerCase());
+                    
+                    const shouldShow = matchesFoodtruck && matchesSearch;
+                    
+                    if (shouldShow) {
+                        productoCard.classList.remove('fade-out', 'hidden');
+                        productoCard.classList.add('fade-in');
+                        item.style.display = '';
+                        visibleCount++;
+                    } else {
+                        productoCard.classList.add('fade-out');
+                        setTimeout(() => {
+                            productoCard.classList.add('hidden');
+                            item.style.display = 'none';
+                        }, 200);
+                    }
+                });
+
+                // Mostrar/ocultar mensaje de no productos
+                if (noProductsMessage) {
+                    if (visibleCount === 0 && id !== null) {
+                        noProductsMessage.style.display = 'block';
+                    } else {
+                        noProductsMessage.style.display = 'none';
+                    }
+                }
             }
 
+            // Búsqueda de food trucks
+            document.getElementById('searchFoodtruck')?.addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                document.querySelectorAll('.foodtruck-card').forEach(card => {
+                    const name = card.querySelector('.foodtruck-name')?.textContent.toLowerCase() || '';
+                    const description = card.querySelector('.foodtruck-description')?.textContent.toLowerCase() || '';
+                    const parent = card.closest('.col-md-4, .col-lg-3');
+                    if (name.includes(searchTerm) || description.includes(searchTerm)) {
+                        parent.style.display = '';
+                    } else {
+                        parent.style.display = 'none';
+                    }
+                });
+            });
 
-            // Filtros de categoría
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    const filter = this.dataset.filter;
-                    // Implementar lógica de filtrado
+            // Búsqueda de productos
+            document.getElementById('searchProducto')?.addEventListener('input', function(e) {
+                currentProductSearch = e.target.value;
+                // Re-aplicar filtro de food truck con la nueva búsqueda
+                filterProductosByFoodtruck(selectedFoodtruckId);
+            });
+
+            // Funciones para control de cantidad
+            function increaseQuantity(productId) {
+                const input = document.getElementById('quantity-' + productId);
+                const currentValue = parseInt(input.value) || 1;
+                if (currentValue < 99) {
+                    input.value = currentValue + 1;
+                    updateQuantityButtons(productId);
+                }
+            }
+
+            function decreaseQuantity(productId) {
+                const input = document.getElementById('quantity-' + productId);
+                const currentValue = parseInt(input.value) || 1;
+                if (currentValue > 1) {
+                    input.value = currentValue - 1;
+                    updateQuantityButtons(productId);
+                }
+            }
+
+            function updateQuantityButtons(productId) {
+                const input = document.getElementById('quantity-' + productId);
+                const value = parseInt(input.value) || 1;
+                const decreaseBtn = document.getElementById('btn-decrease-' + productId);
+                const increaseBtn = document.getElementById('btn-increase-' + productId);
+                
+                if (decreaseBtn) {
+                    decreaseBtn.disabled = value <= 1;
+                }
+                if (increaseBtn) {
+                    increaseBtn.disabled = value >= 99;
+                }
+            }
+
+            // Inicializar botones de cantidad al cargar la página
+            document.addEventListener('DOMContentLoaded', function() {
+                document.querySelectorAll('.quantity-input').forEach(input => {
+                    const productId = input.id.replace('quantity-', '');
+                    updateQuantityButtons(productId);
                 });
             });
         </script>

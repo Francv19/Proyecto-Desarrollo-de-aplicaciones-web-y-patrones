@@ -12,12 +12,30 @@ import java.util.List;
 public class PedidoService {
     @Autowired
     private PedidoRepository pedidoRepository;
+    
+    @Autowired
+    private PuntosService puntosService;
 
     public Pedido actualizarEstado(Integer idPedido, Pedido.EstadoPedido nuevoEstado) {
         Pedido pedido = pedidoRepository.findById(idPedido)
             .orElseThrow(() -> new RuntimeException("Pedido no encontrado"));
+        
+        Pedido.EstadoPedido estadoAnterior = pedido.getEstado();
         pedido.setEstado(nuevoEstado);
-        return pedidoRepository.save(pedido);
+        pedido = pedidoRepository.save(pedido);
+        
+        // Si el pedido cambió a "entregado", acumular puntos
+        if (estadoAnterior != Pedido.EstadoPedido.entregado && 
+            nuevoEstado == Pedido.EstadoPedido.entregado) {
+            try {
+                puntosService.acumularPuntosPorPedido(idPedido);
+            } catch (Exception e) {
+                // Log el error pero no fallar la actualización del estado
+                System.err.println("Error al acumular puntos: " + e.getMessage());
+            }
+        }
+        
+        return pedido;
     }
 
     public Pedido actualizarEta(Integer idPedido, Integer etaMinutos) {

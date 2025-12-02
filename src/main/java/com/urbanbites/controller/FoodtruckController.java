@@ -4,12 +4,14 @@ import com.urbanbites.domain.Foodtruck;
 import com.urbanbites.domain.Usuario;
 import com.urbanbites.repository.UsuarioRepository;
 import com.urbanbites.service.FoodtruckService;
+import com.urbanbites.service.FirebaseStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -23,6 +25,9 @@ public class FoodtruckController {
     
     @Autowired
     private UsuarioRepository usuarioRepository;
+    
+    @Autowired
+    private FirebaseStorageService firebaseStorageService;
     
     private Usuario obtenerUsuarioActual() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -65,9 +70,20 @@ public class FoodtruckController {
                                  @RequestParam(required = false) String email,
                                  @RequestParam(required = false) Integer porcentajePuntos,
                                  @RequestParam(defaultValue = "true") Boolean activo,
+                                 @RequestParam(required = false) MultipartFile imagen,
                                  RedirectAttributes redirectAttributes) {
         try {
             Usuario usuario = obtenerUsuarioActual();
+            
+            String rutaImagen = null;
+            if (imagen != null && !imagen.isEmpty()) {
+                try {
+                    rutaImagen = firebaseStorageService.cargaImagen(imagen, "foodtrucks/" + usuario.getIdUsuario() + "/");
+                } catch (Exception e) {
+                    redirectAttributes.addFlashAttribute("error", "Error al subir la imagen: " + e.getMessage());
+                    return "redirect:/owner/foodtrucks/nuevo";
+                }
+            }
             
             foodtruckService.crearFoodtruck(
                 usuario.getIdUsuario(),
@@ -76,7 +92,8 @@ public class FoodtruckController {
                 telefono,
                 email,
                 porcentajePuntos,
-                activo
+                activo,
+                rutaImagen
             );
             
             redirectAttributes.addFlashAttribute("mensaje", "Food truck creado exitosamente. Se ha creado un menú principal por defecto.");
@@ -119,6 +136,7 @@ public class FoodtruckController {
                                       @RequestParam(required = false) String email,
                                       @RequestParam(required = false) Integer porcentajePuntos,
                                       @RequestParam(defaultValue = "true") Boolean activo,
+                                      @RequestParam(required = false) MultipartFile imagen,
                                       RedirectAttributes redirectAttributes) {
         try {
             Foodtruck foodtruck = foodtruckService.obtenerFoodtruckPorId(id);
@@ -136,7 +154,17 @@ public class FoodtruckController {
                 return "redirect:/owner/foodtrucks";
             }
             
-            foodtruckService.actualizarFoodtruck(id, nombre, descripcion, telefono, email, porcentajePuntos, activo);
+            String rutaImagen = foodtruck.getRutaImagen(); // Mantener la imagen actual si no se sube una nueva
+            if (imagen != null && !imagen.isEmpty()) {
+                try {
+                    rutaImagen = firebaseStorageService.cargaImagen(imagen, "foodtrucks/" + usuario.getIdUsuario() + "/");
+                } catch (Exception e) {
+                    redirectAttributes.addFlashAttribute("error", "Error al subir la imagen: " + e.getMessage());
+                    return "redirect:/owner/foodtrucks/" + id + "/editar";
+                }
+            }
+            
+            foodtruckService.actualizarFoodtruck(id, nombre, descripcion, telefono, email, porcentajePuntos, activo, rutaImagen);
             
             redirectAttributes.addFlashAttribute("mensaje", "Food truck actualizado exitosamente");
             return "redirect:/owner/foodtrucks";

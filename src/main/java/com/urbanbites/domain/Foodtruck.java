@@ -35,6 +35,9 @@ public class Foodtruck implements Serializable {
     @Column(name = "porcentaje_puntos", columnDefinition = "TINYINT UNSIGNED")
     private Integer porcentajePuntos;
 
+    @Column(name = "ruta_imagen", length = 500)
+    private String rutaImagen;
+
     @Column(name = "activo")
     private Boolean activo;
 

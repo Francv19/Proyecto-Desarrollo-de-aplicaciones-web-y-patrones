@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+    <head>
+        <th:block th:replace="horarios/fragmentos :: horariosHead"></th:block>
+        <title>Horarios y Ubicaciones · Urban Bites</title>
+        <th:block th:replace="app/fragmentos :: appHead"></th:block>
+        <th:block th:replace="horarios/fragmentos :: horariosStyles"></th:block>
+    </head>
+    <body class="bg-light" th:with="currentPage='horarios'">
+        <div class="d-flex min-vh-100">
+            <th:block th:replace="general/fragmentos :: sidebarCliente(${currentPage})"></th:block>
+
+            <main class="flex-grow-1 p-4" style="overflow-y: auto;">
+                <h2 class="fw-bold mb-4">Horarios y Ubicaciones</h2>
+
+                <div th:if="${horariosAgrupados != null and !horariosAgrupados.isEmpty()}">
+                    <div th:each="entry : ${horariosAgrupados}">
+                        <div class="card mb-4">
+                            <div class="card-header" style="background-color: #104E43; color: white;">
+                                <h5 class="mb-0" th:text="${entry.value[0].foodtruck.nombre}">Food Truck</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-6" th:each="horario : ${entry.value}">
+                                        <div class="horario-card">
+                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <span class="dia-badge" th:text="${horario.getNombreDia()}">Lunes</span>
+                                                <span class="badge bg-success" th:if="${horario.activo}">Activo</span>
+                                            </div>
+                                            <div class="mb-2">
+                                                <i class="bi bi-clock"></i>
+                                                <span th:text="${#temporals.format(horario.horaApertura, 'HH:mm')} + ' - ' + ${#temporals.format(horario.horaCierre, 'HH:mm')}">08:00 - 18:00</span>
+                                            </div>
+                                            <div th:if="${horario.direccion != null and !#strings.isEmpty(horario.direccion)}">
+                                                <i class="bi bi-geo-alt"></i>
+                                                <span th:text="${horario.direccion}">Dirección</span>
+                                            </div>
+                                            <div th:if="${horario.latitud != null and horario.longitud != null}">
+                                                <small class="text-muted">
+                                                    <i class="bi bi-map"></i>
+                                                    Coordenadas: 
+                                                    <span th:text="${horario.latitud} + ', ' + ${horario.longitud}">Lat, Lng</span>
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div th:if="${horariosAgrupados == null or horariosAgrupados.isEmpty()}">
+                    <div class="text-center py-5">
+                        <i class="bi bi-calendar-x" style="font-size: 4rem; color: #ddd;"></i>
+                        <p class="text-muted mt-3">No hay horarios disponibles en este momento</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script th:src="@{/js/rutinas.js}"></script>
+    </body>
+</html>
+

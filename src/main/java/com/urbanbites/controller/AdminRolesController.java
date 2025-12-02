@@ -2,10 +2,16 @@ package com.urbanbites.controller;
 
 import com.urbanbites.domain.Rol;
 import com.urbanbites.domain.Usuario;
+import com.urbanbites.repository.EventoRepository;
 import com.urbanbites.repository.FoodtruckRepository;
 import com.urbanbites.repository.PedidoRepository;
 import com.urbanbites.repository.RolRepository;
 import com.urbanbites.repository.UsuarioRepository;
+import com.urbanbites.domain.Evento;
+import com.urbanbites.domain.Foodtruck;
+import com.urbanbites.service.FoodtruckService;
+import com.urbanbites.service.FirebaseStorageService;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -30,6 +36,15 @@ public class AdminRolesController {
     
     @Autowired
     private PedidoRepository pedidoRepository;
+    
+    @Autowired
+    private EventoRepository eventoRepository;
+    
+    @Autowired
+    private FoodtruckService foodtruckService;
+    
+    @Autowired
+    private FirebaseStorageService firebaseStorageService;
     
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -75,10 +90,146 @@ public class AdminRolesController {
     
     @GetMapping("/food-trucks")
     public String listarFoodtrucks(Model model) {
-        List<com.urbanbites.domain.Foodtruck> foodtrucks = foodtruckRepository.findAll();
+        List<Foodtruck> foodtrucks = foodtruckRepository.findAllWithDueno();
         model.addAttribute("foodtrucks", foodtrucks);
         model.addAttribute("page", "foodtrucks");
         return "admin/foodtrucks/index";
+    }
+    
+    @GetMapping("/food-trucks/nuevo")
+    public String mostrarFormularioNuevoFoodtruck(Model model) {
+        List<Usuario> duenos = usuarioRepository.findAll().stream()
+            .filter(u -> u.getRoles() != null && u.getRoles().stream()
+                .anyMatch(r -> r.getNombre().equals("dueno")))
+            .collect(java.util.stream.Collectors.toList());
+        model.addAttribute("duenos", duenos);
+        model.addAttribute("foodtruck", new Foodtruck());
+        model.addAttribute("page", "foodtrucks");
+        return "admin/foodtrucks/form";
+    }
+    
+    @PostMapping("/food-trucks/crear")
+    public String crearFoodtruck(@RequestParam Integer idDueno,
+                                 @RequestParam String nombre,
+                                 @RequestParam(required = false) String descripcion,
+                                 @RequestParam(required = false) String telefono,
+                                 @RequestParam(required = false) String email,
+                                 @RequestParam(required = false) Integer porcentajePuntos,
+                                 @RequestParam(defaultValue = "true") Boolean activo,
+                                 @RequestParam(required = false) MultipartFile imagen,
+                                 RedirectAttributes redirectAttributes) {
+        try {
+            String rutaImagen = null;
+            if (imagen != null && !imagen.isEmpty()) {
+                try {
+                    rutaImagen = firebaseStorageService.cargaImagen(imagen, "foodtrucks/admin/");
+                } catch (Exception e) {
+                    redirectAttributes.addFlashAttribute("error", "Error al subir la imagen: " + e.getMessage());
+                    return "redirect:/admin/food-trucks/nuevo";
+                }
+            }
+            
+            foodtruckService.crearFoodtruck(
+                idDueno,
+                nombre,
+                descripcion,
+                telefono,
+                email,
+                porcentajePuntos,
+                activo,
+                rutaImagen
+            );
+            
+            redirectAttributes.addFlashAttribute("mensaje", "Food truck creado exitosamente");
+            return "redirect:/admin/food-trucks";
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/admin/food-trucks/nuevo";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al crear food truck: " + e.getMessage());
+            return "redirect:/admin/food-trucks/nuevo";
+        }
+    }
+    
+    @GetMapping("/food-trucks/{id}/editar")
+    public String mostrarFormularioEditarFoodtruck(@PathVariable Integer id, Model model) {
+        Foodtruck foodtruck = foodtruckService.obtenerFoodtruckPorId(id);
+        
+        if (foodtruck == null) {
+            return "redirect:/admin/food-trucks?error=Food truck no encontrado";
+        }
+        
+        List<Usuario> duenos = usuarioRepository.findAll().stream()
+            .filter(u -> u.getRoles() != null && u.getRoles().stream()
+                .anyMatch(r -> r.getNombre().equals("dueno")))
+            .collect(java.util.stream.Collectors.toList());
+        
+        model.addAttribute("foodtruck", foodtruck);
+        model.addAttribute("duenos", duenos);
+        model.addAttribute("page", "foodtrucks");
+        
+        return "admin/foodtrucks/form";
+    }
+    
+    @PostMapping("/food-trucks/{id}/actualizar")
+    public String actualizarFoodtruck(@PathVariable Integer id,
+                                      @RequestParam Integer idDueno,
+                                      @RequestParam String nombre,
+                                      @RequestParam(required = false) String descripcion,
+                                      @RequestParam(required = false) String telefono,
+                                      @RequestParam(required = false) String email,
+                                      @RequestParam(required = false) Integer porcentajePuntos,
+                                      @RequestParam(defaultValue = "true") Boolean activo,
+                                      @RequestParam(required = false) MultipartFile imagen,
+                                      RedirectAttributes redirectAttributes) {
+        try {
+            Foodtruck foodtruck = foodtruckService.obtenerFoodtruckPorId(id);
+            
+            if (foodtruck == null) {
+                redirectAttributes.addFlashAttribute("error", "Food truck no encontrado");
+                return "redirect:/admin/food-trucks";
+            }
+            
+            String rutaImagen = foodtruck.getRutaImagen();
+            if (imagen != null && !imagen.isEmpty()) {
+                try {
+                    rutaImagen = firebaseStorageService.cargaImagen(imagen, "foodtrucks/admin/");
+                } catch (Exception e) {
+                    redirectAttributes.addFlashAttribute("error", "Error al subir la imagen: " + e.getMessage());
+                    return "redirect:/admin/food-trucks/" + id + "/editar";
+                }
+            }
+            
+            foodtruckService.actualizarFoodtruckConDueno(id, idDueno, nombre, descripcion, telefono, email, porcentajePuntos, activo, rutaImagen);
+            
+            redirectAttributes.addFlashAttribute("mensaje", "Food truck actualizado exitosamente");
+            return "redirect:/admin/food-trucks";
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/admin/food-trucks/" + id + "/editar";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al actualizar food truck: " + e.getMessage());
+            return "redirect:/admin/food-trucks/" + id + "/editar";
+        }
+    }
+    
+    @PostMapping("/food-trucks/{id}/eliminar")
+    public String eliminarFoodtruck(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+        try {
+            Foodtruck foodtruck = foodtruckService.obtenerFoodtruckPorId(id);
+            
+            if (foodtruck == null) {
+                redirectAttributes.addFlashAttribute("error", "Food truck no encontrado");
+                return "redirect:/admin/food-trucks";
+            }
+            
+            foodtruckService.eliminarFoodtruck(id);
+            redirectAttributes.addFlashAttribute("mensaje", "Food truck eliminado exitosamente");
+            return "redirect:/admin/food-trucks";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al eliminar food truck: " + e.getMessage());
+            return "redirect:/admin/food-trucks";
+        }
     }
     
     @GetMapping("/configuracion/usuarios/nuevo")
@@ -189,6 +340,19 @@ public class AdminRolesController {
         try {
             Usuario usuario = usuarioRepository.findById(id).orElse(null);
             if (usuario != null) {
+                // Primero, actualizar los eventos que referencian a este usuario
+                List<Evento> eventosRelacionados = eventoRepository.findEventosPorUsuario(id);
+                for (Evento evento : eventosRelacionados) {
+                    if (evento.getSolicitante() != null && evento.getSolicitante().getIdUsuario().equals(id)) {
+                        evento.setSolicitante(null);
+                    }
+                    if (evento.getDuenoCotizador() != null && evento.getDuenoCotizador().getIdUsuario().equals(id)) {
+                        evento.setDuenoCotizador(null);
+                    }
+                    eventoRepository.save(evento);
+                }
+                
+                // Ahora sí podemos eliminar el usuario
                 usuarioRepository.delete(usuario);
                 redirectAttributes.addFlashAttribute("mensaje", "Usuario eliminado exitosamente");
             } else {

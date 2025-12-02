@@ -48,7 +48,7 @@
                     </div>
                     
                     <form th:action="${foodtruck != null and foodtruck.idFoodtruck != null ? '/owner/foodtrucks/' + foodtruck.idFoodtruck + '/actualizar' : '/owner/foodtrucks/crear'}" 
-                          method="post">
+                          method="post" enctype="multipart/form-data">
                         <div class="mb-3">
                             <label for="nombre" class="form-label">Nombre del Food Truck <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="nombre" name="nombre" 
@@ -80,6 +80,23 @@
                                    th:value="${foodtruck?.email}" 
                                    maxlength="120">
                             <small class="form-text text-muted">Correo electrónico de contacto</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="imagen" class="form-label">Imagen del Food Truck</label>
+                            <input type="file" 
+                                   class="form-control" 
+                                   id="imagen" 
+                                   name="imagen" 
+                                   accept="image/*">
+                            <small class="form-text text-muted">Sube una imagen representativa de tu food truck (JPG, PNG, WEBP)</small>
+                            <div th:if="${foodtruck != null and foodtruck.rutaImagen != null and !#strings.isEmpty(foodtruck.rutaImagen)}" class="mt-2">
+                                <img th:src="${foodtruck.rutaImagen}" 
+                                     alt="Imagen actual" 
+                                     class="img-thumbnail" 
+                                     style="max-width: 200px; max-height: 200px; object-fit: cover;">
+                                <p class="text-muted small mt-1">Imagen actual</p>
+                            </div>
                         </div>
                         
                         <div class="mb-3">

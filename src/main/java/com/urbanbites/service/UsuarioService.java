@@ -88,5 +88,25 @@ public class UsuarioService {
         
         return usuarioGuardado;
     }
+    
+    public void actualizarPerfil(Integer idUsuario, String nombre, String apellidos, 
+                                 String correo, String telefono, String password) {
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        
+        usuario.setNombre(nombre);
+        usuario.setApellidos(apellidos);
+        usuario.setCorreo(correo);
+        usuario.setUsername(correo); // Actualizar username también
+        usuario.setTelefono(telefono);
+        
+        // Actualizar contraseña solo si se proporciona
+        if (password != null && !password.isEmpty()) {
+            usuario.setPassword(passwordEncoder.encode(password));
+        }
+        
+        usuarioRepository.save(usuario);
+        usuarioRepository.flush();
+    }
 }
 

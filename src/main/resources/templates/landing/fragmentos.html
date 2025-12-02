@@ -22,18 +22,76 @@
                     background-color: #fff;
                 }
                 .landing-nav {
-                    background: rgba(255, 255, 255, 0.97);
-                    backdrop-filter: blur(8px);
-                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+                    background: transparent;
+                    padding: 1.5rem 0;
+                    position: relative;
+                    z-index: 10;
+                }
+                .landing-nav .navbar-brand,
+                .landing-nav .nav-link {
+                    color: white !important;
+                }
+                .landing-nav .navbar-toggler {
+                    border-color: rgba(255, 255, 255, 0.5);
+                }
+                .landing-nav .navbar-toggler-icon {
+                    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
                 }
                 .landing-hero {
-                    background: linear-gradient(135deg, #0f4b41 0%, #0b362f 60%);
+                    background: linear-gradient(135deg, #104E43 0%, #0b362f 60%);
                     color: #fff;
-                    border-bottom-left-radius: 60px;
-                    border-bottom-right-radius: 60px;
-                    padding: 4rem 0;
+                    padding: 2rem 0 0 0;
                     position: relative;
-                    overflow: hidden;
+                    overflow: visible;
+                    min-height: 650px;
+                    padding-bottom: 0;
+                }
+                .landing-hero-wave {
+                    position: absolute;
+                    bottom: -300px;
+                    left: 0;
+                    right: 0;
+                    width: 100%;
+                    height: auto;
+                    z-index: 1;
+                    pointer-events: none;
+                    object-fit: cover;
+                }
+                .section-beige {
+                    background-color: transparent;
+                    position: relative;
+                    z-index: 2;
+                    margin-top: -300px;
+                    padding-top: 350px;
+                    padding-bottom: 4rem;
+                }
+                .landing-hero-content {
+                    position: relative;
+                    z-index: 10;
+                }
+                .landing-hero-illustration {
+                    position: relative;
+                    z-index: 10;
+                }
+                .landing-hero .btn {
+                    position: relative;
+                    z-index: 11;
+                    pointer-events: auto;
+                    cursor: pointer;
+                }
+                .landing-hero-illustration img {
+                    max-width: 100%;
+                    height: auto;
+                    filter: drop-shadow(0 20px 40px rgba(0,0,0,0.3));
+                }
+                .landing-hero h1 {
+                    font-size: 3.5rem;
+                    font-weight: 700;
+                    line-height: 1.2;
+                    margin-bottom: 1.5rem;
+                }
+                .landing-hero h1 .highlight {
+                    color: #7DD3C0;
                 }
                 .landing-hero .btn-cta {
                     background-color: var(--urban-cta);
@@ -56,10 +114,404 @@
                     padding: 1.5rem;
                     background-color: #fff;
                 }
+                .foodtruck-featured-card {
+                    border-radius: 1.25rem;
+                    overflow: hidden;
+                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+                    transition: transform 0.3s ease, box-shadow 0.3s ease;
+                    height: 100%;
+                    display: flex;
+                    flex-direction: column;
+                    background: white;
+                }
+                .foodtruck-featured-card:hover {
+                    transform: translateY(-5px);
+                    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+                }
+                .foodtruck-featured-image {
+                    width: 100%;
+                    height: 250px;
+                    object-fit: cover;
+                    background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+                }
+                .foodtruck-featured-banner {
+                    padding: 0.5rem 1rem;
+                    font-weight: 700;
+                    font-size: 0.75rem;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                }
+                .section-promociones {
+                    background-image: url('/images/Promo Fondo.png');
+                    background-size: cover;
+                    background-position: center;
+                    background-repeat: no-repeat;
+                    padding: 4rem 0;
+                    position: relative;
+                }
+                .promo-landing-card {
+                    background: white;
+                    border-radius: 12px;
+                    overflow: hidden;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                    transition: transform 0.3s ease;
+                    height: 100%;
+                    display: flex;
+                    flex-direction: column;
+                }
+                .promo-landing-card:hover {
+                    transform: translateY(-5px);
+                }
+                .promo-landing-image {
+                    width: 100%;
+                    height: 200px;
+                    overflow: hidden;
+                }
+                .promo-landing-image img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+                .promo-landing-content {
+                    padding: 1.5rem;
+                    flex-grow: 1;
+                    display: flex;
+                    flex-direction: column;
+                }
+                .promo-price {
+                    font-weight: bold;
+                    font-size: 1.1rem;
+                }
+                .section-foodtrucks {
+                    background-color: white;
+                    padding: 4rem 0;
+                }
+                .foodtruck-landing-card {
+                    background: white;
+                    border-radius: 12px;
+                    overflow: hidden;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                    transition: transform 0.3s ease, box-shadow 0.3s ease;
+                    cursor: pointer;
+                    height: 100%;
+                }
+                .foodtruck-landing-card:hover {
+                    transform: translateY(-3px);
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                }
+                .foodtruck-landing-image {
+                    width: 100%;
+                    height: 180px;
+                    overflow: hidden;
+                }
+                .foodtruck-landing-image img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+                .foodtruck-landing-content {
+                    padding: 1rem;
+                }
+                .section-como-funciona {
+                    background-color: white;
+                    padding: 4rem 0;
+                }
+                .como-funciona-illustration {
+                    max-width: 100%;
+                    height: auto;
+                }
+                .como-funciona-number {
+                    width: 50px;
+                    height: 50px;
+                    border-radius: 50%;
+                    background-color: #ED3101;
+                    color: white;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 1.5rem;
+                    font-weight: bold;
+                    flex-shrink: 0;
+                }
+                .section-puntos {
+                    padding: 5rem 0;
+                    position: relative;
+                    overflow: hidden;
+                    min-height: 500px;
+                }
+                .section-puntos::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 70%;
+                    height: 100%;
+                    background-color: #A8E6CF;
+                    z-index: 0;
+                }
+                .section-puntos::after {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    width: 45%;
+                    height: 100%;
+                    background-color: #ED3101;
+                    clip-path: polygon(15% 0%, 100% 0%, 100% 100%, 0% 100%);
+                    z-index: 0;
+                }
+                .section-puntos .container {
+                    position: relative;
+                    z-index: 1;
+                }
+                .puntos-content {
+                    position: relative;
+                    z-index: 2;
+                    padding-left: 2rem;
+                }
+                .puntos-title {
+                    color: #104E43;
+                    font-size: 2.5rem;
+                    line-height: 1.2;
+                    letter-spacing: -0.02em;
+                }
+                .puntos-text {
+                    color: #104E43;
+                    font-size: 1.5rem;
+                    line-height: 1.5;
+                    font-weight: 400;
+                }
+                .puntos-highlight {
+                    color: #ED3101;
+                    font-weight: 700;
+                }
+                .puntos-image-wrapper {
+                    position: relative;
+                    z-index: 2;
+                    padding: 2rem 0;
+                    max-width: 100%;
+                }
+                .puntos-illustration {
+                    max-width: 100%;
+                    height: auto;
+                    max-height: 500px;
+                    object-fit: contain;
+                    filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.15));
+                }
+                .min-vh-50 {
+                    min-height: 50vh;
+                }
+                .section-mapa-registro {
+                    background-color: white;
+                    padding: 5rem 0;
+                }
+                .mapa-section {
+                    margin-bottom: 4rem;
+                }
+                .mapa-wrapper {
+                    position: relative;
+                    max-width: 100%;
+                    margin: 0 auto;
+                    border-radius: 12px;
+                    overflow: hidden;
+                    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+                }
+                .mapa-image {
+                    width: 100%;
+                    height: auto;
+                    display: block;
+                }
+                .mapa-marker {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    width: 50px;
+                    height: 50px;
+                    background-color: #ED3101;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    box-shadow: 0 4px 15px rgba(237, 49, 1, 0.4);
+                    z-index: 10;
+                    animation: pulse 2s infinite;
+                }
+                .mapa-marker i {
+                    color: white;
+                    font-size: 1.5rem;
+                }
+                @keyframes pulse {
+                    0%, 100% {
+                        transform: translate(-50%, -50%) scale(1);
+                        box-shadow: 0 4px 15px rgba(237, 49, 1, 0.4);
+                    }
+                    50% {
+                        transform: translate(-50%, -50%) scale(1.1);
+                        box-shadow: 0 6px 20px rgba(237, 49, 1, 0.6);
+                    }
+                }
+                .registro-section {
+                    padding: 3rem 0;
+                    position: relative;
+                    z-index: 10;
+                }
+                .registro-section .btn {
+                    position: relative;
+                    z-index: 11;
+                    pointer-events: auto;
+                    cursor: pointer;
+                    display: inline-block !important;
+                    visibility: visible !important;
+                    opacity: 1 !important;
+                    background-color: #ED3101 !important;
+                    color: white !important;
+                    border: none !important;
+                }
+                .registro-section .btn:hover {
+                    background-color: #d12a01 !important;
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 12px rgba(237, 49, 1, 0.4);
+                }
+                .section-como-funciona .btn {
+                    position: relative;
+                    z-index: 10;
+                    pointer-events: auto;
+                    cursor: pointer;
+                    display: inline-block !important;
+                    visibility: visible !important;
+                    opacity: 1 !important;
+                }
+                .section-como-funciona .btn-cta {
+                    background-color: #ED3101 !important;
+                    color: white !important;
+                    border: none !important;
+                }
+                .section-como-funciona .btn:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 12px rgba(237, 49, 1, 0.4);
+                }
+                .food-illustration {
+                    max-width: 100%;
+                    height: auto;
+                    max-height: 300px;
+                    object-fit: contain;
+                    filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.15));
+                }
+                @media (max-width: 992px) {
+                    .puntos-content {
+                        padding-left: 0;
+                        text-align: center;
+                        margin-bottom: 2rem;
+                    }
+                    .puntos-title {
+                        font-size: 2rem;
+                    }
+                    .puntos-text {
+                        font-size: 1.25rem;
+                    }
+                    .section-puntos::before {
+                        width: 100%;
+                    }
+                    .section-puntos::after {
+                        display: none;
+                    }
+                    .section-puntos {
+                        background: linear-gradient(180deg, #A8E6CF 0%, #A8E6CF 60%, #ED3101 60%, #ED3101 100%);
+                    }
+                    .mapa-section h2 {
+                        font-size: 2rem !important;
+                    }
+                    .registro-section h2 {
+                        font-size: 2rem !important;
+                    }
+                    .food-illustration {
+                        max-height: 200px;
+                    }
+                }
+                @media (max-width: 768px) {
+                    .landing-hero h1 {
+                        font-size: 2.5rem;
+                    }
+                    .como-funciona-number {
+                        width: 40px;
+                        height: 40px;
+                        font-size: 1.2rem;
+                    }
+                    .section-puntos {
+                        padding: 3rem 0;
+                        min-height: auto;
+                    }
+                    .puntos-title {
+                        font-size: 1.75rem;
+                        margin-bottom: 1.5rem;
+                    }
+                    .puntos-text {
+                        font-size: 1.1rem;
+                    }
+                    .puntos-image-wrapper {
+                        padding: 1rem 0;
+                    }
+                    .puntos-illustration {
+                        max-height: 300px;
+                    }
+                }
                 .landing-footer {
                     background-color: var(--urban-primary);
                     color: #fff;
-                    padding: 3rem 0;
+                    padding: 4rem 0 2rem 0;
+                }
+                .footer-logo-icon {
+                    width: 50px;
+                    height: 50px;
+                    border-radius: 50%;
+                    background-color: #ED3101;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex-shrink: 0;
+                }
+                .footer-logo-text {
+                    color: white;
+                    font-weight: 700;
+                    font-size: 1.2rem;
+                }
+                .footer-brand-urban {
+                    color: #D4A574;
+                    font-weight: 600;
+                    font-size: 1.1rem;
+                }
+                .footer-brand-bites {
+                    color: #D4A574;
+                    font-weight: 700;
+                    font-size: 1.3rem;
+                }
+                .footer-heading {
+                    color: #7DD3C0;
+                    font-weight: 600;
+                    font-size: 1rem;
+                    text-transform: uppercase;
+                }
+                .footer-links a {
+                    transition: color 0.3s ease;
+                }
+                .footer-links a:hover {
+                    color: #7DD3C0 !important;
+                }
+                .footer-social-icon {
+                    font-size: 1.5rem;
+                    transition: color 0.3s ease, transform 0.3s ease;
+                    display: inline-block;
+                }
+                .footer-social-icon:hover {
+                    color: #7DD3C0 !important;
+                    transform: translateY(-3px);
+                }
+                .footer-copyright {
+                    color: #fff;
+                    font-size: 0.9rem;
+                    padding-top: 2rem;
+                    border-top: 1px solid rgba(255, 255, 255, 0.2);
                 }
             </style>
         </div>
@@ -67,23 +519,23 @@
         <header th:fragment="landingHeader">
             <nav class="landing-nav navbar navbar-expand-lg py-3">
                 <div class="container">
-                    <a class="navbar-brand fw-bold text-uppercase" th:href="@{/}">
-                        <img th:src="@{/images/logo-urban-bites.svg}" alt="Urban Bites" height="36" class="me-2">
-                        Urban Bites
+                    <a class="navbar-brand d-flex align-items-center" th:href="@{/}">
+                        <img th:src="@{/images/Logo Urban Bites.png}" alt="Urban Bites" height="40">
                     </a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#landingNav">
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="collapse navbar-collapse" id="landingNav">
                         <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center gap-lg-3">
-                            <li class="nav-item"><a class="nav-link" th:href="@{/food-trucks}">Food Trucks</a></li>
-                            <li class="nav-item"><a class="nav-link" th:href="@{/promociones}">Promociones</a></li>
-                            <li class="nav-item"><a class="nav-link" th:href="@{/contacto}">Contacto</a></li>
+                            <li class="nav-item"><a class="nav-link text-white" th:href="@{/menu}">Inicio</a></li>
+                            <li class="nav-item"><a class="nav-link text-white" th:href="@{/menu}">Food Trucks</a></li>
+                            <li class="nav-item"><a class="nav-link text-white" th:href="@{/promociones}">Promociones</a></li>
+                            <li class="nav-item"><a class="nav-link text-white" th:href="@{/contacto}">Contacto</a></li>
                             <li class="nav-item">
-                                <a class="btn btn-outline-dark rounded-pill px-4" th:href="@{/login}">Iniciar Sesión</a>
+                                <a class="btn rounded-pill px-4" style="background-color: #104E43; color: white; border: 1px solid white;" th:href="@{/login}">Iniciar Sesión</a>
                             </li>
                             <li class="nav-item">
-                                <a class="btn btn-cta text-white rounded-pill px-4" th:href="@{/registro}">Regístrate</a>
+                                <a class="btn btn-cta text-white rounded-pill px-4" th:href="@{/registro}">Registrarse</a>
                             </li>
                         </ul>
                     </div>
@@ -94,30 +546,71 @@
         <footer th:fragment="landingFooter">
             <div class="landing-footer">
                 <div class="container">
-                    <div class="row g-4">
-                        <div class="col-md-4">
-                            <img th:src="@{/images/logo-urban-bites.svg}" alt="Urban Bites" height="40" class="mb-3">
-                            <p>Tu próxima experiencia foodie comienza aquí. Descubre, ordena y disfruta.</p>
+                    <div class="row g-4 mb-4">
+                        <!-- Logo -->
+                        <div class="col-lg-3 col-md-6">
+                            <div class="footer-logo mb-3">
+                                <img th:src="@{/images/Logo Urban Bites.png}" alt="Urban Bites" height="50">
+                            </div>
                         </div>
-                        <div class="col-md-4">
-                            <h6 class="text-uppercase">Descubre más</h6>
-                            <ul class="list-unstyled">
-                                <li><a class="text-white text-decoration-none" th:href="@{/sobre-nosotros}">Sobre nosotros</a></li>
-                                <li><a class="text-white text-decoration-none" th:href="@{/terminos}">Términos y Condiciones</a></li>
-                                <li><a class="text-white text-decoration-none" th:href="@{/faqs}">Preguntas frecuentes</a></li>
+                        
+                        <!-- Descubrir más -->
+                        <div class="col-lg-2 col-md-6">
+                            <h6 class="footer-heading mb-3">Descubrir más</h6>
+                            <ul class="list-unstyled footer-links">
+                                <li class="mb-2"><a class="text-white text-decoration-none" href="#sobre-nosotros">Sobre UrbanBites</a></li>
+                                <li class="mb-2"><a class="text-white text-decoration-none" href="#puntos">Programa de Lealtad</a></li>
+                                <li class="mb-2"><a class="text-white text-decoration-none" href="#foodtrucks">Ubicación</a></li>
+                                <li class="mb-2"><a class="text-white text-decoration-none" href="#trabajos">Trabajos</a></li>
+                                <li class="mb-2"><a class="text-white text-decoration-none" href="#contacto">Contacto</a></li>
                             </ul>
                         </div>
-                        <div class="col-md-4">
-                            <h6 class="text-uppercase">Contacto</h6>
-                            <ul class="list-unstyled">
-                                <li>+506 0000-0000</li>
-                                <li>contacto@urbanbites.app</li>
-                                <li>@urbanbitesapp</li>
+                        
+                        <!-- Ayuda -->
+                        <div class="col-lg-2 col-md-6">
+                            <h6 class="footer-heading mb-3">Ayuda</h6>
+                            <ul class="list-unstyled footer-links">
+                                <li class="mb-2"><a class="text-white text-decoration-none" href="#faqs">Preguntas Frecuentes</a></li>
+                                <li class="mb-2"><a class="text-white text-decoration-none" href="#terminos">Términos y Condiciones</a></li>
+                                <li class="mb-2"><a class="text-white text-decoration-none" href="#privacidad">Políticas de Privacidad</a></li>
                             </ul>
+                        </div>
+                        
+                        <!-- Contacto -->
+                        <div class="col-lg-2 col-md-6">
+                            <h6 class="footer-heading mb-3">Contacto</h6>
+                            <ul class="list-unstyled footer-links">
+                                <li class="mb-2 text-white">Número de Teléfono: 8887-3214</li>
+                                <li class="mb-2 text-white">Correo Electrónico: Urbanbiteshelp@gmail.com</li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Redes Sociales -->
+                        <div class="col-lg-3 col-md-6">
+                            <h6 class="footer-heading mb-3">Redes Sociales</h6>
+                            <div class="d-flex gap-3">
+                                <a href="#" class="footer-social-icon text-white" aria-label="Facebook">
+                                    <i class="bi bi-facebook"></i>
+                                </a>
+                                <a href="#" class="footer-social-icon text-white" aria-label="Instagram">
+                                    <i class="bi bi-instagram"></i>
+                                </a>
+                                <a href="#" class="footer-social-icon text-white" aria-label="Twitter">
+                                    <i class="bi bi-twitter"></i>
+                                </a>
+                                <a href="#" class="footer-social-icon text-white" aria-label="YouTube">
+                                    <i class="bi bi-youtube"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
-                    <hr class="border-light opacity-25 my-4">
-                    <div class="text-center small">© <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}"></span> Urban Bites. Todos los derechos reservados.</div>
+                    
+                    <!-- Copyright -->
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <p class="footer-copyright mb-0">© 2025 UrbanBites Sociedad | Todos los Derechos Reservados</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </footer>

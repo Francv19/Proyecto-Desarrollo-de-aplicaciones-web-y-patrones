@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+    <head>
+        <th:block th:replace="owner/reglas-puntos/fragmentos :: reglasPuntosHead"></th:block>
+        <title>Nueva Regla de Puntos · Urban Bites</title>
+        <th:block th:replace="app/fragmentos :: appHead"></th:block>
+    </head>
+    <body class="bg-light" th:with="currentPage='reglas-puntos'">
+        <div class="d-flex min-vh-100">
+            <th:block th:replace="general/fragmentos :: sidebarOwner(${currentPage})"></th:block>
+
+            <main class="flex-grow-1 p-4" style="overflow-y: auto; background-color: #f5f5f5;">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="fw-bold mb-0">Nueva Regla de Puntos</h2>
+                    <a th:href="@{/owner/reglas-puntos}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Volver
+                    </a>
+                </div>
+
+                <div class="card" style="max-width: 600px; margin: 0 auto;">
+                    <div class="card-header" style="background-color: #104E43; color: white;">
+                        <h5 class="mb-0" th:text="'Food Truck: ' + ${foodtruck.nombre}">Food Truck</h5>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/owner/reglas-puntos/crear}" method="post">
+                            <input type="hidden" name="idFoodtruck" th:value="${foodtruck.idFoodtruck}">
+                            
+                            <div class="mb-3">
+                                <label for="porcentaje" class="form-label">Porcentaje de Puntos (%)</label>
+                                <input type="number" class="form-control" id="porcentaje" name="porcentaje" 
+                                       min="0" max="100" required>
+                                <small class="text-muted">Porcentaje de puntos que se otorgarán por cada colón gastado (0-100)</small>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="fechaInicio" class="form-label">Fecha de Inicio</label>
+                                <input type="datetime-local" class="form-control" id="fechaInicio" name="fechaInicio" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="fechaFin" class="form-label">Fecha de Fin</label>
+                                <input type="datetime-local" class="form-control" id="fechaFin" name="fechaFin" required>
+                            </div>
+                            
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn flex-grow-1" style="background-color: #ED3101; color: white;">
+                                    Crear Regla
+                                </button>
+                                <a th:href="@{/owner/reglas-puntos}" class="btn btn-outline-secondary">
+                                    Cancelar
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script th:src="@{/js/rutinas.js}"></script>
+    </body>
+</html>
+

@@ -34,6 +34,9 @@ public class PuntosCliente implements Serializable {
 
     @Column(length = 200)
     private String motivo;
+    
+    @Column(name = "fecha_creacion")
+    private java.time.LocalDateTime fechaCreacion;
 
     public enum TipoPunto {
         acumulados, redimidos

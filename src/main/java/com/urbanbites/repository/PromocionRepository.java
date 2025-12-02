@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface PromocionRepository extends JpaRepository<Promocion, Integer> {
-    @Query("SELECT p FROM Promocion p WHERE p.activo = true " +
+    @Query("SELECT p FROM Promocion p LEFT JOIN FETCH p.foodtruck WHERE p.activo = true " +
            "AND p.fechaInicio <= :ahora AND p.fechaFin >= :ahora ORDER BY p.fechaInicio ASC")
     List<Promocion> findPromocionesVigentes(@Param("ahora") LocalDateTime ahora);
     

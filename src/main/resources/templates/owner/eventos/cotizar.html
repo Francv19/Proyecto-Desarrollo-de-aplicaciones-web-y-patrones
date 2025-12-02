@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+    <head>
+        <th:block th:replace="owner/eventos/fragmentos :: eventosOwnerHead"></th:block>
+        <title>Cotizar Evento · Urban Bites</title>
+        <th:block th:replace="app/fragmentos :: appHead"></th:block>
+    </head>
+    <body class="bg-light" th:with="currentPage='eventos'">
+        <div class="d-flex min-vh-100">
+            <th:block th:replace="general/fragmentos :: sidebarOwner(${currentPage})"></th:block>
+
+            <main class="flex-grow-1 p-4" style="overflow-y: auto; background-color: #f5f5f5;">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="fw-bold mb-0">Cotizar Evento</h2>
+                    <a th:href="@{/owner/eventos}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Volver
+                    </a>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header" style="background-color: #104E43; color: white;">
+                        <h5 class="mb-0" th:text="${evento.nombre}">Evento</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <p class="mb-2"><strong>Solicitante:</strong> 
+                                    <span th:text="${evento.solicitante.nombre + ' ' + evento.solicitante.apellidos}">Cliente</span>
+                                </p>
+                                <p class="mb-2"><strong>Tipo de Servicio:</strong> 
+                                    <span th:text="${#strings.capitalize(evento.tipoServicio.name())}">Catering</span>
+                                </p>
+                                <p class="mb-2"><strong>Fecha:</strong> 
+                                    <span th:text="${#temporals.format(evento.fechaInicio, 'dd MMM yyyy, hh:mm a')}">Inicio</span>
+                                    <span> - </span>
+                                    <span th:text="${#temporals.format(evento.fechaFin, 'dd MMM yyyy, hh:mm a')}">Fin</span>
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="mb-2" th:if="${evento.direccion != null}">
+                                    <strong>Dirección:</strong> <span th:text="${evento.direccion}">Dirección</span>
+                                </p>
+                                <p class="mb-2" th:if="${evento.invitados != null}">
+                                    <strong>Invitados:</strong> <span th:text="${evento.invitados}">0</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div th:if="${evento.descripcion != null and !#strings.isEmpty(evento.descripcion)}">
+                            <p class="mb-2"><strong>Descripción:</strong></p>
+                            <p class="text-muted" th:text="${evento.descripcion}">Descripción</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="max-width: 600px; margin: 0 auto;">
+                    <div class="card-header" style="background-color: #104E43; color: white;">
+                        <h5 class="mb-0">Cotización</h5>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/owner/eventos/{id}/cotizar(id=${evento.idEvento})}" method="post">
+                            <div class="mb-3">
+                                <label for="montoCotizado" class="form-label">Monto Cotizado (₡)</label>
+                                <input type="number" class="form-control" id="montoCotizado" name="montoCotizado" 
+                                       step="0.01" min="0.01" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="detallesCotizacion" class="form-label">Detalles de la Cotización</label>
+                                <textarea class="form-control" id="detallesCotizacion" name="detallesCotizacion" 
+                                          rows="5" placeholder="Incluye detalles sobre el servicio, menú, condiciones, etc..."></textarea>
+                            </div>
+                            
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn flex-grow-1" style="background-color: #ED3101; color: white;">
+                                    Enviar Cotización
+                                </button>
+                                <a th:href="@{/owner/eventos}" class="btn btn-outline-secondary">
+                                    Cancelar
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script th:src="@{/js/rutinas.js}"></script>
+    </body>
+</html>
+

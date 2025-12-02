@@ -6,40 +6,167 @@
         <title>Promociones · Urban Bites</title>
         <th:block th:replace="app/fragmentos :: appHead"></th:block>
         <style>
+            :root {
+                --urban-primary: #104E43;
+                --urban-secondary: #FFE5B4;
+                --urban-cta: #ED3101;
+                --urban-light: #F4F4F4;
+                --urban-ink: #1C1C1C;
+            }
+            .section-title {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+            .section-title-icon {
+                color: var(--urban-cta);
+                font-size: 1.5rem;
+            }
             .promo-card {
                 border-radius: 12px;
                 overflow: hidden;
                 position: relative;
                 height: 100%;
-                min-height: 300px;
+                min-height: 400px;
+                background: white;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+            .promo-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            }
+            .promo-image-wrapper {
+                position: relative;
+                width: 100%;
+                height: 250px;
+                overflow: hidden;
             }
             .promo-card img {
                 width: 100%;
-                height: 200px;
+                height: 100%;
                 object-fit: cover;
             }
             .promo-badge {
                 position: absolute;
-                top: 10px;
-                right: 10px;
-                background-color: #ED3101;
+                top: 15px;
+                right: 15px;
+                background-color: var(--urban-cta);
                 color: white;
                 padding: 0.5rem 1rem;
                 border-radius: 8px;
                 font-weight: bold;
                 font-size: 0.85rem;
+                z-index: 2;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            }
+            .promo-content {
+                padding: 1.5rem;
+            }
+            .promo-title {
+                color: #333;
+                font-size: 1.5rem;
+                font-weight: bold;
+                margin-bottom: 0.75rem;
+            }
+            .promo-description {
+                color: #666;
+                font-size: 0.95rem;
+                line-height: 1.5;
+                margin-bottom: 1rem;
+                min-height: 60px;
+            }
+            .promo-btn {
+                background-color: var(--urban-cta);
+                color: white;
+                border: none;
+                padding: 0.75rem 1.5rem;
+                border-radius: 8px;
+                font-weight: 600;
+                width: 100%;
+                transition: background-color 0.3s ease;
+            }
+            .promo-btn:hover {
+                background-color: #c02801;
+                color: white;
             }
             .coupon-card {
-                border: 2px solid #ddd;
                 border-radius: 12px;
                 padding: 1.5rem;
                 height: 100%;
                 position: relative;
+                min-height: 400px;
+                display: flex;
+                flex-direction: column;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+                border: 2px solid transparent;
+            }
+            .coupon-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            }
+            .coupon-card.bg-danger {
+                background: linear-gradient(135deg, var(--urban-primary) 0%, #0b362f 100%);
+                color: white;
+                border-color: var(--urban-primary);
+            }
+            .coupon-card.bg-white {
+                background: var(--urban-secondary);
+                color: var(--urban-ink);
+                border-color: var(--urban-primary);
+                border-width: 2px;
+            }
+            .coupon-card.bg-dark {
+                background: linear-gradient(135deg, var(--urban-primary) 0%, #0b362f 100%);
+                color: white;
+                border-color: var(--urban-primary);
+            }
+            .coupon-card.bg-dark .discount-display,
+            .coupon-card.bg-danger .discount-display {
+                color: var(--urban-secondary);
+            }
+            .coupon-card.bg-white .discount-display {
+                color: var(--urban-cta);
+            }
+            .coupon-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                margin-bottom: 1rem;
+            }
+            .coupon-title {
+                font-weight: bold;
+                font-size: 0.9rem;
+                margin-bottom: 0.25rem;
+            }
+            .coupon-date {
+                font-size: 0.8rem;
+                opacity: 0.9;
             }
             .discount-display {
-                font-size: 2rem;
+                font-size: 2.5rem;
                 font-weight: bold;
-                color: #ED3101;
+                color: var(--urban-cta);
+                line-height: 1;
+            }
+            .coupon-image-wrapper {
+                width: 100%;
+                height: 150px;
+                overflow: hidden;
+                border-radius: 8px;
+                margin-bottom: 1rem;
+            }
+            .coupon-image-wrapper img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            .coupon-description {
+                flex-grow: 1;
+                margin-bottom: 1rem;
+                font-size: 0.9rem;
+                line-height: 1.5;
             }
         </style>
     </head>
@@ -50,31 +177,43 @@
             <main class="flex-grow-1 p-4" style="overflow-y: auto;">
                 <!-- Promociones Destacadas -->
                 <section class="mb-5">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h2 class="fw-bold mb-0">Promociones Destacadas</h2>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="section-title">
+                            <h2 class="fw-bold mb-0">Promociones Destacadas</h2>
+                            <i class="bi bi-arrow-right-circle-fill section-title-icon"></i>
+                        </div>
                         <a href="#" class="text-muted small text-decoration-none">ver todos</a>
                     </div>
 
-                    <div class="row g-3" th:if="${promocionesDestacadas != null and !promocionesDestacadas.isEmpty()}">
+                    <div class="row g-4" th:if="${promocionesDestacadas != null and !promocionesDestacadas.isEmpty()}">
                         <div class="col-md-4" th:each="promo : ${promocionesDestacadas}">
-                            <div class="promo-card bg-white shadow-sm">
-                                <div class="promo-badge" th:if="${promo.tipoDescuento == T(com.urbanbites.domain.Promocion.TipoDescuento).porcentaje}">
-                                    <span th:text="${promo.valor.intValue() + '% Off'}">50% Off</span>
+                            <div class="promo-card">
+                                <div class="promo-image-wrapper">
+                                    <img th:src="${promo.foodtruck != null and promo.foodtruck.rutaImagen != null and !#strings.isEmpty(promo.foodtruck.rutaImagen)} ? ${promo.foodtruck.rutaImagen} : '/images/placeholder-truck.png'" 
+                                         th:alt="${promo.foodtruck != null ? promo.foodtruck.nombre : 'Promoción'}"
+                                         onerror="this.src='/images/placeholder-truck.png'">
+                                    <div class="promo-badge" th:if="${promo.tipoDescuento != null and promo.tipoDescuento.name() == 'porcentaje'}">
+                                        <span th:text="'DISC UP TO ' + ${promo.valor.intValue()} + '% SPECIAL PRICE'">DISC UP TO 50% SPECIAL PRICE</span>
+                                    </div>
+                                    <div class="promo-badge" th:if="${promo.tipoDescuento != null and promo.tipoDescuento.name() == 'monto_fijo'}">
+                                        <span th:text="'¢' + ${#numbers.formatDecimal(promo.valor, 0, 'COMMA', 0, 'POINT')} + ' OFF'">Descuento</span>
+                                    </div>
                                 </div>
-                                <div class="promo-badge" th:if="${promo.tipoDescuento == T(com.urbanbites.domain.Promocion.TipoDescuento).monto_fijo}">
-                                    <span th:text="'¢' + ${#numbers.formatDecimal(promo.valor, 0, 'COMMA', 0, 'POINT')} + ' Off'">Descuento</span>
-                                </div>
-                                <img th:src="@{/images/placeholder-promo.jpg}" 
-                                     alt="Promoción" 
-                                     class="img-fluid">
-                                <div class="p-3">
-                                    <h5 class="fw-bold mb-2" th:if="${promo.tipoDescuento == T(com.urbanbites.domain.Promocion.TipoDescuento).porcentaje}">
+                                <div class="promo-content">
+                                    <h5 class="promo-title" th:if="${promo.tipoDescuento != null and promo.tipoDescuento.name() == 'porcentaje'}">
                                         <span th:text="${promo.valor.intValue() + '% Off'}">50% Off</span>
                                     </h5>
-                                    <p class="text-muted small mb-2" th:text="${promo.foodtruck.descripcion}">Burgers artesanales hechas al momento, rápidas y jugosas con descuento especial.</p>
-                                    <button class="btn w-100" style="background-color: #ED3101; color: white;">
+                                    <h5 class="promo-title" th:if="${promo.tipoDescuento != null and promo.tipoDescuento.name() == 'monto_fijo'}">
+                                        <span th:text="'¢' + ${#numbers.formatDecimal(promo.valor, 0, 'COMMA', 0, 'POINT')} + ' Off'">Descuento</span>
+                                    </h5>
+                                    <p class="promo-description" 
+                                       th:text="${promo.foodtruck != null and promo.foodtruck.descripcion != null and !#strings.isEmpty(promo.foodtruck.descripcion)} ? promo.foodtruck.descripcion : 'Descubre nuestras deliciosas ofertas especiales'">
+                                        Burgers artesanales hechas al momento, rápidas y jugosas con descuento especial.
+                                    </p>
+                                    <a th:href="@{/menu(foodtruck=${promo.foodtruck != null ? promo.foodtruck.idFoodtruck : null})}" 
+                                       class="btn promo-btn">
                                         Ver más
-                                    </button>
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -86,36 +225,120 @@
 
                 <!-- Cupones -->
                 <section>
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h2 class="fw-bold mb-0">Cupones</h2>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="section-title">
+                            <h2 class="fw-bold mb-0">Cupones</h2>
+                            <i class="bi bi-arrow-right-circle-fill section-title-icon"></i>
+                        </div>
                         <a href="#" class="text-muted small text-decoration-none">ver todos</a>
                     </div>
 
-                    <div class="row g-3" th:if="${cupones != null and !cupones.isEmpty()}">
+                    <div class="row g-4" th:if="${cupones != null and !cupones.isEmpty()}">
                         <div class="col-md-4" th:each="cupon : ${cupones}">
-                            <div class="coupon-card" 
-                                 th:style="${cupon.foodtruck.nombre.contains('Rongjae')} ? 'background-color: #dc3545; color: white;' : 
-                                            ${cupon.foodtruck.nombre.contains('Vegetables')} ? 'background-color: white;' : 
-                                            'background-color: #343a40; color: white;'">
-                                <div class="d-flex justify-content-between align-items-start mb-3">
+                            <!-- Cupón con fondo verde primario para Rongjae -->
+                            <div class="coupon-card bg-danger text-white" 
+                                 th:if="${cupon.foodtruck != null and cupon.foodtruck.nombre != null and (#strings.contains(cupon.foodtruck.nombre.toLowerCase(), 'rongjae'))}">
+                                <div class="coupon-header">
                                     <div>
-                                        <h6 class="fw-bold mb-1" th:if="${cupon.tipoDescuento == T(com.urbanbites.domain.Promocion.TipoDescuento).porcentaje}">
+                                        <h6 class="coupon-title" th:if="${cupon.tipoDescuento != null and cupon.tipoDescuento.name() == 'porcentaje'}">
                                             <span th:text="'DISCOUNT FOOD VOUCHER ' + ${cupon.valor.intValue() + '% OFF'}">DISCOUNT FOOD VOUCHER 50% OFF</span>
                                         </h6>
-                                        <p class="small mb-1" th:text="${#temporals.format(cupon.fechaFin, 'dd MMM yyyy')}">Valid Until 14 July 2024</p>
+                                        <h6 class="coupon-title" th:if="${cupon.tipoDescuento != null and cupon.tipoDescuento.name() == 'monto_fijo'}">
+                                            <span th:text="'DISCOUNT FOOD VOUCHER ¢' + ${#numbers.formatDecimal(cupon.valor, 0, 'COMMA', 0, 'POINT')} + ' OFF'">DISCOUNT FOOD VOUCHER</span>
+                                        </h6>
+                                        <p class="coupon-date" th:if="${cupon.fechaFin != null}" 
+                                           th:text="${'Valid until ' + #temporals.format(cupon.fechaFin, 'dd MMM yyyy')}">Valid Until 14 July 2024</p>
                                     </div>
-                                    <div class="discount-display" th:if="${cupon.tipoDescuento == T(com.urbanbites.domain.Promocion.TipoDescuento).porcentaje}">
+                                    <div class="discount-display" th:if="${cupon.tipoDescuento != null and cupon.tipoDescuento.name() == 'porcentaje'}">
                                         <span th:text="'¢' + ${cupon.valor.intValue() + '%'}">¢50%</span>
                                     </div>
+                                    <div class="discount-display" th:if="${cupon.tipoDescuento != null and cupon.tipoDescuento.name() == 'monto_fijo'}">
+                                        <span th:text="'¢' + ${#numbers.formatDecimal(cupon.valor, 0, 'COMMA', 0, 'POINT')}">¢1000</span>
+                                    </div>
                                 </div>
-                                <img th:src="@{/images/placeholder-cupon.jpg}" 
-                                     alt="Cupón" 
-                                     class="img-fluid mb-3" 
-                                     style="max-height: 150px; object-fit: cover; border-radius: 8px;">
-                                <p class="mb-2" th:text="${cupon.foodtruck.descripcion}">50% de descuento en todas tus compras superior a 10,000 colones.</p>
-                                <button class="btn w-100" style="background-color: #ED3101; color: white;">
+                                <div class="coupon-image-wrapper">
+                                    <img th:src="${cupon.foodtruck != null and cupon.foodtruck.rutaImagen != null and !#strings.isEmpty(cupon.foodtruck.rutaImagen)} ? ${cupon.foodtruck.rutaImagen} : '/images/placeholder-truck.png'" 
+                                         th:alt="${cupon.foodtruck != null ? cupon.foodtruck.nombre : 'Cupón'}"
+                                         onerror="this.src='/images/placeholder-truck.png'">
+                                </div>
+                                <p class="coupon-description" 
+                                   th:text="${cupon.foodtruck != null and cupon.foodtruck.descripcion != null and !#strings.isEmpty(cupon.foodtruck.descripcion)} ? cupon.foodtruck.descripcion : 'Aprovecha esta increíble oferta'">
+                                    50% de descuento en todas tus compras superior a 10,000 colones.
+                                </p>
+                                <a th:href="@{/menu(foodtruck=${cupon.foodtruck != null ? cupon.foodtruck.idFoodtruck : null})}" 
+                                   class="btn promo-btn">
                                     Ver más
-                                </button>
+                                </a>
+                            </div>
+                            <!-- Cupón con fondo beige secundario para Vegetable -->
+                            <div class="coupon-card bg-white text-dark" 
+                                 th:if="${cupon.foodtruck != null and cupon.foodtruck.nombre != null and (#strings.contains(cupon.foodtruck.nombre.toLowerCase(), 'vegetable'))}">
+                                <div class="coupon-header">
+                                    <div>
+                                        <h6 class="coupon-title" th:if="${cupon.tipoDescuento != null and cupon.tipoDescuento.name() == 'porcentaje'}">
+                                            <span th:text="'DISCOUNT FOOD VOUCHER ' + ${cupon.valor.intValue() + '% OFF'}">DISCOUNT FOOD VOUCHER 50% OFF</span>
+                                        </h6>
+                                        <h6 class="coupon-title" th:if="${cupon.tipoDescuento != null and cupon.tipoDescuento.name() == 'monto_fijo'}">
+                                            <span th:text="'DISCOUNT FOOD VOUCHER ¢' + ${#numbers.formatDecimal(cupon.valor, 0, 'COMMA', 0, 'POINT')} + ' OFF'">DISCOUNT FOOD VOUCHER</span>
+                                        </h6>
+                                        <p class="coupon-date" th:if="${cupon.fechaFin != null}" 
+                                           th:text="${'Valid until ' + #temporals.format(cupon.fechaFin, 'dd MMM yyyy')}">Valid Until 14 July 2024</p>
+                                    </div>
+                                    <div class="discount-display" th:if="${cupon.tipoDescuento != null and cupon.tipoDescuento.name() == 'porcentaje'}">
+                                        <span th:text="'¢' + ${cupon.valor.intValue() + '%'}">¢50%</span>
+                                    </div>
+                                    <div class="discount-display" th:if="${cupon.tipoDescuento != null and cupon.tipoDescuento.name() == 'monto_fijo'}">
+                                        <span th:text="'¢' + ${#numbers.formatDecimal(cupon.valor, 0, 'COMMA', 0, 'POINT')}">¢1000</span>
+                                    </div>
+                                </div>
+                                <div class="coupon-image-wrapper">
+                                    <img th:src="${cupon.foodtruck != null and cupon.foodtruck.rutaImagen != null and !#strings.isEmpty(cupon.foodtruck.rutaImagen)} ? ${cupon.foodtruck.rutaImagen} : '/images/placeholder-truck.png'" 
+                                         th:alt="${cupon.foodtruck != null ? cupon.foodtruck.nombre : 'Cupón'}"
+                                         onerror="this.src='/images/placeholder-truck.png'">
+                                </div>
+                                <p class="coupon-description" 
+                                   th:text="${cupon.foodtruck != null and cupon.foodtruck.descripcion != null and !#strings.isEmpty(cupon.foodtruck.descripcion)} ? cupon.foodtruck.descripcion : 'Aprovecha esta increíble oferta'">
+                                    50% de descuento en todas tus compras superior a 10,000 colones.
+                                </p>
+                                <a th:href="@{/menu(foodtruck=${cupon.foodtruck != null ? cupon.foodtruck.idFoodtruck : null})}" 
+                                   class="btn promo-btn">
+                                    Ver más
+                                </a>
+                            </div>
+                            <!-- Cupón con fondo verde primario por defecto -->
+                            <div class="coupon-card bg-dark text-white" 
+                                 th:unless="${(cupon.foodtruck != null and cupon.foodtruck.nombre != null and (#strings.contains(cupon.foodtruck.nombre.toLowerCase(), 'rongjae'))) or (cupon.foodtruck != null and cupon.foodtruck.nombre != null and (#strings.contains(cupon.foodtruck.nombre.toLowerCase(), 'vegetable')))}">
+                                <div class="coupon-header">
+                                    <div>
+                                        <h6 class="coupon-title" th:if="${cupon.tipoDescuento != null and cupon.tipoDescuento.name() == 'porcentaje'}">
+                                            <span th:text="'DISCOUNT FOOD VOUCHER ' + ${cupon.valor.intValue() + '% OFF'}">DISCOUNT FOOD VOUCHER 50% OFF</span>
+                                        </h6>
+                                        <h6 class="coupon-title" th:if="${cupon.tipoDescuento != null and cupon.tipoDescuento.name() == 'monto_fijo'}">
+                                            <span th:text="'DISCOUNT FOOD VOUCHER ¢' + ${#numbers.formatDecimal(cupon.valor, 0, 'COMMA', 0, 'POINT')} + ' OFF'">DISCOUNT FOOD VOUCHER</span>
+                                        </h6>
+                                        <p class="coupon-date" th:if="${cupon.fechaFin != null}" 
+                                           th:text="${'Valid until ' + #temporals.format(cupon.fechaFin, 'dd MMM yyyy')}">Valid Until 14 July 2024</p>
+                                    </div>
+                                    <div class="discount-display" th:if="${cupon.tipoDescuento != null and cupon.tipoDescuento.name() == 'porcentaje'}">
+                                        <span th:text="'¢' + ${cupon.valor.intValue() + '%'}">¢50%</span>
+                                    </div>
+                                    <div class="discount-display" th:if="${cupon.tipoDescuento != null and cupon.tipoDescuento.name() == 'monto_fijo'}">
+                                        <span th:text="'¢' + ${#numbers.formatDecimal(cupon.valor, 0, 'COMMA', 0, 'POINT')}">¢1000</span>
+                                    </div>
+                                </div>
+                                <div class="coupon-image-wrapper">
+                                    <img th:src="${cupon.foodtruck != null and cupon.foodtruck.rutaImagen != null and !#strings.isEmpty(cupon.foodtruck.rutaImagen)} ? ${cupon.foodtruck.rutaImagen} : '/images/placeholder-truck.png'" 
+                                         th:alt="${cupon.foodtruck != null ? cupon.foodtruck.nombre : 'Cupón'}"
+                                         onerror="this.src='/images/placeholder-truck.png'">
+                                </div>
+                                <p class="coupon-description" 
+                                   th:text="${cupon.foodtruck != null and cupon.foodtruck.descripcion != null and !#strings.isEmpty(cupon.foodtruck.descripcion)} ? cupon.foodtruck.descripcion : 'Aprovecha esta increíble oferta'">
+                                    50% de descuento en todas tus compras superior a 10,000 colones.
+                                </p>
+                                <a th:href="@{/menu(foodtruck=${cupon.foodtruck != null ? cupon.foodtruck.idFoodtruck : null})}" 
+                                   class="btn promo-btn">
+                                    Ver más
+                                </a>
                             </div>
                         </div>
                     </div>

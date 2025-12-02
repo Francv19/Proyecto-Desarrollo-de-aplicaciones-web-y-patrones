@@ -94,21 +94,24 @@ public class ProjectConfig implements WebMvcConfigurer {
                 .requestMatchers("/", "/landing/**", "/errores/**",
                         "/pruebas/**", "/registro/**", "/setup/**", "/js/**", "/webjars/**", 
                         "/css/**", "/images/**", "/img/**", "/menu/**", 
-                        "/promociones", "/food-trucks", "/login", "/logout")
+                        "/promociones", "/promociones/**", "/horarios", "/food-trucks", "/login", "/logout")
                 .permitAll()
                 .requestMatchers(
                         "/admin/**", "/usuario/**", "/producto/**",
                         "/categoria/**", "/reportes/**"
                 ).hasRole("admin")
+                .requestMatchers("/admin/horarios/**").hasRole("admin")
                 .requestMatchers(
                         "/app/owner/**", "/pedidos/owner/**", 
                         "/pedidos/*/estado", "/pedidos/*/eta", 
-                        "/cotizaciones/**", "/owner/productos/**", "/owner/foodtrucks/**"
+                        "/cotizaciones/**", "/owner/productos/**", "/owner/foodtrucks/**", 
+                        "/owner/reglas-puntos/**", "/owner/promociones/**", "/owner/eventos/**"
                 ).hasAnyRole("dueno", "admin")
                 .requestMatchers(
                         "/carrito", "/carrito/**",
                         "/app/cliente/**", "/app/admin/**",
-                        "/resenas", "/resenas/**", "/puntos/**", "/pedidos"
+                        "/resenas", "/resenas/**", "/puntos/**", "/pedidos", "/eventos", "/eventos/**",
+                        "/configuracion", "/configuracion/**"
                 ).authenticated()
                 .anyRequest().authenticated()
                 )

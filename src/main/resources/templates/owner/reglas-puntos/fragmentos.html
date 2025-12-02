@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+    <head th:fragment="reglasPuntosHead">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <th:block th:fragment="reglasPuntosStyles">
+            <style>
+                .regla-card {
+                    border: 1px solid #ddd;
+                    border-radius: 12px;
+                    padding: 1.5rem;
+                    background: white;
+                    transition: all 0.3s ease;
+                }
+                .regla-card:hover {
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                }
+            </style>
+        </th:block>
+        
+        <th:block th:fragment="reglasPuntosAlerts">
+            <div th:if="${mensaje}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <span th:text="${mensaje}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <span th:text="${error}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </th:block>
+    </body>
+</html>
+

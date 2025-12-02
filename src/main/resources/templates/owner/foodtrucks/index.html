@@ -54,6 +54,13 @@
                     <div class="row g-4">
                         <div class="col-md-6 col-lg-4" th:each="foodtruck : ${foodtrucks}">
                             <div class="foodtruck-card">
+                                <div class="mb-3 text-center">
+                                    <img th:src="${foodtruck.rutaImagen != null and !#strings.isEmpty(foodtruck.rutaImagen)} ? ${foodtruck.rutaImagen} : '/images/placeholder-truck.png'" 
+                                         th:alt="${foodtruck.nombre}"
+                                         class="img-fluid rounded" 
+                                         style="max-height: 150px; width: 100%; object-fit: cover;"
+                                         onerror="this.src='/images/placeholder-truck.png'">
+                                </div>
                                 <div class="d-flex justify-content-between align-items-start mb-3">
                                     <div class="flex-grow-1">
                                         <h5 class="fw-bold mb-1" th:text="${foodtruck.nombre}">Nombre del Food Truck</h5>

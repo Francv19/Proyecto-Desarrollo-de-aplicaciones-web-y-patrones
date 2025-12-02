@@ -36,7 +36,7 @@ public class FoodtruckService {
     @Transactional
     public Foodtruck crearFoodtruck(Integer idDueno, String nombre, String descripcion,
                                     String telefono, String email, Integer porcentajePuntos,
-                                    Boolean activo) {
+                                    Boolean activo, String rutaImagen) {
         Usuario dueno = usuarioRepository.findById(idDueno)
             .orElseThrow(() -> new RuntimeException("Dueño no encontrado"));
         
@@ -51,6 +51,7 @@ public class FoodtruckService {
         foodtruck.setTelefono(telefono);
         foodtruck.setEmail(email);
         foodtruck.setPorcentajePuntos(porcentajePuntos != null ? porcentajePuntos : 0);
+        foodtruck.setRutaImagen(rutaImagen);
         foodtruck.setActivo(activo != null ? activo : true);
         
         foodtruck = foodtruckRepository.save(foodtruck);
@@ -69,7 +70,7 @@ public class FoodtruckService {
     @Transactional
     public Foodtruck actualizarFoodtruck(Integer idFoodtruck, String nombre, String descripcion,
                                         String telefono, String email, Integer porcentajePuntos,
-                                        Boolean activo) {
+                                        Boolean activo, String rutaImagen) {
         Foodtruck foodtruck = foodtruckRepository.findById(idFoodtruck)
             .orElseThrow(() -> new RuntimeException("Food truck no encontrado"));
         
@@ -92,11 +93,30 @@ public class FoodtruckService {
         if (porcentajePuntos != null) {
             foodtruck.setPorcentajePuntos(porcentajePuntos);
         }
+        if (rutaImagen != null && !rutaImagen.trim().isEmpty()) {
+            foodtruck.setRutaImagen(rutaImagen);
+        }
         if (activo != null) {
             foodtruck.setActivo(activo);
         }
         
         return foodtruckRepository.save(foodtruck);
+    }
+    
+    @Transactional
+    public Foodtruck actualizarFoodtruckConDueno(Integer idFoodtruck, Integer idDueno, String nombre, String descripcion,
+                                                String telefono, String email, Integer porcentajePuntos,
+                                                Boolean activo, String rutaImagen) {
+        Foodtruck foodtruck = foodtruckRepository.findById(idFoodtruck)
+            .orElseThrow(() -> new RuntimeException("Food truck no encontrado"));
+        
+        if (idDueno != null) {
+            Usuario nuevoDueno = usuarioRepository.findById(idDueno)
+                .orElseThrow(() -> new RuntimeException("Dueño no encontrado"));
+            foodtruck.setDueno(nuevoDueno);
+        }
+        
+        return actualizarFoodtruck(idFoodtruck, nombre, descripcion, telefono, email, porcentajePuntos, activo, rutaImagen);
     }
     
     @Transactional
@@ -112,6 +132,11 @@ public class FoodtruckService {
             .orElseThrow(() -> new RuntimeException("Food truck no encontrado"));
         foodtruck.setActivo(false);
         foodtruckRepository.save(foodtruck);
+    }
+    
+    @Transactional(readOnly = true)
+    public List<Foodtruck> obtenerTodosFoodtrucks() {
+        return foodtruckRepository.findAll();
     }
 }
 

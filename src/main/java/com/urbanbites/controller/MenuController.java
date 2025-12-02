@@ -24,13 +24,7 @@ public class MenuController {
     @GetMapping("/menu")
     public String verMenu(@RequestParam(required = false) Integer foodtruck, Model model) {
         List<Foodtruck> foodtrucks = foodtruckRepository.findByActivoTrue();
-        List<Producto> productos;
-        
-        if (foodtruck != null) {
-            productos = productoService.obtenerProductosDisponiblesPorFoodtruck(foodtruck);
-        } else {
-            productos = productoService.obtenerTodosProductosDisponibles();
-        }
+        List<Producto> productos = productoService.obtenerTodosProductosDisponibles();
         
         model.addAttribute("foodtrucks", foodtrucks);
         model.addAttribute("productos", productos);

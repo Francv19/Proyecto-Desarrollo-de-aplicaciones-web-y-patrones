@@ -102,15 +102,15 @@
                 </div>
 
                 <nav class="nav flex-column nav-section">
+                    <a class="nav-link" th:classappend="${page} == 'dashboard' ? ' active'"
+                    th:href="@{/app/owner}">
+                     <i class="bi bi-kanban icon"></i>
+                     <span>Dashboard</span>
+                    </a>
                     <a class="nav-link" th:classappend="${page} == 'cotizaciones' ? ' active'"
                        th:href="@{/cotizaciones}">
                         <i class="bi bi-chat-square-text icon"></i>
                         <span>Cotizaciones</span>
-                    </a>
-                    <a class="nav-link" th:classappend="${page} == 'dashboard' ? ' active'"
-                       th:href="@{/app/owner}">
-                        <i class="bi bi-kanban icon"></i>
-                        <span>Dashboard</span>
                     </a>
                     <a class="nav-link" th:classappend="${page} == 'foodtrucks' ? ' active'"
                        th:href="@{/owner/foodtrucks}">
@@ -122,13 +122,18 @@
                         <i class="bi bi-journal-bookmark icon"></i>
                         <span>Gestión de Productos</span>
                     </a>
+                    <a class="nav-link" th:classappend="${page} == 'reglas-puntos' ? ' active'"
+                       th:href="@{/owner/reglas-puntos}">
+                        <i class="bi bi-star icon"></i>
+                        <span>Reglas de Puntos</span>
+                    </a>
                     <a class="nav-link" th:classappend="${page} == 'pedidos' ? ' active'"
                        th:href="@{/pedidos/owner}">
                         <i class="bi bi-receipt icon"></i>
                         <span>Pedidos</span>
                     </a>
                     <a class="nav-link" th:classappend="${page} == 'promociones' ? ' active'"
-                       th:href="@{/promociones}">
+                       th:href="@{/owner/promociones}">
                         <i class="bi bi-ticket-detailed icon"></i>
                         <span>Promociones</span>
                     </a>
@@ -136,6 +141,11 @@
                        th:href="@{/resenas/owner}">
                         <i class="bi bi-chat-left-dots icon"></i>
                         <span>Reseñas</span>
+                    </a>
+                    <a class="nav-link" th:classappend="${page} == 'eventos' ? ' active'"
+                       th:href="@{/owner/eventos}">
+                        <i class="bi bi-calendar-event icon"></i>
+                        <span>Eventos</span>
                     </a>
                     <a class="nav-link" th:classappend="${page} == 'configuracion' ? ' active'"
                        th:href="@{/configuracion}">
@@ -159,7 +169,6 @@
             <aside class="sidebar-urban">
                 <div class="sidebar-brand text-center">
                     <img th:src="@{/images/Logo Urban Bites.png}" alt="Urban Bites" class="img-fluid mb-2" style="max-width: 160px; height: auto;" />
-                    <div class="sidebar-brand-text">Urban Bites</div>
                 </div>
 
                 <nav class="nav flex-column nav-section">
@@ -178,21 +187,26 @@
                         <i class="bi bi-ticket icon"></i>
                         <span>Promociones</span>
                     </a>
+                    <a class="nav-link" th:classappend="${page} == 'horarios' ? ' active'"
+                       th:href="@{/horarios}">
+                        <i class="bi bi-calendar-check icon"></i>
+                        <span>Horarios</span>
+                    </a>
                     <a class="nav-link" th:classappend="${page} == 'resenas' ? ' active'"
                        th:href="@{/resenas}">
                         <i class="bi bi-chat-left-quote icon"></i>
                         <span>Reseñas</span>
-                    </a>
-                    <a class="nav-link" th:classappend="${page} == 'configuracion' ? ' active'"
-                       th:href="@{/configuracion}">
-                        <i class="bi bi-gear icon"></i>
-                        <span>Configuración</span>
                     </a>
                     <a class="nav-link" th:classappend="${page} == 'puntos' ? ' active'"
                        th:href="@{/puntos/saldo}">
                         <i class="bi bi-star icon"></i>
                         <span>Puntos</span>
                     </a>
+                    <a class="nav-link" th:classappend="${page} == 'configuracion' ? ' active'"
+                    th:href="@{/configuracion}">
+                     <i class="bi bi-gear icon"></i>
+                     <span>Configuración</span>
+                 </a>
                 </nav>
 
                 <div class="logout-link">
@@ -210,7 +224,7 @@
             <aside class="sidebar-urban">
                 <div class="sidebar-brand text-center">
                     <img th:src="@{/images/Logo Urban Bites.png}" alt="Urban Bites" class="img-fluid mb-2" style="max-width: 160px; height: auto;" />
-                    <div class="sidebar-brand-text">Urban Bites Admin</div>
+                    <div class="sidebar-brand-text">Administrador</div>
                 </div>
 
                 <nav class="nav flex-column nav-section">
@@ -218,11 +232,6 @@
                        th:href="@{/admin}">
                         <i class="bi bi-speedometer icon"></i>
                         <span>Dashboard</span>
-                    </a>
-                    <a class="nav-link" th:classappend="${page} == 'usuarios' ? ' active'"
-                       th:href="@{/admin/usuarios}">
-                        <i class="bi bi-people icon"></i>
-                        <span>Usuarios</span>
                     </a>
                     <a class="nav-link" th:classappend="${page} == 'roles' ? ' active'"
                        th:href="@{/admin/roles}">
@@ -233,6 +242,11 @@
                        th:href="@{/admin/food-trucks}">
                         <i class="bi bi-truck icon"></i>
                         <span>Food Trucks</span>
+                    </a>
+                    <a class="nav-link" th:classappend="${page} == 'horarios' ? ' active'"
+                       th:href="@{/admin/horarios}">
+                        <i class="bi bi-calendar-check icon"></i>
+                        <span>Horarios</span>
                     </a>
                     <a class="nav-link" th:classappend="${page} == 'promociones' ? ' active'"
                        th:href="@{/admin/promociones}">

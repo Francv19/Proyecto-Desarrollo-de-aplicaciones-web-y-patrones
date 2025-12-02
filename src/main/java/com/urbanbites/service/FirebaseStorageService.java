@@ -53,6 +53,34 @@ public class FirebaseStorageService {
             return null;
         }
     }
+    
+    public String cargaImagen(MultipartFile archivoLocalCliente, String carpeta) {
+        try {
+            // El nombre original del archivo local del cliente
+            String nombreOriginal = archivoLocalCliente.getOriginalFilename();
+            
+            if (nombreOriginal == null || nombreOriginal.isEmpty()) {
+                nombreOriginal = "imagen_" + System.currentTimeMillis() + ".jpg";
+            }
+
+            // Se genera el nombre único usando timestamp
+            String fileName = "img" + System.currentTimeMillis() + "_" + nombreOriginal;
+
+            // Se convierte/sube el archivo a un archivo temporal
+            File file = this.convertToFile(archivoLocalCliente);
+
+            // se copia a Firestore y se obtiene el url válido de la imagen (por 10 años) 
+            String URL = this.uploadFile(file, carpeta, fileName);
+
+            // Se elimina el archivo temporal cargado desde el cliente
+            file.delete();
+
+            return URL;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     private String uploadFile(File file, String carpeta, String fileName) throws IOException {
         //Se define el lugar y acceso al archivo .json

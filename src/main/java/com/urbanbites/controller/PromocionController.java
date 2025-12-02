@@ -16,9 +16,16 @@ public class PromocionController {
 
     @GetMapping("/promociones")
     public String verPromociones(Model model) {
-        List<Promocion> promociones = promocionService.obtenerPromocionesVigentes();
-        model.addAttribute("promocionesDestacadas", promociones);
-        model.addAttribute("cupones", promociones);
+        List<Promocion> todasPromociones = promocionService.obtenerPromocionesVigentes();
+        
+        // Promociones destacadas: las primeras 3
+        List<Promocion> promocionesDestacadas = todasPromociones.stream()
+                .limit(3)
+                .collect(java.util.stream.Collectors.toList());
+        
+        // Cupones: todas las promociones vigentes
+        model.addAttribute("promocionesDestacadas", promocionesDestacadas);
+        model.addAttribute("cupones", todasPromociones);
         return "promociones/index";
     }
 }

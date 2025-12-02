@@ -55,6 +55,7 @@ CREATE TABLE foodtrucks (
   telefono           VARCHAR(25),
   email              VARCHAR(120),
   porcentaje_puntos  TINYINT UNSIGNED DEFAULT 0 CHECK (porcentaje_puntos BETWEEN 0 AND 100),
+  ruta_imagen        VARCHAR(500),
   activo             BOOLEAN NOT NULL DEFAULT TRUE,
   fecha_creacion     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   fecha_modificacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

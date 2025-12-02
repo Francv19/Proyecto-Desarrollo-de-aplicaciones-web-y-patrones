@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+    <head>
+        <th:block th:replace="owner/promociones/fragmentos :: promocionesHead"></th:block>
+        <title>Nueva Promoción · Urban Bites</title>
+        <th:block th:replace="app/fragmentos :: appHead"></th:block>
+    </head>
+    <body class="bg-light" th:with="currentPage='promociones'">
+        <div class="d-flex min-vh-100">
+            <th:block th:replace="general/fragmentos :: sidebarOwner(${currentPage})"></th:block>
+
+            <main class="flex-grow-1 p-4" style="overflow-y: auto; background-color: #f5f5f5;">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="fw-bold mb-0">Nueva Promoción</h2>
+                    <a th:href="@{/owner/promociones}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Volver
+                    </a>
+                </div>
+
+                <div class="card" style="max-width: 600px; margin: 0 auto;">
+                    <div class="card-header" style="background-color: #104E43; color: white;">
+                        <h5 class="mb-0" th:text="'Food Truck: ' + ${foodtruck.nombre}">Food Truck</h5>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/owner/promociones/crear}" method="post">
+                            <input type="hidden" name="idFoodtruck" th:value="${foodtruck.idFoodtruck}">
+                            
+                            <div class="mb-3">
+                                <label for="tipoDescuento" class="form-label">Tipo de Descuento</label>
+                                <select class="form-select" id="tipoDescuento" name="tipoDescuento" required>
+                                    <option value="porcentaje">Porcentaje (%)</option>
+                                    <option value="monto_fijo">Monto Fijo (₡)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="valor" class="form-label">Valor del Descuento</label>
+                                <input type="number" class="form-control" id="valor" name="valor" 
+                                       step="0.01" min="0.01" required>
+                                <small class="text-muted">Ingresa el porcentaje (0-100) o el monto fijo según el tipo seleccionado</small>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="fechaInicio" class="form-label">Fecha de Inicio</label>
+                                <input type="datetime-local" class="form-control" id="fechaInicio" name="fechaInicio" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="fechaFin" class="form-label">Fecha de Fin</label>
+                                <input type="datetime-local" class="form-control" id="fechaFin" name="fechaFin" required>
+                            </div>
+                            
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn flex-grow-1" style="background-color: #ED3101; color: white;">
+                                    Crear Promoción
+                                </button>
+                                <a th:href="@{/owner/promociones}" class="btn btn-outline-secondary">
+                                    Cancelar
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script th:src="@{/js/rutinas.js}"></script>
+    </body>
+</html>
+

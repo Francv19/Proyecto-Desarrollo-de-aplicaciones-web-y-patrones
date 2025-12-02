@@ -7,7 +7,8 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface PuntosClienteRepository extends JpaRepository<PuntosCliente, Integer> {
-    List<PuntosCliente> findByUsuarioIdUsuario(Integer idUsuario);
+    @Query("SELECT p FROM PuntosCliente p LEFT JOIN FETCH p.foodtruck LEFT JOIN FETCH p.pedido WHERE p.usuario.idUsuario = :idUsuario ORDER BY p.fechaCreacion DESC")
+    List<PuntosCliente> findByUsuarioIdUsuario(@Param("idUsuario") Integer idUsuario);
     
     @Query("SELECT COALESCE(SUM(CASE WHEN p.tipo = 'acumulados' THEN p.puntos ELSE -p.puntos END), 0) " +
            "FROM PuntosCliente p WHERE p.usuario.idUsuario = :idUsuario")

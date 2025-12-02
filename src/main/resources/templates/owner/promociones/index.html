@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+    <head>
+        <th:block th:replace="owner/promociones/fragmentos :: promocionesHead"></th:block>
+        <title>Promociones · Urban Bites</title>
+        <th:block th:replace="app/fragmentos :: appHead"></th:block>
+        <th:block th:replace="owner/promociones/fragmentos :: promocionesStyles"></th:block>
+    </head>
+    <body class="bg-light" th:with="currentPage='promociones'">
+        <div class="d-flex min-vh-100">
+            <th:block th:replace="general/fragmentos :: sidebarOwner(${currentPage})"></th:block>
+
+            <main class="flex-grow-1 p-4" style="overflow-y: auto; background-color: #f5f5f5;">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="fw-bold mb-0">Promociones</h2>
+                </div>
+
+                <th:block th:replace="owner/promociones/fragmentos :: promocionesAlerts"></th:block>
+
+                <div th:if="${foodtrucks != null and !foodtrucks.isEmpty()}">
+                    <div class="card mb-4" th:each="foodtruck : ${foodtrucks}">
+                        <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #104E43; color: white;">
+                            <h5 class="mb-0" th:text="${foodtruck.nombre}">Food Truck</h5>
+                            <a th:href="@{/owner/promociones/nuevo(idFoodtruck=${foodtruck.idFoodtruck})}" 
+                               class="btn btn-sm" style="background-color: #ED3101; color: white;">
+                                <i class="bi bi-plus-circle"></i> Nueva Promoción
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            <div th:if="${promocionesPorFoodtruck != null and promocionesPorFoodtruck.get(foodtruck.idFoodtruck) != null and !promocionesPorFoodtruck.get(foodtruck.idFoodtruck).isEmpty()}">
+                                <div class="row g-3">
+                                    <div class="col-md-6" th:each="promocion : ${promocionesPorFoodtruck.get(foodtruck.idFoodtruck)}">
+                                        <div class="card border" th:classappend="${promocion.activo} ? 'border-success' : 'border-secondary'">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <h6 class="fw-bold mb-0">
+                                                        <span th:if="${promocion.tipoDescuento.name() == 'porcentaje'}" 
+                                                              th:text="${promocion.valor} + '% OFF'">10% OFF</span>
+                                                        <span th:if="${promocion.tipoDescuento.name() == 'monto_fijo'}" 
+                                                              th:text="'₡' + ${#numbers.formatDecimal(promocion.valor, 0, 'COMMA', 2, 'POINT')} + ' OFF'">₡1,000 OFF</span>
+                                                    </h6>
+                                                    <span class="badge" 
+                                                          th:class="${promocion.activo} ? 'bg-success' : 'bg-secondary'"
+                                                          th:text="${promocion.activo} ? 'Activa' : 'Inactiva'">
+                                                        Activa
+                                                    </span>
+                                                </div>
+                                                <p class="text-muted small mb-2">
+                                                    <span th:text="${#temporals.format(promocion.fechaInicio, 'dd MMM yyyy, hh:mm a')}">Inicio</span>
+                                                    <span> - </span>
+                                                    <span th:text="${#temporals.format(promocion.fechaFin, 'dd MMM yyyy, hh:mm a')}">Fin</span>
+                                                </p>
+                                                <div class="d-flex gap-2">
+                                                    <form th:action="@{/owner/promociones/{id}/eliminar(id=${promocion.idPromocion})}" 
+                                                          method="post" class="d-inline">
+                                                        <button type="submit" class="btn btn-sm btn-danger" 
+                                                                onclick="return confirm('¿Estás seguro de eliminar esta promoción?')">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                    <form th:if="${promocion.activo}" 
+                                                          th:action="@{/owner/promociones/{id}/desactivar(id=${promocion.idPromocion})}" 
+                                                          method="post" class="d-inline">
+                                                        <button type="submit" class="btn btn-sm btn-warning">
+                                                            <i class="bi bi-pause-circle"></i> Desactivar
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div th:if="${promocionesPorFoodtruck == null or promocionesPorFoodtruck.get(foodtruck.idFoodtruck) == null or promocionesPorFoodtruck.get(foodtruck.idFoodtruck).isEmpty()}">
+                                <p class="text-muted text-center py-3">No hay promociones configuradas para este food truck</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script th:src="@{/js/rutinas.js}"></script>
+    </body>
+</html>
+

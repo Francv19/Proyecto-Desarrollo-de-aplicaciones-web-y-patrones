@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+    <head>
+        <th:block th:replace="eventos/fragmentos :: eventosHead"></th:block>
+        <title>Mis Eventos · Urban Bites</title>
+        <th:block th:replace="app/fragmentos :: appHead"></th:block>
+    </head>
+    <body class="bg-light" th:with="currentPage='eventos'">
+        <div class="d-flex min-vh-100">
+            <th:block th:replace="general/fragmentos :: sidebarCliente(${currentPage})"></th:block>
+
+            <main class="flex-grow-1 p-4" style="overflow-y: auto;">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="fw-bold mb-0">Mis Solicitudes de Eventos</h2>
+                    <a th:href="@{/eventos/nuevo}" class="btn" style="background-color: #ED3101; color: white;">
+                        <i class="bi bi-plus-circle"></i> Nueva Solicitud
+                    </a>
+                </div>
+
+                <th:block th:replace="eventos/fragmentos :: eventosAlerts"></th:block>
+
+                <div th:if="${eventos != null and !eventos.isEmpty()}">
+                    <div class="card mb-3" th:each="evento : ${eventos}">
+                        <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #104E43; color: white;">
+                            <h5 class="mb-0" th:text="${evento.nombre}">Evento</h5>
+                            <span class="badge" 
+                                  th:class="${evento.estado.name() == 'aceptado'} ? 'bg-success' : 
+                                              (${evento.estado.name() == 'cotizado'} ? 'bg-info' : 
+                                              (${evento.estado.name() == 'pendiente'} ? 'bg-warning' : 
+                                              (${evento.estado.name() == 'rechazado'} ? 'bg-danger' : 'bg-secondary')))"
+                                  th:text="${#strings.capitalize(evento.estado.name())}">
+                                Estado
+                            </span>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <p class="mb-2"><strong>Food Truck:</strong> <span th:text="${evento.foodtruck.nombre}">Food Truck</span></p>
+                                    <p class="mb-2"><strong>Tipo de Servicio:</strong> <span th:text="${#strings.capitalize(evento.tipoServicio.name())}">Catering</span></p>
+                                    <p class="mb-2"><strong>Fecha:</strong> 
+                                        <span th:text="${#temporals.format(evento.fechaInicio, 'dd MMM yyyy, hh:mm a')}">Inicio</span>
+                                        <span> - </span>
+                                        <span th:text="${#temporals.format(evento.fechaFin, 'dd MMM yyyy, hh:mm a')}">Fin</span>
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-2" th:if="${evento.direccion != null}">
+                                        <strong>Dirección:</strong> <span th:text="${evento.direccion}">Dirección</span>
+                                    </p>
+                                    <p class="mb-2" th:if="${evento.invitados != null}">
+                                        <strong>Invitados:</strong> <span th:text="${evento.invitados}">0</span>
+                                    </p>
+                                    <p class="mb-2" th:if="${evento.montoCotizado != null}">
+                                        <strong>Monto Cotizado:</strong> 
+                                        <span th:text="'₡' + ${#numbers.formatDecimal(evento.montoCotizado, 0, 'COMMA', 2, 'POINT')}">₡0.00</span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div th:if="${evento.descripcion != null and !#strings.isEmpty(evento.descripcion)}">
+                                <p class="mb-2"><strong>Descripción:</strong></p>
+                                <p class="text-muted" th:text="${evento.descripcion}">Descripción</p>
+                            </div>
+                            <div th:if="${evento.detallesCotizacion != null and !#strings.isEmpty(evento.detallesCotizacion)}">
+                                <p class="mb-2"><strong>Detalles de Cotización:</strong></p>
+                                <p class="text-muted" th:text="${evento.detallesCotizacion}">Detalles</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div th:if="${eventos == null or eventos.isEmpty()}">
+                    <div class="text-center py-5">
+                        <i class="bi bi-calendar-x" style="font-size: 4rem; color: #ddd;"></i>
+                        <p class="text-muted mt-3">No has solicitado ningún evento aún</p>
+                        <a th:href="@{/eventos/nuevo}" class="btn" style="background-color: #ED3101; color: white;">
+                            Solicitar Evento
+                        </a>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script th:src="@{/js/rutinas.js}"></script>
+    </body>
+</html>
+
