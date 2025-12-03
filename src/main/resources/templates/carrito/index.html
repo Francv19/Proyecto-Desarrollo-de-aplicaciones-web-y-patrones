@@ -103,10 +103,79 @@
                             </div>
                         </div>
 
+                        <div class="mt-3 pt-3 border-top" th:if="${puntosInfo != null and puntosInfo.puntos > 0}">
+                            <div class="alert" style="background-color: #e7f3ff; border-left: 4px solid #104E43; border-radius: 8px;">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-star-fill text-warning me-2" style="font-size: 1.5rem;"></i>
+                                    <div class="flex-grow-1">
+                                        <strong>¡Ganarás puntos con este pedido!</strong>
+                                        <div class="mt-1">
+                                            <span class="text-muted small">Obtendrás:</span>
+                                            <strong class="ms-2" style="color: #104E43; font-size: 1.2rem;" th:text="${puntosInfo.puntos}">0</strong>
+                                            <span class="text-muted small ms-1">puntos</span>
+                                            <span class="badge ms-2" 
+                                                  th:classappend="${puntosInfo.esReglaEspecial} ? 'bg-success' : 'bg-secondary'"
+                                                  th:text="${puntosInfo.descripcion}">Regla</span>
+                                        </div>
+                                        <small class="text-muted d-block mt-1" th:text="'Aplicando ' + ${puntosInfo.porcentaje} + '% sobre el total del pedido'">Porcentaje</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="mt-3 pt-3 border-top" th:if="${saldoPuntos != null and saldoPuntos > 0}">
+                            <div class="card" style="background-color: #f8f9fa; border: 1px solid #dee2e6;">
+                                <div class="card-body p-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <div>
+                                            <span class="text-muted small">Puntos disponibles:</span>
+                                            <strong class="ms-2" th:text="${saldoPuntos}">0</strong>
+                                            <span class="text-muted small ms-1">puntos</span>
+                                        </div>
+                                        <i class="bi bi-star-fill text-warning"></i>
+                                    </div>
+                                    <div class="mb-2">
+                                        <label for="puntosACanjear" class="form-label small mb-1">Canjear puntos (10 puntos = ₡1.00)</label>
+                                        <div class="input-group input-group-sm">
+                                            <input type="number" 
+                                                   class="form-control" 
+                                                   id="puntosACanjear" 
+                                                   name="puntosACanjear"
+                                                   min="0" 
+                                                   th:max="${saldoPuntos}"
+                                                   step="1"
+                                                   value="0"
+                                                   oninput="calcularDescuento()"
+                                                   onchange="calcularDescuento()">
+                                            <button type="button" class="btn btn-outline-secondary" onclick="usarTodosLosPuntos()">
+                                                Usar todos
+                                            </button>
+                                        </div>
+                                        <small class="text-muted">Máximo: <span id="maxPuntos" th:text="${saldoPuntos}">0</span> puntos</small>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="text-muted small">Descuento aplicado:</span>
+                                        <strong class="text-success" id="descuentoAplicado">₡0.00</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
                             <div>
                                 <span class="text-muted" th:text="${carrito.detalles.size() + ' Artículo(s)'}">Artículos</span>
-                                <p class="fw-bold mb-0 mt-1" th:text="'Total: ₡' + ${#numbers.formatDecimal(total, 0, 'COMMA', 2, 'POINT')}">Total: ₡0.00</p>
+                                <div class="mt-1">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="text-muted small">Subtotal:</span>
+                                        <span class="text-muted small" id="subtotal" th:text="'₡' + ${#numbers.formatDecimal(total, 0, 'COMMA', 2, 'POINT')}">₡0.00</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center" id="descuentoLine" style="display: none !important;">
+                                        <span class="text-muted small">Descuento (puntos):</span>
+                                        <span class="text-success small" id="descuentoLineText">-₡0.00</span>
+                                    </div>
+                                    <p class="fw-bold mb-0 mt-1" id="totalFinal" th:text="'Total: ₡' + ${#numbers.formatDecimal(total, 0, 'COMMA', 2, 'POINT')}">Total: ₡0.00</p>
+                                </div>
                             </div>
                             <div class="d-flex gap-2">
                                 <form th:action="@{/carrito/vaciar}" method="post" class="d-inline">
@@ -114,7 +183,8 @@
                                         <i class="bi bi-x"></i>
                                     </button>
                                 </form>
-                                <form th:action="@{/carrito/confirmar}" method="post" class="d-inline">
+                                <form th:action="@{/carrito/confirmar}" method="post" class="d-inline" id="formConfirmar">
+                                    <input type="hidden" name="puntosACanjear" id="puntosACanjearHidden" value="0">
                                     <button type="submit" class="btn-action btn-confirm">
                                         <i class="bi bi-check"></i>
                                     </button>
@@ -174,5 +244,80 @@
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <script th:src="@{/js/rutinas.js}"></script>
+        <script th:inline="javascript">
+            const totalBruto = /*[[${total}]]*/ 0;
+            const saldoPuntos = /*[[${saldoPuntos != null ? saldoPuntos : 0}]]*/ 0;
+            
+            function formatearMoneda(valor) {
+                return '₡' + valor.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+            
+            function calcularDescuento() {
+                const puntosInput = document.getElementById('puntosACanjear');
+                if (!puntosInput) return;
+                
+                let puntos = parseInt(puntosInput.value) || 0;
+                
+                if (puntos > saldoPuntos) {
+                    puntos = saldoPuntos;
+                    puntosInput.value = puntos;
+                }
+                
+                if (puntos < 0) {
+                    puntos = 0;
+                    puntosInput.value = 0;
+                }
+                
+                const descuento = puntos / 10;
+                
+                const descuentoFinal = Math.min(descuento, totalBruto);
+                
+                const puntosReales = Math.floor(descuentoFinal * 10);
+                
+                const descuentoAplicadoEl = document.getElementById('descuentoAplicado');
+                if (descuentoAplicadoEl) {
+                    descuentoAplicadoEl.textContent = formatearMoneda(descuentoFinal);
+                }
+                
+                const totalFinal = Math.max(0, totalBruto - descuentoFinal);
+                const totalFinalEl = document.getElementById('totalFinal');
+                if (totalFinalEl) {
+                    totalFinalEl.textContent = 'Total: ' + formatearMoneda(totalFinal);
+                }
+                
+                const descuentoLine = document.getElementById('descuentoLine');
+                const descuentoLineText = document.getElementById('descuentoLineText');
+                if (descuentoLine && descuentoLineText) {
+                    if (descuentoFinal > 0) {
+                        descuentoLine.style.display = 'flex';
+                        descuentoLineText.textContent = '-' + formatearMoneda(descuentoFinal);
+                    } else {
+                        descuentoLine.style.display = 'none';
+                    }
+                }
+                
+                const puntosHidden = document.getElementById('puntosACanjearHidden');
+                if (puntosHidden) {
+                    puntosHidden.value = puntosReales;
+                }
+            }
+            
+            function usarTodosLosPuntos() {
+                const puntosInput = document.getElementById('puntosACanjear');
+                if (!puntosInput) return;
+                
+                const maxPuntosPorTotal = Math.floor(totalBruto * 10);
+                const puntosAUsar = Math.min(saldoPuntos, maxPuntosPorTotal);
+                
+                puntosInput.value = puntosAUsar;
+                calcularDescuento();
+            }
+            
+            document.addEventListener('DOMContentLoaded', function() {
+                if (saldoPuntos > 0) {
+                    calcularDescuento();
+                }
+            });
+        </script>
     </body>
 </html>

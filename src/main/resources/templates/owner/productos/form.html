@@ -48,17 +48,26 @@
                     <form th:action="${producto != null and producto.idProducto != null ? '/owner/productos/' + producto.idProducto + '/actualizar' : '/owner/productos/crear'}" 
                           method="post">
                         <div class="mb-3">
-                            <label for="idMenu" class="form-label">Menú <span class="text-danger">*</span></label>
-                            <select class="form-select" id="idMenu" name="idMenu" required>
-                                <option value="">Seleccione un menú</option>
-                                <option th:each="menu : ${menus}" 
-                                        th:value="${menu.idMenu}" 
-                                        th:text="${menu.nombre}"
-                                        th:selected="${producto != null and producto.menu != null and producto.menu.idMenu == menu.idMenu}">
+                            <label for="idFoodtruck" class="form-label">Food Truck <span class="text-danger">*</span></label>
+                            <select class="form-select" id="idFoodtruck" name="idFoodtruck" required 
+                                    th:disabled="${producto != null and producto.idProducto != null}">
+                                <option value="">Seleccione un food truck</option>
+                                <option th:each="ft : ${foodtrucks}" 
+                                        th:value="${ft.idFoodtruck}" 
+                                        th:text="${ft.nombre}"
+                                        th:selected="${foodtruckSeleccionado != null and foodtruckSeleccionado.idFoodtruck == ft.idFoodtruck}">
                                 </option>
                             </select>
-                            <small class="form-text text-muted">Seleccione el menú al que pertenece este producto</small>
+                            <small class="form-text text-muted" th:if="${producto != null and producto.idProducto != null}">
+                                No se puede cambiar el food truck de un producto existente
+                            </small>
+                            <small class="form-text text-muted" th:unless="${producto != null and producto.idProducto != null}">
+                                Seleccione el food truck para este producto
+                            </small>
                         </div>
+                        
+                        <!-- Campo oculto para el menú principal -->
+                        <input type="hidden" id="idMenu" name="idMenu" th:value="${menuPrincipal != null ? menuPrincipal.idMenu : ''}">
                         
                         <div class="mb-3">
                             <label for="nombre" class="form-label">Nombre del Producto <span class="text-danger">*</span></label>
@@ -117,14 +126,47 @@
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <script th:src="@{/js/rutinas.js}"></script>
-        <script>
-            // Validación del precio
-            document.getElementById('precio').addEventListener('input', function(e) {
-                const value = parseFloat(e.target.value);
-                if (value <= 0) {
-                    e.target.setCustomValidity('El precio debe ser mayor a 0');
-                } else {
-                    e.target.setCustomValidity('');
+        <script th:inline="javascript">
+            // Mapa de menús principales por food truck
+            const menusPorFoodtruck = /*[[${menusPorFoodtruck}]]*/ {};
+            
+            // Función para actualizar el menú principal cuando cambia el food truck
+            function actualizarMenuPrincipal() {
+                const foodtruckSelect = document.getElementById('idFoodtruck');
+                const menuInput = document.getElementById('idMenu');
+                
+                if (foodtruckSelect && menuInput) {
+                    const foodtruckId = parseInt(foodtruckSelect.value);
+                    
+                    if (foodtruckId && menusPorFoodtruck[foodtruckId]) {
+                        menuInput.value = menusPorFoodtruck[foodtruckId];
+                    } else {
+                        menuInput.value = '';
+                    }
+                }
+            }
+            
+            // Inicializar cuando el DOM esté listo
+            document.addEventListener('DOMContentLoaded', function() {
+                const foodtruckSelect = document.getElementById('idFoodtruck');
+                if (foodtruckSelect) {
+                    // Event listener para el selector de food truck
+                    foodtruckSelect.addEventListener('change', actualizarMenuPrincipal);
+                    // Inicializar menú al cargar la página
+                    actualizarMenuPrincipal();
+                }
+                
+                // Validación del precio
+                const precioInput = document.getElementById('precio');
+                if (precioInput) {
+                    precioInput.addEventListener('input', function(e) {
+                        const value = parseFloat(e.target.value);
+                        if (value <= 0) {
+                            e.target.setCustomValidity('El precio debe ser mayor a 0');
+                        } else {
+                            e.target.setCustomValidity('');
+                        }
+                    });
                 }
             });
         </script>

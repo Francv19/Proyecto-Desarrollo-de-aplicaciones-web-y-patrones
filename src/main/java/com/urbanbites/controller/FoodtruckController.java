@@ -5,6 +5,7 @@ import com.urbanbites.domain.Usuario;
 import com.urbanbites.repository.UsuarioRepository;
 import com.urbanbites.service.FoodtruckService;
 import com.urbanbites.service.FirebaseStorageService;
+import com.urbanbites.service.ReglaPuntosService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,6 +30,9 @@ public class FoodtruckController {
     @Autowired
     private FirebaseStorageService firebaseStorageService;
     
+    @Autowired
+    private ReglaPuntosService reglaPuntosService;
+    
     private Usuario obtenerUsuarioActual() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return usuarioRepository.findByUsername(auth.getName());
@@ -43,6 +47,13 @@ public class FoodtruckController {
             }
             
             List<Foodtruck> foodtrucks = foodtruckService.obtenerFoodtrucksPorDueno(usuario.getIdUsuario());
+            
+            // Debug: verificar que las imágenes se están cargando
+            if (foodtrucks != null) {
+                for (Foodtruck ft : foodtrucks) {
+                    System.out.println("Food Truck: " + ft.getNombre() + ", rutaImagen: " + ft.getRutaImagen());
+                }
+            }
             
             model.addAttribute("foodtrucks", foodtrucks != null ? foodtrucks : new java.util.ArrayList<>());
             model.addAttribute("page", "foodtrucks");
@@ -79,7 +90,9 @@ public class FoodtruckController {
             if (imagen != null && !imagen.isEmpty()) {
                 try {
                     rutaImagen = firebaseStorageService.cargaImagen(imagen, "foodtrucks/" + usuario.getIdUsuario() + "/");
+                    System.out.println("Imagen subida exitosamente. URL: " + rutaImagen);
                 } catch (Exception e) {
+                    e.printStackTrace();
                     redirectAttributes.addFlashAttribute("error", "Error al subir la imagen: " + e.getMessage());
                     return "redirect:/owner/foodtrucks/nuevo";
                 }
@@ -122,7 +135,13 @@ public class FoodtruckController {
             return "redirect:/owner/foodtrucks?error=No tienes permiso para editar este food truck";
         }
         
+        // Obtener información sobre reglas de puntos
+        List<com.urbanbites.domain.ReglaPuntos> reglas = reglaPuntosService.obtenerReglasPorFoodtruck(id);
+        long reglasActivas = reglas.stream().filter(r -> r.getActivo() != null && r.getActivo()).count();
+        
         model.addAttribute("foodtruck", foodtruck);
+        model.addAttribute("tieneReglas", !reglas.isEmpty());
+        model.addAttribute("reglasActivas", reglasActivas);
         model.addAttribute("page", "foodtrucks");
         
         return "owner/foodtrucks/form";
@@ -158,7 +177,9 @@ public class FoodtruckController {
             if (imagen != null && !imagen.isEmpty()) {
                 try {
                     rutaImagen = firebaseStorageService.cargaImagen(imagen, "foodtrucks/" + usuario.getIdUsuario() + "/");
+                    System.out.println("Imagen actualizada exitosamente. URL: " + rutaImagen);
                 } catch (Exception e) {
+                    e.printStackTrace();
                     redirectAttributes.addFlashAttribute("error", "Error al subir la imagen: " + e.getMessage());
                     return "redirect:/owner/foodtrucks/" + id + "/editar";
                 }

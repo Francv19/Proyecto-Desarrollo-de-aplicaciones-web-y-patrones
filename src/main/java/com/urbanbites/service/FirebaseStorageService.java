@@ -43,6 +43,10 @@ public class FirebaseStorageService {
 
             // se copia a Firestore y se obtiene el url válido de la imagen (por 10 años) 
             String URL = this.uploadFile(file, carpeta, fileName);
+            
+            if (URL == null) {
+                throw new IOException("No se pudo obtener la URL de la imagen subida");
+            }
 
             // Se elimina el archivo temporal cargado desde el cliente
             file.delete();
@@ -50,7 +54,7 @@ public class FirebaseStorageService {
             return URL;
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
+            throw new RuntimeException("Error al subir imagen: " + e.getMessage(), e);
         }
     }
     
@@ -71,6 +75,10 @@ public class FirebaseStorageService {
 
             // se copia a Firestore y se obtiene el url válido de la imagen (por 10 años) 
             String URL = this.uploadFile(file, carpeta, fileName);
+            
+            if (URL == null) {
+                throw new IOException("No se pudo obtener la URL de la imagen subida");
+            }
 
             // Se elimina el archivo temporal cargado desde el cliente
             file.delete();
@@ -78,7 +86,7 @@ public class FirebaseStorageService {
             return URL;
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
+            throw new RuntimeException("Error al subir imagen: " + e.getMessage(), e);
         }
     }
 

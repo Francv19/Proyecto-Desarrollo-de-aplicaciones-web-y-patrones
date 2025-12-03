@@ -67,11 +67,12 @@
                                 </div>
                                 <div class="text-end">
                                     <span class="fw-bold fs-5"
-                                          th:classappend="${movimiento.tipo == T(com.urbanbites.domain.PuntosCliente.TipoPunto).acumulados} ? 'movimiento-positivo' : 'movimiento-negativo'"
-                                          th:text="${movimiento.tipo == T(com.urbanbites.domain.PuntosCliente.TipoPunto).acumulados} ? '+' + movimiento.puntos : '-' + movimiento.puntos}">
-                                        +8
+                                          th:classappend="${movimiento.tipo != null and movimiento.tipo.name() == 'acumulados'} ? 'movimiento-positivo' : 'movimiento-negativo'">
+                                        <span th:if="${movimiento.tipo != null and movimiento.tipo.name() == 'acumulados'}">+</span>
+                                        <span th:unless="${movimiento.tipo != null and movimiento.tipo.name() == 'acumulados'}">-</span>
+                                        <span th:text="${movimiento.puntos != null ? movimiento.puntos : 0}">0</span>
                                     </span>
-                                    <p class="text-muted small mb-0 mt-1" th:text="${movimiento.tipo == T(com.urbanbites.domain.PuntosCliente.TipoPunto).acumulados} ? 'Acumulados' : 'Redimidos'">Acumulados</p>
+                                    <p class="text-muted small mb-0 mt-1" th:text="${movimiento.tipo != null and movimiento.tipo.name() == 'acumulados'} ? 'Acumulados' : 'Redimidos'">Acumulados</p>
                                 </div>
                             </div>
                         </div>

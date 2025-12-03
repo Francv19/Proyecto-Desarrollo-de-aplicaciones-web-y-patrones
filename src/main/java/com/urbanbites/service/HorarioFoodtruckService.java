@@ -27,6 +27,16 @@ public class HorarioFoodtruckService {
     }
     
     @Transactional(readOnly = true)
+    public List<HorarioFoodtruck> obtenerTodosHorariosPorFoodtruck(Integer idFoodtruck) {
+        return horarioFoodtruckRepository.findByFoodtruckIdFoodtruck(idFoodtruck);
+    }
+    
+    @Transactional(readOnly = true)
+    public HorarioFoodtruck obtenerHorarioPorId(Integer idHorario) {
+        return horarioFoodtruckRepository.findById(idHorario).orElse(null);
+    }
+    
+    @Transactional(readOnly = true)
     public Map<Integer, List<HorarioFoodtruck>> obtenerHorariosAgrupadosPorFoodtruck() {
         List<HorarioFoodtruck> horarios = horarioFoodtruckRepository.findAllHorariosActivos();
         return horarios.stream()

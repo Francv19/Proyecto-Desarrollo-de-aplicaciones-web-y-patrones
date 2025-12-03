@@ -40,6 +40,9 @@ public class CarritoService {
     
     @Autowired
     private DetallePedidoRepository detallePedidoRepository;
+    
+    @Autowired
+    private com.urbanbites.service.PuntosService puntosService;
 
     public Carrito obtenerCarritoAbierto(Integer idUsuario) {
         if (idUsuario == null) {
@@ -158,7 +161,7 @@ public class CarritoService {
         detalleCarritoRepository.deleteById(idDetalle);
     }
 
-    public Pedido confirmarPedido(Integer idUsuario) {
+    public Pedido confirmarPedido(Integer idUsuario, Integer puntosACanjear) {
         if (idUsuario == null) {
             throw new IllegalArgumentException("El ID del usuario no puede ser nulo");
         }
@@ -208,16 +211,45 @@ public class CarritoService {
             totalBruto = totalBruto.add(subtotal);
         }
         
+        // Calcular descuento por puntos si se proporcionaron (solo validación, no crear movimiento aún)
+        BigDecimal descuento = BigDecimal.ZERO;
+        if (puntosACanjear != null && puntosACanjear > 0) {
+            // Validar que el usuario tenga suficientes puntos
+            Integer saldoDisponible = puntosService.obtenerSaldoPuntos(usuario.getIdUsuario());
+            if (saldoDisponible < puntosACanjear) {
+                throw new RuntimeException("No tienes suficientes puntos. Saldo disponible: " + saldoDisponible);
+            }
+            
+            // Conversión: 10 puntos = 1 colón
+            descuento = new BigDecimal(puntosACanjear).divide(new BigDecimal(10), 2, java.math.RoundingMode.DOWN);
+            // Asegurar que el descuento no sea mayor al total bruto
+            if (descuento.compareTo(totalBruto) > 0) {
+                descuento = totalBruto;
+                // Ajustar puntos a canjear al máximo posible
+                puntosACanjear = totalBruto.multiply(new BigDecimal(10)).intValue();
+            }
+        }
+        
+        BigDecimal totalNeto = totalBruto.subtract(descuento);
+        if (totalNeto.compareTo(BigDecimal.ZERO) < 0) {
+            totalNeto = BigDecimal.ZERO;
+        }
+        
         Pedido pedido = new Pedido();
         pedido.setUsuario(usuario);
         pedido.setFoodtruck(foodtruck);
         pedido.setEstado(Pedido.EstadoPedido.recibido);
         pedido.setTotalBruto(totalBruto);
-        pedido.setDescuento(BigDecimal.ZERO);
-        pedido.setTotalNeto(totalBruto);
+        pedido.setDescuento(descuento);
+        pedido.setTotalNeto(totalNeto);
         pedido.setFechaCreacion(LocalDateTime.now());
         
         pedido = pedidoRepository.save(pedido);
+        
+        // Si se canjearon puntos, crear el movimiento después de crear el pedido
+        if (puntosACanjear != null && puntosACanjear > 0 && descuento.compareTo(BigDecimal.ZERO) > 0) {
+            puntosService.redimirPuntos(usuario.getIdUsuario(), puntosACanjear, pedido.getIdPedido(), foodtruck.getIdFoodtruck());
+        }
         
         List<com.urbanbites.domain.DetallePedido> detallesPedido = new java.util.ArrayList<>();
         for (DetalleCarrito detalle : carrito.getDetalles()) {

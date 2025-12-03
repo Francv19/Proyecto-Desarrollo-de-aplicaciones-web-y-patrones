@@ -100,7 +100,18 @@
                         </div>
                         
                         <div class="mb-3">
-                            <label for="porcentajePuntos" class="form-label">Porcentaje de Puntos</label>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label for="porcentajePuntos" class="form-label mb-0">Porcentaje de Puntos por Defecto</label>
+                                <a th:href="${foodtruck != null and foodtruck.idFoodtruck != null ? '/owner/reglas-puntos?foodtruckId=' + foodtruck.idFoodtruck : '/owner/reglas-puntos'}" 
+                                   class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-star"></i> Configurar Reglas
+                                    <span th:if="${tieneReglas != null and tieneReglas}" 
+                                          class="badge bg-danger ms-1" 
+                                          th:text="${reglasActivas != null ? reglasActivas : 0}">
+                                        0
+                                    </span>
+                                </a>
+                            </div>
                             <input type="number" 
                                    class="form-control" 
                                    id="porcentajePuntos" 
@@ -108,7 +119,18 @@
                                    th:value="${foodtruck?.porcentajePuntos}"
                                    min="0" 
                                    max="100">
-                            <small class="form-text text-muted">Porcentaje de puntos que se otorgan a los clientes por compras (0-100)</small>
+                            <small class="form-text text-muted">
+                                Porcentaje base de puntos otorgados por compras (0-100). 
+                                <strong>Nota:</strong> Puedes crear reglas específicas con fechas en 
+                                <a th:href="${foodtruck != null and foodtruck.idFoodtruck != null ? '/owner/reglas-puntos?foodtruckId=' + foodtruck.idFoodtruck : '/owner/reglas-puntos'}" 
+                                   class="text-decoration-none">Reglas de Puntos</a>, 
+                                las cuales tendrán prioridad sobre este valor por defecto.
+                            </small>
+                            <div th:if="${tieneReglas != null and tieneReglas}" class="alert alert-info mt-2 mb-0" role="alert">
+                                <i class="bi bi-info-circle"></i>
+                                <strong>Este food truck tiene <span th:text="${reglasActivas != null ? reglasActivas : 0}">0</span> regla(s) activa(s).</strong>
+                                Las reglas activas tienen prioridad sobre el porcentaje por defecto.
+                            </div>
                         </div>
                         
                         <div class="mb-3">

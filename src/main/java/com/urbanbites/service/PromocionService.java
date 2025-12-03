@@ -29,7 +29,7 @@ public class PromocionService {
     }
     
     public Promocion crearPromocion(Integer idFoodtruck, Promocion.TipoDescuento tipoDescuento,
-                                   BigDecimal valor, LocalDateTime fechaInicio, LocalDateTime fechaFin) {
+                                   BigDecimal valor, String descripcion, LocalDateTime fechaInicio, LocalDateTime fechaFin) {
         if (valor == null || valor.compareTo(BigDecimal.ZERO) <= 0) {
             throw new RuntimeException("El valor debe ser mayor a 0");
         }
@@ -45,6 +45,7 @@ public class PromocionService {
         promocion.setFoodtruck(foodtruck);
         promocion.setTipoDescuento(tipoDescuento);
         promocion.setValor(valor);
+        promocion.setDescripcion(descripcion);
         promocion.setFechaInicio(fechaInicio);
         promocion.setFechaFin(fechaFin);
         promocion.setActivo(true);
@@ -53,7 +54,7 @@ public class PromocionService {
     }
     
     public Promocion actualizarPromocion(Integer idPromocion, Promocion.TipoDescuento tipoDescuento,
-                                        BigDecimal valor, LocalDateTime fechaInicio, LocalDateTime fechaFin) {
+                                        BigDecimal valor, String descripcion, LocalDateTime fechaInicio, LocalDateTime fechaFin) {
         Promocion promocion = promocionRepository.findById(idPromocion)
             .orElseThrow(() -> new RuntimeException("Promoción no encontrada"));
         
@@ -69,6 +70,7 @@ public class PromocionService {
         
         if (tipoDescuento != null) promocion.setTipoDescuento(tipoDescuento);
         if (valor != null) promocion.setValor(valor);
+        if (descripcion != null) promocion.setDescripcion(descripcion);
         if (fechaInicio != null) promocion.setFechaInicio(fechaInicio);
         if (fechaFin != null) promocion.setFechaFin(fechaFin);
         

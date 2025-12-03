@@ -35,25 +35,45 @@ public class ProductoController {
     @Autowired
     private UsuarioRepository usuarioRepository;
     
-    private Foodtruck obtenerFoodtruckDelDueno() {
+    private Usuario obtenerUsuarioActual() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Usuario usuario = usuarioRepository.findByUsername(auth.getName());
-        
+        return usuarioRepository.findByUsername(auth.getName());
+    }
+    
+    private List<Foodtruck> obtenerFoodtrucksDelDueno() {
+        Usuario usuario = obtenerUsuarioActual();
         List<Foodtruck> foodtrucks = foodtruckRepository.findByDuenoIdUsuario(usuario.getIdUsuario());
         if (foodtrucks.isEmpty()) {
             throw new RuntimeException("No se encontró un food truck para este dueño");
         }
-        return foodtrucks.get(0); // Tomar el primero, se puede mejorar para manejar múltiples
+        return foodtrucks;
     }
     
     @GetMapping
-    public String listarProductos(Model model, RedirectAttributes redirectAttributes) {
+    public String listarProductos(@RequestParam(required = false) Integer foodtruckId, Model model, RedirectAttributes redirectAttributes) {
         try {
-            Foodtruck foodtruck = obtenerFoodtruckDelDueno();
-            List<Producto> productos = productoService.obtenerTodosProductosPorFoodtruck(foodtruck.getIdFoodtruck());
+            List<Foodtruck> foodtrucks = obtenerFoodtrucksDelDueno();
+            List<Producto> productos = new java.util.ArrayList<>();
+            Foodtruck foodtruckSeleccionado = null;
+            
+            if (foodtruckId != null) {
+                foodtruckSeleccionado = foodtrucks.stream()
+                    .filter(ft -> ft.getIdFoodtruck().equals(foodtruckId))
+                    .findFirst()
+                    .orElse(null);
+                
+                if (foodtruckSeleccionado != null) {
+                    productos = productoService.obtenerTodosProductosPorFoodtruck(foodtruckSeleccionado.getIdFoodtruck());
+                }
+            } else if (!foodtrucks.isEmpty()) {
+                // Si no hay selección, usar el primero por defecto
+                foodtruckSeleccionado = foodtrucks.get(0);
+                productos = productoService.obtenerTodosProductosPorFoodtruck(foodtruckSeleccionado.getIdFoodtruck());
+            }
             
             model.addAttribute("productos", productos != null ? productos : new java.util.ArrayList<>());
-            model.addAttribute("foodtruck", foodtruck);
+            model.addAttribute("foodtrucks", foodtrucks);
+            model.addAttribute("foodtruckSeleccionado", foodtruckSeleccionado);
             model.addAttribute("page", "productos");
             
             return "owner/productos/index";
@@ -75,19 +95,44 @@ public class ProductoController {
     }
     
     @GetMapping("/nuevo")
-    public String mostrarFormularioNuevo(Model model, RedirectAttributes redirectAttributes) {
+    public String mostrarFormularioNuevo(@RequestParam(required = false) Integer foodtruckId, Model model, RedirectAttributes redirectAttributes) {
         try {
-            Foodtruck foodtruck = obtenerFoodtruckDelDueno();
-            List<Menu> menus = menuRepository.findByFoodtruckIdFoodtruckAndActivoTrue(foodtruck.getIdFoodtruck());
+            List<Foodtruck> foodtrucks = obtenerFoodtrucksDelDueno();
+            Foodtruck foodtruckSeleccionado = null;
+            Menu menuPrincipal = null;
+            java.util.Map<Integer, Integer> menusPorFoodtruck = new java.util.HashMap<>();
             
-            if (menus.isEmpty()) {
-                redirectAttributes.addFlashAttribute("error", "No hay menús disponibles. Por favor, contacta al administrador.");
-                return "redirect:/owner/productos";
+            if (foodtruckId != null) {
+                foodtruckSeleccionado = foodtrucks.stream()
+                    .filter(ft -> ft.getIdFoodtruck().equals(foodtruckId))
+                    .findFirst()
+                    .orElse(null);
+            }
+            
+            if (foodtruckSeleccionado == null && !foodtrucks.isEmpty()) {
+                foodtruckSeleccionado = foodtrucks.get(0);
+            }
+            
+            for (Foodtruck ft : foodtrucks) {
+                List<Menu> menus = menuRepository.findByFoodtruckIdFoodtruckAndActivoTrue(ft.getIdFoodtruck());
+                if (!menus.isEmpty()) {
+                    Menu menu = menus.stream()
+                        .filter(m -> "Menú Principal".equalsIgnoreCase(m.getNombre()))
+                        .findFirst()
+                        .orElse(menus.get(0));
+                    menusPorFoodtruck.put(ft.getIdFoodtruck(), menu.getIdMenu());
+                    
+                    if (foodtruckSeleccionado != null && ft.getIdFoodtruck().equals(foodtruckSeleccionado.getIdFoodtruck())) {
+                        menuPrincipal = menu;
+                    }
+                }
             }
             
             model.addAttribute("producto", new Producto());
-            model.addAttribute("menus", menus);
-            model.addAttribute("foodtruck", foodtruck);
+            model.addAttribute("foodtrucks", foodtrucks);
+            model.addAttribute("foodtruckSeleccionado", foodtruckSeleccionado);
+            model.addAttribute("menuPrincipal", menuPrincipal);
+            model.addAttribute("menusPorFoodtruck", menusPorFoodtruck);
             model.addAttribute("page", "productos");
             
             return "owner/productos/form";
@@ -102,17 +147,41 @@ public class ProductoController {
     }
     
     @PostMapping("/crear")
-    public String crearProducto(@RequestParam Integer idMenu,
+    public String crearProducto(@RequestParam Integer idFoodtruck,
+                                @RequestParam(required = false) Integer idMenu,
                                 @RequestParam String nombre,
                                 @RequestParam(required = false) String descripcion,
                                 @RequestParam BigDecimal precio,
                                 @RequestParam(defaultValue = "true") Boolean disponible,
                                 RedirectAttributes redirectAttributes) {
         try {
-            Foodtruck foodtruck = obtenerFoodtruckDelDueno();
+            // Validar que el food truck pertenece al dueño
+            List<Foodtruck> foodtrucks = obtenerFoodtrucksDelDueno();
+            boolean perteneceAlDueno = foodtrucks.stream()
+                .anyMatch(ft -> ft.getIdFoodtruck().equals(idFoodtruck));
+            
+            if (!perteneceAlDueno) {
+                redirectAttributes.addFlashAttribute("error", "No tienes permiso para crear productos en este food truck");
+                return "redirect:/owner/productos/nuevo?foodtruckId=" + idFoodtruck;
+            }
+            
+            // Si no se proporciona idMenu, obtener el menú principal del food truck
+            if (idMenu == null) {
+                List<Menu> menus = menuRepository.findByFoodtruckIdFoodtruckAndActivoTrue(idFoodtruck);
+                if (menus.isEmpty()) {
+                    redirectAttributes.addFlashAttribute("error", "No hay menús disponibles para este food truck");
+                    return "redirect:/owner/productos/nuevo?foodtruckId=" + idFoodtruck;
+                }
+                // Buscar "Menú Principal" o tomar el primero
+                Menu menuPrincipal = menus.stream()
+                    .filter(m -> "Menú Principal".equalsIgnoreCase(m.getNombre()))
+                    .findFirst()
+                    .orElse(menus.get(0));
+                idMenu = menuPrincipal.getIdMenu();
+            }
             
             productoService.crearProducto(
-                foodtruck.getIdFoodtruck(),
+                idFoodtruck,
                 idMenu,
                 nombre,
                 descripcion,
@@ -121,34 +190,57 @@ public class ProductoController {
             );
             
             redirectAttributes.addFlashAttribute("mensaje", "Producto creado exitosamente");
-            return "redirect:/owner/productos";
+            return "redirect:/owner/productos?foodtruckId=" + idFoodtruck;
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/owner/productos/nuevo";
+            return "redirect:/owner/productos/nuevo?foodtruckId=" + idFoodtruck;
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error al crear producto: " + e.getMessage());
-            return "redirect:/owner/productos/nuevo";
+            return "redirect:/owner/productos/nuevo?foodtruckId=" + idFoodtruck;
         }
     }
     
     @GetMapping("/{id}/editar")
     public String mostrarFormularioEditar(@PathVariable Integer id, Model model) {
         try {
-            Foodtruck foodtruck = obtenerFoodtruckDelDueno();
+            List<Foodtruck> foodtrucks = obtenerFoodtrucksDelDueno();
             Producto producto = productoService.obtenerProductoPorId(id);
             
             if (producto == null) {
                 return "redirect:/owner/productos?error=Producto no encontrado";
             }
-                        if (!producto.getFoodtruck().getIdFoodtruck().equals(foodtruck.getIdFoodtruck())) {
+            
+            boolean perteneceAlDueno = foodtrucks.stream()
+                .anyMatch(ft -> ft.getIdFoodtruck().equals(producto.getFoodtruck().getIdFoodtruck()));
+            
+            if (!perteneceAlDueno) {
                 return "redirect:/owner/productos?error=No tienes permiso para editar este producto";
             }
             
-            List<Menu> menus = menuRepository.findByFoodtruckIdFoodtruckAndActivoTrue(foodtruck.getIdFoodtruck());
+            Foodtruck foodtruckProducto = producto.getFoodtruck();
+            Menu menuPrincipal = null;
+            java.util.Map<Integer, Integer> menusPorFoodtruck = new java.util.HashMap<>();
+            
+            for (Foodtruck ft : foodtrucks) {
+                List<Menu> menus = menuRepository.findByFoodtruckIdFoodtruckAndActivoTrue(ft.getIdFoodtruck());
+                if (!menus.isEmpty()) {
+                    Menu menu = menus.stream()
+                        .filter(m -> "Menú Principal".equalsIgnoreCase(m.getNombre()))
+                        .findFirst()
+                        .orElse(menus.get(0));
+                    menusPorFoodtruck.put(ft.getIdFoodtruck(), menu.getIdMenu());
+                    
+                    if (ft.getIdFoodtruck().equals(foodtruckProducto.getIdFoodtruck())) {
+                        menuPrincipal = menu;
+                    }
+                }
+            }
             
             model.addAttribute("producto", producto);
-            model.addAttribute("menus", menus);
-            model.addAttribute("foodtruck", foodtruck);
+            model.addAttribute("foodtrucks", foodtrucks);
+            model.addAttribute("foodtruckSeleccionado", foodtruckProducto);
+            model.addAttribute("menuPrincipal", menuPrincipal);
+            model.addAttribute("menusPorFoodtruck", menusPorFoodtruck);
             model.addAttribute("page", "productos");
             
             return "owner/productos/form";
@@ -159,14 +251,15 @@ public class ProductoController {
     
     @PostMapping("/{id}/actualizar")
     public String actualizarProducto(@PathVariable Integer id,
-                                     @RequestParam Integer idMenu,
+                                     @RequestParam Integer idFoodtruck,
+                                     @RequestParam(required = false) Integer idMenu,
                                      @RequestParam String nombre,
                                      @RequestParam(required = false) String descripcion,
                                      @RequestParam BigDecimal precio,
                                      @RequestParam(defaultValue = "true") Boolean disponible,
                                      RedirectAttributes redirectAttributes) {
         try {
-            Foodtruck foodtruck = obtenerFoodtruckDelDueno();
+            List<Foodtruck> foodtrucks = obtenerFoodtrucksDelDueno();
             Producto producto = productoService.obtenerProductoPorId(id);
             
             if (producto == null) {
@@ -174,15 +267,31 @@ public class ProductoController {
                 return "redirect:/owner/productos";
             }
             
-            if (!producto.getFoodtruck().getIdFoodtruck().equals(foodtruck.getIdFoodtruck())) {
+            boolean perteneceAlDueno = foodtrucks.stream()
+                .anyMatch(ft -> ft.getIdFoodtruck().equals(idFoodtruck));
+            
+            if (!perteneceAlDueno) {
                 redirectAttributes.addFlashAttribute("error", "No tienes permiso para editar este producto");
                 return "redirect:/owner/productos";
             }
             
-            productoService.actualizarProducto(id, idMenu, nombre, descripcion, precio, disponible);
+            if (idMenu == null) {
+                List<Menu> menus = menuRepository.findByFoodtruckIdFoodtruckAndActivoTrue(idFoodtruck);
+                if (menus.isEmpty()) {
+                    redirectAttributes.addFlashAttribute("error", "No hay menús disponibles para este food truck");
+                    return "redirect:/owner/productos/" + id + "/editar";
+                }
+                Menu menuPrincipal = menus.stream()
+                    .filter(m -> "Menú Principal".equalsIgnoreCase(m.getNombre()))
+                    .findFirst()
+                    .orElse(menus.get(0));
+                idMenu = menuPrincipal.getIdMenu();
+            }
+            
+            productoService.actualizarProducto(id, idFoodtruck, idMenu, nombre, descripcion, precio, disponible);
             
             redirectAttributes.addFlashAttribute("mensaje", "Producto actualizado exitosamente");
-            return "redirect:/owner/productos";
+            return "redirect:/owner/productos?foodtruckId=" + idFoodtruck;
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/owner/productos/" + id + "/editar";
@@ -195,7 +304,7 @@ public class ProductoController {
     @PostMapping("/{id}/eliminar")
     public String eliminarProducto(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
         try {
-            Foodtruck foodtruck = obtenerFoodtruckDelDueno();
+            List<Foodtruck> foodtrucks = obtenerFoodtrucksDelDueno();
             Producto producto = productoService.obtenerProductoPorId(id);
             
             if (producto == null) {
@@ -203,15 +312,18 @@ public class ProductoController {
                 return "redirect:/owner/productos";
             }
             
-            // Verificar que el producto pertenece al food truck del dueño
-            if (!producto.getFoodtruck().getIdFoodtruck().equals(foodtruck.getIdFoodtruck())) {
+            boolean perteneceAlDueno = foodtrucks.stream()
+                .anyMatch(ft -> ft.getIdFoodtruck().equals(producto.getFoodtruck().getIdFoodtruck()));
+            
+            if (!perteneceAlDueno) {
                 redirectAttributes.addFlashAttribute("error", "No tienes permiso para eliminar este producto");
                 return "redirect:/owner/productos";
             }
             
+            Integer foodtruckId = producto.getFoodtruck().getIdFoodtruck();
             productoService.eliminarProducto(id);
             redirectAttributes.addFlashAttribute("mensaje", "Producto eliminado exitosamente");
-            return "redirect:/owner/productos";
+            return "redirect:/owner/productos?foodtruckId=" + foodtruckId;
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error al eliminar producto: " + e.getMessage());
             return "redirect:/owner/productos";

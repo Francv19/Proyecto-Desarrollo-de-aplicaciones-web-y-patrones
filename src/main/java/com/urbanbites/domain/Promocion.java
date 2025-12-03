@@ -27,6 +27,9 @@ public class Promocion implements Serializable {
     @Column(precision = 10, scale = 2)
     private BigDecimal valor;
 
+    @Column(length = 500)
+    private String descripcion;
+
     @Column(name = "fecha_inicio")
     private java.time.LocalDateTime fechaInicio;
 

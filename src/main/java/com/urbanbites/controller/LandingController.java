@@ -19,11 +19,9 @@ public class LandingController {
 
     @GetMapping("/")
     public String landing(Model model) {
-        // Obtener food trucks activos destacados (los primeros 3)
+        // Obtener todos los food trucks activos para el carrusel
         List<com.urbanbites.domain.Foodtruck> foodtrucksDestacados = 
-            foodtruckRepository.findByActivoTrue().stream()
-                .limit(3)
-                .collect(java.util.stream.Collectors.toList());
+            foodtruckRepository.findByActivoTrue();
         
         // Obtener todos los food trucks activos
         List<com.urbanbites.domain.Foodtruck> todosFoodtrucks = 

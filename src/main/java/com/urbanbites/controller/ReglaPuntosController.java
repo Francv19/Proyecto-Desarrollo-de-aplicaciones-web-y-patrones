@@ -29,7 +29,7 @@ public class ReglaPuntosController {
     private UsuarioRepository usuarioRepository;
 
     @GetMapping
-    public String listarReglas(Model model) {
+    public String listarReglas(@RequestParam(required = false) Integer foodtruckId, Model model) {
         try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             Usuario usuario = usuarioRepository.findByUsername(auth.getName());
@@ -45,7 +45,14 @@ public class ReglaPuntosController {
                 return "owner/reglas-puntos/index";
             }
             
-            // Obtener reglas para todos los food trucks del dueño
+            // Si se especifica un food truck, filtrar solo ese
+            if (foodtruckId != null) {
+                foodtrucks = foodtrucks.stream()
+                    .filter(ft -> ft.getIdFoodtruck().equals(foodtruckId))
+                    .collect(java.util.stream.Collectors.toList());
+            }
+            
+            // Obtener reglas para todos los food trucks del dueño (o el filtrado)
             java.util.Map<Integer, List<ReglaPuntos>> reglasPorFoodtruck = new java.util.HashMap<>();
             for (com.urbanbites.domain.Foodtruck ft : foodtrucks) {
                 List<ReglaPuntos> reglas = reglaPuntosService.obtenerReglasPorFoodtruck(ft.getIdFoodtruck());
@@ -54,6 +61,7 @@ public class ReglaPuntosController {
             
             model.addAttribute("foodtrucks", foodtrucks);
             model.addAttribute("reglasPorFoodtruck", reglasPorFoodtruck);
+            model.addAttribute("foodtruckIdFiltrado", foodtruckId);
             model.addAttribute("page", "reglas-puntos");
             
             return "owner/reglas-puntos/index";

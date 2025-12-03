@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title th:text="${horario != null and horario.idHorario != null ? 'Editar Horario' : 'Nuevo Horario'}">Horario · Urban Bites</title>
+        <th:block th:replace="app/fragmentos :: appHead"></th:block>
+        <style>
+            .form-card {
+                background: white;
+                border: 2px solid #104E43;
+                border-radius: 12px;
+                padding: 2rem;
+                max-width: 700px;
+                margin: 0 auto;
+            }
+            .form-title {
+                color: #104E43;
+                font-weight: bold;
+                margin-bottom: 1.5rem;
+            }
+            .btn-primary-custom {
+                background: #ED3101;
+                border-color: #ED3101;
+                color: white;
+            }
+            .btn-primary-custom:hover {
+                background: #c02801;
+                border-color: #c02801;
+            }
+        </style>
+    </head>
+    <body class="bg-light" th:with="currentPage='horarios'">
+        <div class="d-flex min-vh-100">
+            <th:block th:replace="general/fragmentos :: sidebarOwner(${currentPage})"></th:block>
+
+            <main class="flex-grow-1 p-4" style="overflow-y: auto;">
+                <div class="form-card">
+                    <h2 class="form-title" th:text="${horario != null and horario.idHorario != null ? 'Editar Horario' : 'Crear Nuevo Horario'}"></h2>
+                    
+                    <div th:if="${mensaje}" class="alert alert-success alert-dismissible fade show" role="alert">
+                        <span th:text="${mensaje}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <span th:text="${error}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <p class="text-muted">
+                            <strong>Food Truck:</strong> <span th:text="${foodtruck.nombre}">Food Truck</span>
+                        </p>
+                    </div>
+                    
+                    <form th:action="${horario != null and horario.idHorario != null ? '/owner/horarios/' + horario.idHorario + '/actualizar' : '/owner/horarios/crear'}" 
+                          method="post">
+                        <input type="hidden" name="idFoodtruck" th:value="${foodtruck.idFoodtruck}">
+                        
+                        <div class="mb-3">
+                            <label for="diaSemana" class="form-label">Día de la Semana <span class="text-danger">*</span></label>
+                            <select class="form-select" id="diaSemana" name="diaSemana" required>
+                                <option value="1" th:selected="${horario != null and horario.diaSemana == 1}">Lunes</option>
+                                <option value="2" th:selected="${horario != null and horario.diaSemana == 2}">Martes</option>
+                                <option value="3" th:selected="${horario != null and horario.diaSemana == 3}">Miércoles</option>
+                                <option value="4" th:selected="${horario != null and horario.diaSemana == 4}">Jueves</option>
+                                <option value="5" th:selected="${horario != null and horario.diaSemana == 5}">Viernes</option>
+                                <option value="6" th:selected="${horario != null and horario.diaSemana == 6}">Sábado</option>
+                                <option value="7" th:selected="${horario != null and horario.diaSemana == 7}">Domingo</option>
+                            </select>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="horaApertura" class="form-label">Hora de Apertura <span class="text-danger">*</span></label>
+                                <input type="time" 
+                                       class="form-control" 
+                                       id="horaApertura" 
+                                       name="horaApertura" 
+                                       th:value="${horario != null and horario.horaApertura != null ? #temporals.format(horario.horaApertura, 'HH:mm') : ''}"
+                                       required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="horaCierre" class="form-label">Hora de Cierre <span class="text-danger">*</span></label>
+                                <input type="time" 
+                                       class="form-control" 
+                                       id="horaCierre" 
+                                       name="horaCierre" 
+                                       th:value="${horario != null and horario.horaCierre != null ? #temporals.format(horario.horaCierre, 'HH:mm') : ''}"
+                                       required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="direccion" class="form-label">Dirección</label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="direccion" 
+                                   name="direccion" 
+                                   th:value="${horario?.direccion}"
+                                   placeholder="Ej: Plaza Central, San José"
+                                   maxlength="250">
+                            <small class="form-text text-muted">Dirección donde estará el food truck este día</small>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="latitud" class="form-label">Latitud</label>
+                                <input type="number" 
+                                       class="form-control" 
+                                       id="latitud" 
+                                       name="latitud" 
+                                       th:value="${horario?.latitud}"
+                                       step="0.000001" 
+                                       placeholder="9.9281">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="longitud" class="form-label">Longitud</label>
+                                <input type="number" 
+                                       class="form-control" 
+                                       id="longitud" 
+                                       name="longitud" 
+                                       th:value="${horario?.longitud}"
+                                       step="0.000001" 
+                                       placeholder="-84.0907">
+                            </div>
+                        </div>
+                        <small class="form-text text-muted mb-3 d-block">Coordenadas GPS para mostrar la ubicación en el mapa (opcional)</small>
+                        
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary-custom">
+                                <span th:text="${horario != null and horario.idHorario != null ? 'Actualizar' : 'Crear'}"></span>
+                            </button>
+                            <a th:href="@{/owner/horarios(idFoodtruck=${foodtruck.idFoodtruck})}" class="btn btn-secondary">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </main>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script th:src="@{/js/rutinas.js}"></script>
+        <script>
+            // Validación de horas
+            document.getElementById('horaApertura').addEventListener('change', function() {
+                validarHoras();
+            });
+            
+            document.getElementById('horaCierre').addEventListener('change', function() {
+                validarHoras();
+            });
+            
+            function validarHoras() {
+                const apertura = document.getElementById('horaApertura').value;
+                const cierre = document.getElementById('horaCierre').value;
+                
+                if (apertura && cierre) {
+                    const horaApertura = new Date('2000-01-01T' + apertura);
+                    const horaCierre = new Date('2000-01-01T' + cierre);
+                    
+                    if (horaCierre <= horaApertura) {
+                        document.getElementById('horaCierre').setCustomValidity('La hora de cierre debe ser posterior a la hora de apertura');
+                    } else {
+                        document.getElementById('horaCierre').setCustomValidity('');
+                    }
+                }
+            }
+        </script>
+    </body>
+</html>
+

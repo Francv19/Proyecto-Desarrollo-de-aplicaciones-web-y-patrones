@@ -12,10 +12,22 @@
 
             <main class="flex-grow-1 p-4" style="overflow-y: auto; background-color: #f5f5f5;">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2 class="fw-bold mb-0">Reglas de Puntos</h2>
-                    <a th:href="@{/owner/foodtrucks}" class="btn" style="background-color: #104E43; color: white;">
-                        <i class="bi bi-arrow-left"></i> Volver a Food Trucks
-                    </a>
+                    <div>
+                        <h2 class="fw-bold mb-0">Reglas de Puntos</h2>
+                        <p class="text-muted small mb-0" th:if="${foodtruckIdFiltrado != null}">
+                            Mostrando reglas para un food truck específico
+                        </p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a th:if="${foodtruckIdFiltrado != null}" 
+                           th:href="@{/owner/reglas-puntos}" 
+                           class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle"></i> Quitar Filtro
+                        </a>
+                        <a th:href="@{/owner/foodtrucks}" class="btn" style="background-color: #104E43; color: white;">
+                            <i class="bi bi-arrow-left"></i> Volver a Food Trucks
+                        </a>
+                    </div>
                 </div>
 
                 <th:block th:replace="owner/reglas-puntos/fragmentos :: reglasPuntosAlerts"></th:block>
@@ -23,13 +35,27 @@
                 <div th:if="${foodtrucks != null and !foodtrucks.isEmpty()}">
                     <div class="card mb-4" th:each="foodtruck : ${foodtrucks}">
                         <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #104E43; color: white;">
-                            <h5 class="mb-0" th:text="${foodtruck.nombre}">Food Truck</h5>
+                            <div>
+                                <h5 class="mb-0" th:text="${foodtruck.nombre}">Food Truck</h5>
+                                <small class="text-light">
+                                    Porcentaje por defecto: <strong th:text="${foodtruck.porcentajePuntos != null ? foodtruck.porcentajePuntos : 0} + '%'">0%</strong>
+                                </small>
+                            </div>
                             <a th:href="@{/owner/reglas-puntos/nuevo(idFoodtruck=${foodtruck.idFoodtruck})}" 
                                class="btn btn-sm" style="background-color: #ED3101; color: white;">
                                 <i class="bi bi-plus-circle"></i> Nueva Regla
                             </a>
                         </div>
                         <div class="card-body">
+                            <div class="alert alert-info mb-3" role="alert">
+                                <i class="bi bi-info-circle"></i>
+                                <strong>¿Cómo funcionan las reglas?</strong>
+                                <ul class="mb-0 mt-2">
+                                    <li>Las <strong>reglas activas</strong> con fechas vigentes tienen <strong>prioridad</strong> sobre el porcentaje por defecto.</li>
+                                    <li>Si no hay reglas vigentes, se usa el <strong>porcentaje por defecto</strong> del food truck (<span th:text="${foodtruck.porcentajePuntos != null ? foodtruck.porcentajePuntos : 0} + '%'">0%</span>).</li>
+                                    <li>Puedes editar el porcentaje por defecto desde la <a th:href="@{/owner/foodtrucks/{id}/editar(id=${foodtruck.idFoodtruck})}" class="alert-link">configuración del food truck</a>.</li>
+                                </ul>
+                            </div>
                             <div th:if="${reglasPorFoodtruck != null and reglasPorFoodtruck.get(foodtruck.idFoodtruck) != null and !reglasPorFoodtruck.get(foodtruck.idFoodtruck).isEmpty()}">
                                 <div class="table-responsive">
                                     <table class="table table-hover">

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Gestión de Horarios · Urban Bites</title>
+        <th:block th:replace="app/fragmentos :: appHead"></th:block>
+    </head>
+    <body class="bg-light" th:with="currentPage='horarios'">
+        <div class="d-flex min-vh-100">
+            <th:block th:replace="general/fragmentos :: sidebarOwner(${currentPage})"></th:block>
+
+            <main class="flex-grow-1 p-4" style="overflow-y: auto; background-color: #f5f5f5;">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="fw-bold mb-0">Gestión de Horarios</h2>
+                </div>
+
+                <div th:if="${mensaje}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <span th:text="${mensaje}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <span th:text="${error}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <form method="get" action="/owner/horarios" class="d-flex gap-2">
+                            <select name="idFoodtruck" class="form-select" onchange="this.form.submit()">
+                                <option value="">Seleccionar Food Truck...</option>
+                                <option th:each="ft : ${foodtrucks}" 
+                                        th:value="${ft.idFoodtruck}"
+                                        th:selected="${foodtruckId != null and foodtruckId == ft.idFoodtruck}"
+                                        th:text="${ft.nombre}">Food Truck</option>
+                            </select>
+                        </form>
+                    </div>
+                </div>
+
+                <div th:if="${foodtruckId != null and horarios != null}">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="mb-0">Horarios del Food Truck</h4>
+                        <a th:href="@{/owner/horarios/nuevo(idFoodtruck=${foodtruckId})}" 
+                           class="btn" style="background-color: #ED3101; color: white;">
+                            <i class="bi bi-plus-circle"></i> Nuevo Horario
+                        </a>
+                    </div>
+
+                    <div th:if="${horarios != null and !horarios.isEmpty()}">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Día</th>
+                                        <th>Hora Apertura</th>
+                                        <th>Hora Cierre</th>
+                                        <th>Dirección</th>
+                                        <th>Coordenadas</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="horario : ${horarios}">
+                                        <td th:text="${horario.getNombreDia()}">Lunes</td>
+                                        <td th:text="${#temporals.format(horario.horaApertura, 'HH:mm')}">08:00</td>
+                                        <td th:text="${#temporals.format(horario.horaCierre, 'HH:mm')}">18:00</td>
+                                        <td th:text="${horario.direccion ?: 'N/A'}">Dirección</td>
+                                        <td>
+                                            <span th:if="${horario.latitud != null and horario.longitud != null}"
+                                                  th:text="${horario.latitud} + ', ' + ${horario.longitud}">Lat, Lng</span>
+                                            <span th:if="${horario.latitud == null or horario.longitud == null}">N/A</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge" 
+                                                  th:class="${horario.activo} ? 'bg-success' : 'bg-secondary'"
+                                                  th:text="${horario.activo} ? 'Activo' : 'Inactivo'">
+                                                Activo
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex gap-2">
+                                                <a th:href="@{/owner/horarios/{id}/editar(id=${horario.idHorario})}" 
+                                                   class="btn btn-sm" style="background-color: #104E43; color: white;">
+                                                    <i class="bi bi-pencil"></i> Editar
+                                                </a>
+                                                <button type="button" 
+                                                        class="btn btn-sm btn-danger"
+                                                        th:data-bs-toggle="'modal'"
+                                                        th:data-bs-target="'#modalEliminar'"
+                                                        th:data-horario-id="${horario.idHorario}"
+                                                        th:data-horario-dia="${horario.getNombreDia()}"
+                                                        onclick="abrirModalEliminar(this)">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                                <form th:if="${horario.activo}" 
+                                                      th:action="@{/owner/horarios/{id}/desactivar(id=${horario.idHorario})}" 
+                                                      method="post" class="d-inline">
+                                                    <button type="submit" class="btn btn-sm btn-warning">
+                                                        <i class="bi bi-pause-circle"></i> Desactivar
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div th:if="${horarios == null or horarios.isEmpty()}">
+                        <p class="text-muted text-center py-3">No hay horarios configurados para este food truck</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <div class="modal fade" id="modalEliminar" tabindex="-1" aria-labelledby="modalEliminarLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalEliminarLabel">Confirmar Eliminación</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>¿Estás seguro de que deseas eliminar el horario del día <strong id="diaHorarioEliminar"></strong>?</p>
+                        <p class="text-danger mb-0"><small>Esta acción no se puede deshacer.</small></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <form id="formEliminarHorario" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-danger">Eliminar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script th:src="@{/js/rutinas.js}"></script>
+        <script>
+            function abrirModalEliminar(button) {
+                const horarioId = button.getAttribute('data-horario-id');
+                const horarioDia = button.getAttribute('data-horario-dia');
+                
+                document.getElementById('diaHorarioEliminar').textContent = horarioDia;
+                
+                const form = document.getElementById('formEliminarHorario');
+                form.action = '/owner/horarios/' + horarioId + '/eliminar';
+            }
+        </script>
+    </body>
+</html>
+

@@ -13,5 +13,9 @@ public interface PuntosClienteRepository extends JpaRepository<PuntosCliente, In
     @Query("SELECT COALESCE(SUM(CASE WHEN p.tipo = 'acumulados' THEN p.puntos ELSE -p.puntos END), 0) " +
            "FROM PuntosCliente p WHERE p.usuario.idUsuario = :idUsuario")
     Integer calcularSaldoPuntos(@Param("idUsuario") Integer idUsuario);
+    
+    @Query("SELECT p FROM PuntosCliente p LEFT JOIN FETCH p.pedido LEFT JOIN FETCH p.foodtruck " +
+           "WHERE p.pedido.idPedido = :idPedido AND p.tipo = 'acumulados'")
+    List<PuntosCliente> findByPedidoIdPedidoAndTipoAcumulados(@Param("idPedido") Integer idPedido);
 }
 

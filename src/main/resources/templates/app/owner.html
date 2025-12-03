@@ -3,26 +3,282 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Urban Bites · Owner</title>
+        <title>Dashboard · Urban Bites</title>
         <th:block th:replace="app/fragmentos :: appHead"></th:block>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+        <style>
+            :root {
+                --urban-primary: #104E43;
+                --urban-secondary: #FFE5B4;
+                --urban-cta: #ED3101;
+                --urban-light: #F4F4F4;
+                --urban-ink: #1C1C1C;
+            }
+            .dashboard-header {
+                margin-bottom: 2rem;
+            }
+            .dashboard-title {
+                color: var(--urban-primary);
+                font-weight: bold;
+                font-size: 2rem;
+                margin-bottom: 0.5rem;
+            }
+            .dashboard-subtitle {
+                color: #666;
+                font-size: 1rem;
+            }
+            .stat-card {
+                background: white;
+                border-radius: 12px;
+                padding: 1.5rem;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                transition: all 0.3s ease;
+                height: 100%;
+                border-left: 4px solid var(--urban-primary);
+            }
+            .stat-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            }
+            .stat-card.pending {
+                border-left-color: #ffc107;
+            }
+            .stat-card.today {
+                border-left-color: var(--urban-cta);
+            }
+            .stat-card.products {
+                border-left-color: #17a2b8;
+            }
+            .stat-card.promotions {
+                border-left-color: #6f42c1;
+            }
+            .stat-icon {
+                width: 48px;
+                height: 48px;
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.5rem;
+                margin-bottom: 1rem;
+            }
+            .stat-icon.primary {
+                background-color: rgba(16, 78, 67, 0.1);
+                color: var(--urban-primary);
+            }
+            .stat-icon.warning {
+                background-color: rgba(255, 193, 7, 0.1);
+                color: #ffc107;
+            }
+            .stat-icon.danger {
+                background-color: rgba(237, 49, 1, 0.1);
+                color: var(--urban-cta);
+            }
+            .stat-icon.info {
+                background-color: rgba(23, 162, 184, 0.1);
+                color: #17a2b8;
+            }
+            .stat-icon.purple {
+                background-color: rgba(111, 66, 193, 0.1);
+                color: #6f42c1;
+            }
+            .stat-value {
+                font-size: 2rem;
+                font-weight: bold;
+                color: var(--urban-ink);
+                margin-bottom: 0.25rem;
+            }
+            .stat-label {
+                color: #666;
+                font-size: 0.9rem;
+                font-weight: 500;
+            }
+            .section-card {
+                background: white;
+                border-radius: 12px;
+                padding: 1.5rem;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                margin-bottom: 1.5rem;
+            }
+            .section-title {
+                color: var(--urban-primary);
+                font-weight: bold;
+                font-size: 1.25rem;
+                margin-bottom: 1rem;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+            .order-item {
+                padding: 1rem;
+                border-bottom: 1px solid #eee;
+                transition: background-color 0.2s ease;
+            }
+            .order-item:last-child {
+                border-bottom: none;
+            }
+            .order-item:hover {
+                background-color: var(--urban-light);
+            }
+            .order-status {
+                display: inline-block;
+                padding: 0.25rem 0.75rem;
+                border-radius: 20px;
+                font-size: 0.85rem;
+                font-weight: 600;
+            }
+            .order-status.recibido {
+                background-color: #ffc107;
+                color: #000;
+            }
+            .order-status.en_preparacion {
+                background-color: #17a2b8;
+                color: white;
+            }
+            .order-status.listo {
+                background-color: #28a745;
+                color: white;
+            }
+            .order-status.entregado {
+                background-color: var(--urban-primary);
+                color: white;
+            }
+            .empty-state {
+                text-align: center;
+                padding: 3rem 1rem;
+                color: #999;
+            }
+            .empty-state i {
+                font-size: 3rem;
+                margin-bottom: 1rem;
+            }
+        </style>
     </head>
-    <body class="bg-light" th:with="currentPage=${page} ?: 'dashboard'">
+    <body class="bg-light" th:with="currentPage='dashboard'">
+        <th:block th:replace="general/fragmentos :: sidebarStyles"></th:block>
         <div class="d-flex min-vh-100">
             <th:block th:replace="general/fragmentos :: sidebarOwner(${currentPage})"></th:block>
 
-            <main class="flex-grow-1 p-4">
-                <section class="mb-4">
-                    <p class="text-uppercase fw-semibold text-secondary mb-1">Panel Owner</p>
-                    <h1 class="display-6 fw-bold text-dark">Vista base para propietarios</h1>
-                    <p class="text-muted mb-0">TODO:Colocar aquí los componentes específicos (dashboard, pedidos, promociones, etc.).</p>
-                </section>
+            <main class="flex-grow-1 p-4" style="overflow-y: auto;">
+                <!-- Header -->
+                <div class="dashboard-header">
+                    <h1 class="dashboard-title">
+                        <i class="bi bi-speedometer2 me-2"></i>
+                        Dashboard
+                    </h1>
+                    <p class="dashboard-subtitle">Bienvenido de vuelta, aquí tienes un resumen de tu negocio</p>
+                </div>
 
-                <section class="bg-white rounded-4 p-4 shadow-sm">
-                    <p class="mb-0 text-muted">Contenido de ejemplo</p>
-                    <div class="border rounded-4 p-3 mt-3">
-                        <p class="mb-0">TODO: Este bloque sirve como placeholder para los módulos del app de propietarios.</p>
+                <!-- Error Message -->
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <span th:text="${error}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <!-- Statistics Cards -->
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6 col-lg-3">
+                        <div class="stat-card">
+                            <div class="stat-icon primary">
+                                <i class="bi bi-receipt"></i>
+                            </div>
+                            <div class="stat-value" th:text="${totalPedidos}">0</div>
+                            <div class="stat-label">Total de Pedidos</div>
+                        </div>
                     </div>
-                </section>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="stat-card pending">
+                            <div class="stat-icon warning">
+                                <i class="bi bi-clock-history"></i>
+                            </div>
+                            <div class="stat-value" th:text="${pedidosPendientes}">0</div>
+                            <div class="stat-label">Pedidos Pendientes</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="stat-card today">
+                            <div class="stat-icon danger">
+                                <i class="bi bi-calendar-day"></i>
+                            </div>
+                            <div class="stat-value" th:text="${pedidosHoy}">0</div>
+                            <div class="stat-label">Pedidos de Hoy</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="stat-card products">
+                            <div class="stat-icon info">
+                                <i class="bi bi-box-seam"></i>
+                            </div>
+                            <div class="stat-value" th:text="${totalProductos}">0</div>
+                            <div class="stat-label">Productos Totales</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6 col-lg-3">
+                        <div class="stat-card promotions">
+                            <div class="stat-icon purple">
+                                <i class="bi bi-ticket-detailed"></i>
+                            </div>
+                            <div class="stat-value" th:text="${totalPromociones}">0</div>
+                            <div class="stat-label">Promociones Activas</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="stat-card">
+                            <div class="stat-icon primary">
+                                <i class="bi bi-truck"></i>
+                            </div>
+                            <div class="stat-value" th:text="${foodtrucks != null ? foodtrucks.size() : 0}">0</div>
+                            <div class="stat-label">Food Trucks</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pedidos Recientes -->
+                <div class="section-card">
+                    <h3 class="section-title">
+                        <i class="bi bi-list-ul"></i>
+                        Pedidos Recientes
+                    </h3>
+                    <div th:if="${pedidosRecientes != null and !pedidosRecientes.isEmpty()}">
+                        <div class="order-item" th:each="pedido : ${pedidosRecientes}">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <div class="d-flex align-items-center gap-2 mb-2">
+                                        <strong th:text="'Pedido #' + ${pedido.idPedido}">Pedido #123</strong>
+                                        <span class="order-status" 
+                                              th:classappend="'order-status.' + ${pedido.estado.name()}"
+                                              th:text="${#strings.capitalize(pedido.estado.name().replace('_', ' '))}">
+                                            Recibido
+                                        </span>
+                                    </div>
+                                    <p class="text-muted small mb-1" th:if="${pedido.foodtruck != null}">
+                                        <i class="bi bi-truck me-1"></i>
+                                        <span th:text="${pedido.foodtruck.nombre}">Food Truck</span>
+                                    </p>
+                                    <p class="text-muted small mb-0" th:if="${pedido.fechaCreacion != null}">
+                                        <i class="bi bi-clock me-1"></i>
+                                        <span th:text="${#temporals.format(pedido.fechaCreacion, 'dd/MM/yyyy HH:mm')}">01/01/2024 12:00</span>
+                                    </p>
+                                </div>
+                                <a th:href="@{/pedidos/owner}" class="btn btn-sm btn-outline-primary">
+                                    Ver Detalles
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:if="${pedidosRecientes == null or pedidosRecientes.isEmpty()}" class="empty-state">
+                        <i class="bi bi-inbox"></i>
+                        <p>No hay pedidos recientes</p>
+                    </div>
+                    <div class="text-center mt-3" th:if="${pedidosRecientes != null and !pedidosRecientes.isEmpty()}">
+                        <a th:href="@{/pedidos/owner}" class="btn btn-outline-primary">
+                            Ver Todos los Pedidos
+                        </a>
+                    </div>
+                </div>
             </main>
         </div>
 
@@ -30,4 +286,3 @@
         <script th:src="@{/js/rutinas.js}"></script>
     </body>
 </html>
-

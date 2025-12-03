@@ -1,9 +1,11 @@
 package com.urbanbites.controller;
 
 import com.urbanbites.domain.Pedido;
+import com.urbanbites.domain.PuntosCliente;
 import com.urbanbites.domain.Usuario;
 import com.urbanbites.repository.UsuarioRepository;
 import com.urbanbites.service.PedidoService;
+import com.urbanbites.service.PuntosService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,6 +24,9 @@ public class PedidoController {
     
     @Autowired
     private UsuarioRepository usuarioRepository;
+    
+    @Autowired
+    private PuntosService puntosService;
 
     @GetMapping
     public String verPedidosCliente(Model model) {
@@ -37,7 +42,22 @@ public class PedidoController {
             }
             
             List<Pedido> pedidos = pedidoService.obtenerPedidosPorUsuario(usuario.getIdUsuario());
+            
+            // Obtener puntos ganados por cada pedido entregado
+            java.util.Map<Integer, PuntosCliente> puntosPorPedido = new java.util.HashMap<>();
+            if (pedidos != null) {
+                for (Pedido pedido : pedidos) {
+                    if (pedido.getEstado() == Pedido.EstadoPedido.entregado && pedido.getIdPedido() != null) {
+                        PuntosCliente puntos = puntosService.obtenerPuntosPorPedido(pedido.getIdPedido());
+                        if (puntos != null) {
+                            puntosPorPedido.put(pedido.getIdPedido(), puntos);
+                        }
+                    }
+                }
+            }
+            
             model.addAttribute("pedidos", pedidos != null ? pedidos : new java.util.ArrayList<>());
+            model.addAttribute("puntosPorPedido", puntosPorPedido);
             
             return "pedidos/cliente";
         } catch (Exception e) {

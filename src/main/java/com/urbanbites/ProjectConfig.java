@@ -105,7 +105,8 @@ public class ProjectConfig implements WebMvcConfigurer {
                         "/app/owner/**", "/pedidos/owner/**", 
                         "/pedidos/*/estado", "/pedidos/*/eta", 
                         "/cotizaciones/**", "/owner/productos/**", "/owner/foodtrucks/**", 
-                        "/owner/reglas-puntos/**", "/owner/promociones/**", "/owner/eventos/**"
+                        "/owner/reglas-puntos/**", "/owner/promociones/**", "/owner/eventos/**",
+                        "/owner/horarios/**"
                 ).hasAnyRole("dueno", "admin")
                 .requestMatchers(
                         "/carrito", "/carrito/**",

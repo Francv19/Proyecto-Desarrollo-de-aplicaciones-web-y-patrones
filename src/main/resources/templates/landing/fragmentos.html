@@ -93,9 +93,41 @@
                 .landing-hero h1 .highlight {
                     color: #7DD3C0;
                 }
-                .landing-hero .btn-cta {
+                .landing-hero .btn-cta,
+                .landing-nav .btn-cta {
                     background-color: var(--urban-cta);
                     color: #fff;
+                    border-radius: 999px;
+                    padding: 0.75rem 1.5rem;
+                    transition: all 0.3s ease;
+                    position: relative;
+                    overflow: hidden;
+                }
+                .landing-hero .btn-cta:hover,
+                .landing-nav .btn-cta:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 8px 20px rgba(237, 49, 1, 0.4);
+                    background-color: #c02801;
+                }
+                .landing-hero .btn-cta:active,
+                .landing-nav .btn-cta:active {
+                    transform: translateY(0);
+                }
+                .landing-hero .btn:not(.btn-cta),
+                .landing-nav .btn:not(.btn-cta) {
+                    transition: all 0.3s ease;
+                }
+                .landing-hero .btn:not(.btn-cta):hover,
+                .landing-nav .btn:not(.btn-cta):hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 8px 20px rgba(16, 78, 67, 0.3);
+                }
+                .landing-hero .btn:not(.btn-cta):active,
+                .landing-nav .btn:not(.btn-cta):active {
+                    transform: translateY(0);
+                }
+                .landing-hero .btn,
+                .landing-nav .btn {
                     border-radius: 999px;
                     padding: 0.75rem 1.5rem;
                     border: none;
@@ -140,6 +172,26 @@
                     font-size: 0.75rem;
                     text-transform: uppercase;
                     letter-spacing: 1px;
+                }
+                #carouselDestacados {
+                    padding: 2rem 0;
+                }
+                #carouselDestacados .carousel-control-prev,
+                #carouselDestacados .carousel-control-next {
+                    width: 50px;
+                    height: 50px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    opacity: 0.8;
+                }
+                #carouselDestacados .carousel-control-prev:hover,
+                #carouselDestacados .carousel-control-next:hover {
+                    opacity: 1;
+                }
+                #carouselDestacados .carousel-control-prev-icon,
+                #carouselDestacados .carousel-control-next-icon {
+                    width: 30px;
+                    height: 30px;
                 }
                 .section-promociones {
                     background-image: url('/images/Promo Fondo.png');

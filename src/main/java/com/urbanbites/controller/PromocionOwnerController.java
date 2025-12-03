@@ -92,6 +92,7 @@ public class PromocionOwnerController {
     public String crearPromocion(@RequestParam Integer idFoodtruck,
                                  @RequestParam String tipoDescuento,
                                  @RequestParam BigDecimal valor,
+                                 @RequestParam(required = false) String descripcion,
                                  @RequestParam String fechaInicio,
                                  @RequestParam String fechaFin,
                                  RedirectAttributes redirectAttributes) {
@@ -113,7 +114,7 @@ public class PromocionOwnerController {
             LocalDateTime fechaInicioDT = LocalDateTime.parse(fechaInicio);
             LocalDateTime fechaFinDT = LocalDateTime.parse(fechaFin);
             
-            promocionService.crearPromocion(idFoodtruck, tipo, valor, fechaInicioDT, fechaFinDT);
+            promocionService.crearPromocion(idFoodtruck, tipo, valor, descripcion, fechaInicioDT, fechaFinDT);
             redirectAttributes.addFlashAttribute("mensaje", "Promoción creada exitosamente");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());

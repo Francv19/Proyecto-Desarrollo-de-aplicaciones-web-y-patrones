@@ -5,6 +5,7 @@ import com.urbanbites.domain.Pedido;
 import com.urbanbites.domain.Usuario;
 import com.urbanbites.repository.UsuarioRepository;
 import com.urbanbites.service.CarritoService;
+import com.urbanbites.service.PuntosService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,6 +25,9 @@ public class CarritoController {
     
     @Autowired
     private UsuarioRepository usuarioRepository;
+    
+    @Autowired
+    private PuntosService puntosService;
     
     private Usuario obtenerUsuarioActual() {
         try {
@@ -63,17 +67,34 @@ public class CarritoController {
             }
             
             BigDecimal total = BigDecimal.ZERO;
+            Integer idFoodtruck = null;
             if (carrito.getDetalles() != null && !carrito.getDetalles().isEmpty()) {
                 for (var detalle : carrito.getDetalles()) {
                     if (detalle != null && detalle.getPrecioUnit() != null && detalle.getCantidad() != null) {
                         BigDecimal subtotal = detalle.getPrecioUnit().multiply(new BigDecimal(detalle.getCantidad()));
                         total = total.add(subtotal);
                     }
+                    // Obtener el food truck del primer detalle
+                    if (idFoodtruck == null && detalle != null && detalle.getProducto() != null && 
+                        detalle.getProducto().getFoodtruck() != null) {
+                        idFoodtruck = detalle.getProducto().getFoodtruck().getIdFoodtruck();
+                    }
                 }
+            }
+            
+            // Obtener saldo de puntos del usuario
+            Integer saldoPuntos = puntosService.obtenerSaldoPuntos(usuario.getIdUsuario());
+            
+            // Calcular puntos que se obtendrán con este pedido
+            PuntosService.PuntosInfo puntosInfo = null;
+            if (idFoodtruck != null && total.compareTo(BigDecimal.ZERO) > 0) {
+                puntosInfo = puntosService.calcularPuntosAObtener(total, idFoodtruck);
             }
             
             model.addAttribute("carrito", carrito);
             model.addAttribute("total", total);
+            model.addAttribute("saldoPuntos", saldoPuntos);
+            model.addAttribute("puntosInfo", puntosInfo);
             model.addAttribute("page", "carrito");
             
             return "carrito/index";
@@ -145,7 +166,8 @@ public class CarritoController {
     }
     
     @PostMapping("/confirmar")
-    public String confirmarPedido(RedirectAttributes redirectAttributes) {
+    public String confirmarPedido(@RequestParam(required = false) Integer puntosACanjear,
+                                   RedirectAttributes redirectAttributes) {
         try {
             Usuario usuario = obtenerUsuarioActual();
             if (usuario == null) {
@@ -153,8 +175,21 @@ public class CarritoController {
                 return "redirect:/login";
             }
             
-            Pedido pedido = carritoService.confirmarPedido(usuario.getIdUsuario());
-            redirectAttributes.addFlashAttribute("mensaje", "Pedido confirmado exitosamente. Número de pedido: #" + pedido.getIdPedido());
+            // Validar que los puntos a canjear no sean negativos
+            if (puntosACanjear != null && puntosACanjear < 0) {
+                redirectAttributes.addFlashAttribute("error", "La cantidad de puntos a canjear no puede ser negativa");
+                return "redirect:/carrito";
+            }
+            
+            Pedido pedido = carritoService.confirmarPedido(usuario.getIdUsuario(), puntosACanjear);
+            
+            String mensaje = "Pedido confirmado exitosamente. Número de pedido: #" + pedido.getIdPedido();
+            if (puntosACanjear != null && puntosACanjear > 0) {
+                mensaje += ". Se canjearon " + puntosACanjear + " puntos (₡" + 
+                    String.format("%.2f", pedido.getDescuento().doubleValue()) + " de descuento)";
+            }
+            
+            redirectAttributes.addFlashAttribute("mensaje", mensaje);
             return "redirect:/pedidos";
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());

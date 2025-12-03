@@ -193,20 +193,26 @@
                                          th:alt="${promo.foodtruck != null ? promo.foodtruck.nombre : 'Promoción'}"
                                          onerror="this.src='/images/placeholder-truck.png'">
                                     <div class="promo-badge" th:if="${promo.tipoDescuento != null and promo.tipoDescuento.name() == 'porcentaje'}">
-                                        <span th:text="'DISC UP TO ' + ${promo.valor.intValue()} + '% SPECIAL PRICE'">DISC UP TO 50% SPECIAL PRICE</span>
+                                        <span th:text="'DESC. HASTA ' + ${promo.valor.intValue()} + '% PRECIO ESPECIAL'">DESC. HASTA 50% PRECIO ESPECIAL</span>
                                     </div>
                                     <div class="promo-badge" th:if="${promo.tipoDescuento != null and promo.tipoDescuento.name() == 'monto_fijo'}">
-                                        <span th:text="'¢' + ${#numbers.formatDecimal(promo.valor, 0, 'COMMA', 0, 'POINT')} + ' OFF'">Descuento</span>
+                                        <span th:text="'₡' + ${#numbers.formatDecimal(promo.valor, 0, 'COMMA', 0, 'POINT')} + ' DE DESCUENTO'">Descuento</span>
                                     </div>
                                 </div>
                                 <div class="promo-content">
                                     <h5 class="promo-title" th:if="${promo.tipoDescuento != null and promo.tipoDescuento.name() == 'porcentaje'}">
-                                        <span th:text="${promo.valor.intValue() + '% Off'}">50% Off</span>
+                                        <span th:text="${promo.valor.intValue() + '% de Descuento'}">50% de Descuento</span>
                                     </h5>
                                     <h5 class="promo-title" th:if="${promo.tipoDescuento != null and promo.tipoDescuento.name() == 'monto_fijo'}">
-                                        <span th:text="'¢' + ${#numbers.formatDecimal(promo.valor, 0, 'COMMA', 0, 'POINT')} + ' Off'">Descuento</span>
+                                        <span th:text="'₡' + ${#numbers.formatDecimal(promo.valor, 0, 'COMMA', 0, 'POINT')} + ' de Descuento'">Descuento</span>
                                     </h5>
                                     <p class="promo-description" 
+                                       th:if="${promo.descripcion != null and !#strings.isEmpty(promo.descripcion)}"
+                                       th:text="${promo.descripcion}">
+                                        Descripción de la promoción.
+                                    </p>
+                                    <p class="promo-description" 
+                                       th:unless="${promo.descripcion != null and !#strings.isEmpty(promo.descripcion)}"
                                        th:text="${promo.foodtruck != null and promo.foodtruck.descripcion != null and !#strings.isEmpty(promo.foodtruck.descripcion)} ? promo.foodtruck.descripcion : 'Descubre nuestras deliciosas ofertas especiales'">
                                         Burgers artesanales hechas al momento, rápidas y jugosas con descuento especial.
                                     </p>
@@ -241,13 +247,13 @@
                                 <div class="coupon-header">
                                     <div>
                                         <h6 class="coupon-title" th:if="${cupon.tipoDescuento != null and cupon.tipoDescuento.name() == 'porcentaje'}">
-                                            <span th:text="'DISCOUNT FOOD VOUCHER ' + ${cupon.valor.intValue() + '% OFF'}">DISCOUNT FOOD VOUCHER 50% OFF</span>
+                                            <span th:text="'CUPÓN DE DESCUENTO ' + ${cupon.valor.intValue() + '% DE DESCUENTO'}">CUPÓN DE DESCUENTO 50% DE DESCUENTO</span>
                                         </h6>
                                         <h6 class="coupon-title" th:if="${cupon.tipoDescuento != null and cupon.tipoDescuento.name() == 'monto_fijo'}">
-                                            <span th:text="'DISCOUNT FOOD VOUCHER ¢' + ${#numbers.formatDecimal(cupon.valor, 0, 'COMMA', 0, 'POINT')} + ' OFF'">DISCOUNT FOOD VOUCHER</span>
+                                            <span th:text="'CUPÓN DE DESCUENTO ₡' + ${#numbers.formatDecimal(cupon.valor, 0, 'COMMA', 0, 'POINT')} + ' DE DESCUENTO'">CUPÓN DE DESCUENTO</span>
                                         </h6>
                                         <p class="coupon-date" th:if="${cupon.fechaFin != null}" 
-                                           th:text="${'Valid until ' + #temporals.format(cupon.fechaFin, 'dd MMM yyyy')}">Valid Until 14 July 2024</p>
+                                           th:text="${'Válido hasta ' + #temporals.format(cupon.fechaFin, 'dd MMM yyyy')}">Válido hasta 14 Jul 2024</p>
                                     </div>
                                     <div class="discount-display" th:if="${cupon.tipoDescuento != null and cupon.tipoDescuento.name() == 'porcentaje'}">
                                         <span th:text="'¢' + ${cupon.valor.intValue() + '%'}">¢50%</span>
@@ -262,6 +268,12 @@
                                          onerror="this.src='/images/placeholder-truck.png'">
                                 </div>
                                 <p class="coupon-description" 
+                                   th:if="${cupon.descripcion != null and !#strings.isEmpty(cupon.descripcion)}"
+                                   th:text="${cupon.descripcion}">
+                                    Descripción de la promoción.
+                                </p>
+                                <p class="coupon-description" 
+                                   th:unless="${cupon.descripcion != null and !#strings.isEmpty(cupon.descripcion)}"
                                    th:text="${cupon.foodtruck != null and cupon.foodtruck.descripcion != null and !#strings.isEmpty(cupon.foodtruck.descripcion)} ? cupon.foodtruck.descripcion : 'Aprovecha esta increíble oferta'">
                                     50% de descuento en todas tus compras superior a 10,000 colones.
                                 </p>
@@ -276,13 +288,13 @@
                                 <div class="coupon-header">
                                     <div>
                                         <h6 class="coupon-title" th:if="${cupon.tipoDescuento != null and cupon.tipoDescuento.name() == 'porcentaje'}">
-                                            <span th:text="'DISCOUNT FOOD VOUCHER ' + ${cupon.valor.intValue() + '% OFF'}">DISCOUNT FOOD VOUCHER 50% OFF</span>
+                                            <span th:text="'CUPÓN DE DESCUENTO ' + ${cupon.valor.intValue() + '% DE DESCUENTO'}">CUPÓN DE DESCUENTO 50% DE DESCUENTO</span>
                                         </h6>
                                         <h6 class="coupon-title" th:if="${cupon.tipoDescuento != null and cupon.tipoDescuento.name() == 'monto_fijo'}">
-                                            <span th:text="'DISCOUNT FOOD VOUCHER ¢' + ${#numbers.formatDecimal(cupon.valor, 0, 'COMMA', 0, 'POINT')} + ' OFF'">DISCOUNT FOOD VOUCHER</span>
+                                            <span th:text="'CUPÓN DE DESCUENTO ₡' + ${#numbers.formatDecimal(cupon.valor, 0, 'COMMA', 0, 'POINT')} + ' DE DESCUENTO'">CUPÓN DE DESCUENTO</span>
                                         </h6>
                                         <p class="coupon-date" th:if="${cupon.fechaFin != null}" 
-                                           th:text="${'Valid until ' + #temporals.format(cupon.fechaFin, 'dd MMM yyyy')}">Valid Until 14 July 2024</p>
+                                           th:text="${'Válido hasta ' + #temporals.format(cupon.fechaFin, 'dd MMM yyyy')}">Válido hasta 14 Jul 2024</p>
                                     </div>
                                     <div class="discount-display" th:if="${cupon.tipoDescuento != null and cupon.tipoDescuento.name() == 'porcentaje'}">
                                         <span th:text="'¢' + ${cupon.valor.intValue() + '%'}">¢50%</span>
@@ -297,6 +309,12 @@
                                          onerror="this.src='/images/placeholder-truck.png'">
                                 </div>
                                 <p class="coupon-description" 
+                                   th:if="${cupon.descripcion != null and !#strings.isEmpty(cupon.descripcion)}"
+                                   th:text="${cupon.descripcion}">
+                                    Descripción de la promoción.
+                                </p>
+                                <p class="coupon-description" 
+                                   th:unless="${cupon.descripcion != null and !#strings.isEmpty(cupon.descripcion)}"
                                    th:text="${cupon.foodtruck != null and cupon.foodtruck.descripcion != null and !#strings.isEmpty(cupon.foodtruck.descripcion)} ? cupon.foodtruck.descripcion : 'Aprovecha esta increíble oferta'">
                                     50% de descuento en todas tus compras superior a 10,000 colones.
                                 </p>
@@ -311,13 +329,13 @@
                                 <div class="coupon-header">
                                     <div>
                                         <h6 class="coupon-title" th:if="${cupon.tipoDescuento != null and cupon.tipoDescuento.name() == 'porcentaje'}">
-                                            <span th:text="'DISCOUNT FOOD VOUCHER ' + ${cupon.valor.intValue() + '% OFF'}">DISCOUNT FOOD VOUCHER 50% OFF</span>
+                                            <span th:text="'CUPÓN DE DESCUENTO ' + ${cupon.valor.intValue() + '% DE DESCUENTO'}">CUPÓN DE DESCUENTO 50% DE DESCUENTO</span>
                                         </h6>
                                         <h6 class="coupon-title" th:if="${cupon.tipoDescuento != null and cupon.tipoDescuento.name() == 'monto_fijo'}">
-                                            <span th:text="'DISCOUNT FOOD VOUCHER ¢' + ${#numbers.formatDecimal(cupon.valor, 0, 'COMMA', 0, 'POINT')} + ' OFF'">DISCOUNT FOOD VOUCHER</span>
+                                            <span th:text="'CUPÓN DE DESCUENTO ₡' + ${#numbers.formatDecimal(cupon.valor, 0, 'COMMA', 0, 'POINT')} + ' DE DESCUENTO'">CUPÓN DE DESCUENTO</span>
                                         </h6>
                                         <p class="coupon-date" th:if="${cupon.fechaFin != null}" 
-                                           th:text="${'Valid until ' + #temporals.format(cupon.fechaFin, 'dd MMM yyyy')}">Valid Until 14 July 2024</p>
+                                           th:text="${'Válido hasta ' + #temporals.format(cupon.fechaFin, 'dd MMM yyyy')}">Válido hasta 14 Jul 2024</p>
                                     </div>
                                     <div class="discount-display" th:if="${cupon.tipoDescuento != null and cupon.tipoDescuento.name() == 'porcentaje'}">
                                         <span th:text="'¢' + ${cupon.valor.intValue() + '%'}">¢50%</span>
@@ -332,6 +350,12 @@
                                          onerror="this.src='/images/placeholder-truck.png'">
                                 </div>
                                 <p class="coupon-description" 
+                                   th:if="${cupon.descripcion != null and !#strings.isEmpty(cupon.descripcion)}"
+                                   th:text="${cupon.descripcion}">
+                                    Descripción de la promoción.
+                                </p>
+                                <p class="coupon-description" 
+                                   th:unless="${cupon.descripcion != null and !#strings.isEmpty(cupon.descripcion)}"
                                    th:text="${cupon.foodtruck != null and cupon.foodtruck.descripcion != null and !#strings.isEmpty(cupon.foodtruck.descripcion)} ? cupon.foodtruck.descripcion : 'Aprovecha esta increíble oferta'">
                                     50% de descuento en todas tus compras superior a 10,000 colones.
                                 </p>

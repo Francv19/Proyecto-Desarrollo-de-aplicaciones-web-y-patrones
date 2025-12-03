@@ -73,7 +73,7 @@ public class ProductoService {
     }
     
     @Transactional
-    public Producto actualizarProducto(Integer idProducto, Integer idMenu, String nombre,
+    public Producto actualizarProducto(Integer idProducto, Integer idFoodtruck, Integer idMenu, String nombre,
                                        String descripcion, BigDecimal precio, Boolean disponible) {
         Producto producto = productoRepository.findById(idProducto)
             .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
@@ -82,13 +82,21 @@ public class ProductoService {
             throw new IllegalArgumentException("El precio debe ser mayor a 0");
         }
         
+        // Si se cambia el food truck, actualizarlo
+        if (idFoodtruck != null && !producto.getFoodtruck().getIdFoodtruck().equals(idFoodtruck)) {
+            Foodtruck nuevoFoodtruck = foodtruckRepository.findById(idFoodtruck)
+                .orElseThrow(() -> new RuntimeException("Food truck no encontrado"));
+            producto.setFoodtruck(nuevoFoodtruck);
+        }
+        
         if (idMenu != null) {
             Menu menu = menuRepository.findById(idMenu)
                 .orElseThrow(() -> new RuntimeException("Menú no encontrado"));
             
-            // Verificar que el menú pertenece al mismo food truck
-            if (!menu.getFoodtruck().getIdFoodtruck().equals(producto.getFoodtruck().getIdFoodtruck())) {
-                throw new IllegalArgumentException("El menú no pertenece al food truck del producto");
+            // Verificar que el menú pertenece al food truck (actualizado o existente)
+            Integer foodtruckId = idFoodtruck != null ? idFoodtruck : producto.getFoodtruck().getIdFoodtruck();
+            if (!menu.getFoodtruck().getIdFoodtruck().equals(foodtruckId)) {
+                throw new IllegalArgumentException("El menú no pertenece al food truck especificado");
             }
             producto.setMenu(menu);
         }

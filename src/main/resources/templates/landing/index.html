@@ -37,30 +37,41 @@
                     <div class="text-center mb-5">
                         <h2 class="fw-bold" style="color: #104E43;">Restaurantes Destacados</h2>
                     </div>
-                    <div class="row g-4" th:if="${foodtrucksDestacados != null and !foodtrucksDestacados.isEmpty()}">
-                        <div class="col-md-4" th:each="foodtruck : ${foodtrucksDestacados}">
-                            <div class="foodtruck-featured-card">
-                                <div class="foodtruck-featured-banner" 
-                                     style="background-color: #FFD700; color: #000;"
-                                     th:if="${foodtruck.descripcion != null and !#strings.isEmpty(foodtruck.descripcion)}">
-                                    <span th:text="${foodtruck.descripcion.length() > 20 ? #strings.substring(foodtruck.descripcion, 0, 20) + '...' : foodtruck.descripcion}">BURGERS ARTESANALES</span>
-                                </div>
-                                <img th:src="${foodtruck.rutaImagen != null and !#strings.isEmpty(foodtruck.rutaImagen)} ? ${foodtruck.rutaImagen} : '/images/placeholder-truck.png'" 
-                                     th:alt="${foodtruck.nombre}"
-                                     class="foodtruck-featured-image"
-                                     onerror="this.src='/images/placeholder-truck.png'">
-                                <div class="p-3 flex-grow-1 d-flex flex-column">
-                                    <h5 class="fw-bold mb-2" th:text="${foodtruck.nombre}">Grill & Go</h5>
-                                    <p class="text-muted small mb-3 flex-grow-1" 
-                                       th:text="${foodtruck.descripcion != null and !#strings.isEmpty(foodtruck.descripcion)} ? ${foodtruck.descripcion} : 'Deliciosa comida lista para disfrutar'">
-                                        Burgers artesanales hechas al momento, rápidas y jugosas.
-                                    </p>
-                                    <div class="d-flex justify-content-end">
-                                        <a class="btn btn-cta btn-sm text-white rounded-pill px-3" 
-                                           th:href="@{/menu(foodtruck=${foodtruck.idFoodtruck})}">Ver más</a>
+                    <div th:if="${foodtrucksDestacados != null and !foodtrucksDestacados.isEmpty()}">
+                        <div id="carouselDestacados" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+                            <div class="carousel-inner">
+                                <div th:each="i : ${#numbers.sequence(0, (foodtrucksDestacados.size() + 2) / 3 - 1)}" 
+                                     th:class="${i == 0} ? 'carousel-item active' : 'carousel-item'">
+                                    <div class="row g-4">
+                                        <div class="col-md-4" th:each="j : ${#numbers.sequence(0, 2)}">
+                                            <div th:if="${i * 3 + j < foodtrucksDestacados.size()}" 
+                                                 th:with="foodtruck=${foodtrucksDestacados[i * 3 + j]}">
+                                                <div class="foodtruck-featured-card">
+                                                    <img th:src="${foodtruck.rutaImagen != null and !#strings.isEmpty(foodtruck.rutaImagen)} ? ${foodtruck.rutaImagen} : '/images/placeholder-truck.png'" 
+                                                         th:alt="${foodtruck.nombre}"
+                                                         class="foodtruck-featured-image"
+                                                         onerror="this.src='/images/placeholder-truck.png'">
+                                                    <div class="p-3 flex-grow-1 d-flex flex-column">
+                                                        <h5 class="fw-bold mb-3" th:text="${foodtruck.nombre}">Grill & Go</h5>
+                                                        <div class="d-flex justify-content-end">
+                                                            <a class="btn btn-cta btn-sm text-white rounded-pill px-3" 
+                                                               th:href="@{/menu(foodtruck=${foodtruck.idFoodtruck})}">Ver más</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselDestacados" data-bs-slide="prev" th:if="${foodtrucksDestacados.size() > 3}">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Anterior</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselDestacados" data-bs-slide="next" th:if="${foodtrucksDestacados.size() > 3}">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Siguiente</span>
+                            </button>
                         </div>
                     </div>
                     <div th:if="${foodtrucksDestacados == null or foodtrucksDestacados.isEmpty()}" class="text-center py-5">
@@ -89,9 +100,9 @@
                                     <p class="text-muted small mb-2" th:text="${promo.foodtruck.descripcion != null and !#strings.isEmpty(promo.foodtruck.descripcion)} ? promo.foodtruck.descripcion : 'Descripción'">Description</p>
                                     <p class="promo-price mb-3" style="color: #104E43;">
                                         <span th:if="${promo.tipoDescuento.name() == 'porcentaje'}" 
-                                              th:text="'₡' + ${#numbers.formatDecimal(promo.valor, 0, 'COMMA', 0, 'POINT')} + '% OFF'">₡10% OFF</span>
+                                              th:text="'₡' + ${#numbers.formatDecimal(promo.valor, 0, 'COMMA', 0, 'POINT')} + '% de Descuento'">₡10% de Descuento</span>
                                         <span th:if="${promo.tipoDescuento.name() == 'monto_fijo'}" 
-                                              th:text="'₡' + ${#numbers.formatDecimal(promo.valor, 0, 'COMMA', 2, 'POINT')} + ' OFF'">₡1,000 OFF</span>
+                                              th:text="'₡' + ${#numbers.formatDecimal(promo.valor, 0, 'COMMA', 2, 'POINT')} + ' de Descuento'">₡1,000 de Descuento</span>
                                     </p>
                                     <a class="btn btn-cta btn-sm text-white w-100" 
                                        th:href="@{/menu(foodtruck=${promo.foodtruck.idFoodtruck})}">Ver más</a>
