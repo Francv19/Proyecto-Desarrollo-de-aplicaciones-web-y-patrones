@@ -1,12 +1,15 @@
 package com.urbanbites.controller;
 
 import com.urbanbites.domain.Foodtruck;
+import com.urbanbites.domain.FotoProducto;
 import com.urbanbites.domain.Menu;
 import com.urbanbites.domain.Producto;
 import com.urbanbites.domain.Usuario;
 import com.urbanbites.repository.FoodtruckRepository;
+import com.urbanbites.repository.FotoProductoRepository;
 import com.urbanbites.repository.MenuRepository;
 import com.urbanbites.repository.UsuarioRepository;
+import com.urbanbites.service.FirebaseStorageService;
 import com.urbanbites.service.ProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -14,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
@@ -34,6 +38,12 @@ public class ProductoController {
     
     @Autowired
     private UsuarioRepository usuarioRepository;
+    
+    @Autowired
+    private FirebaseStorageService firebaseStorageService;
+    
+    @Autowired
+    private FotoProductoRepository fotoProductoRepository;
     
     private Usuario obtenerUsuarioActual() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -153,6 +163,7 @@ public class ProductoController {
                                 @RequestParam(required = false) String descripcion,
                                 @RequestParam BigDecimal precio,
                                 @RequestParam(defaultValue = "true") Boolean disponible,
+                                @RequestParam(required = false) MultipartFile imagen,
                                 RedirectAttributes redirectAttributes) {
         try {
             // Validar que el food truck pertenece al dueño
@@ -180,7 +191,7 @@ public class ProductoController {
                 idMenu = menuPrincipal.getIdMenu();
             }
             
-            productoService.crearProducto(
+            Producto producto = productoService.crearProducto(
                 idFoodtruck,
                 idMenu,
                 nombre,
@@ -188,6 +199,42 @@ public class ProductoController {
                 precio,
                 disponible
             );
+            
+            // Subir imagen si se proporciona
+            if (imagen != null && !imagen.isEmpty()) {
+                try {
+                    Usuario usuario = obtenerUsuarioActual();
+                    String rutaImagen = firebaseStorageService.cargaImagen(imagen, "productos/" + usuario.getIdUsuario() + "/" + idFoodtruck + "/");
+                    
+                    // Crear registro de foto del producto
+                    FotoProducto fotoProducto = new FotoProducto();
+                    fotoProducto.setProducto(producto);
+                    fotoProducto.setUrl(rutaImagen);
+                    fotoProducto.setAltText(nombre);
+                    
+                    // Determinar formato
+                    String nombreArchivo = imagen.getOriginalFilename();
+                    if (nombreArchivo != null) {
+                        String extension = nombreArchivo.substring(nombreArchivo.lastIndexOf('.') + 1).toLowerCase();
+                        try {
+                            fotoProducto.setFormato(FotoProducto.FormatoFoto.valueOf(extension));
+                        } catch (IllegalArgumentException e) {
+                            fotoProducto.setFormato(FotoProducto.FormatoFoto.jpg);
+                        }
+                    } else {
+                        fotoProducto.setFormato(FotoProducto.FormatoFoto.jpg);
+                    }
+                    
+                    fotoProducto.setBytes((int) imagen.getSize());
+                    fotoProducto.setActivo(true);
+                    
+                    fotoProductoRepository.save(fotoProducto);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    redirectAttributes.addFlashAttribute("error", "Producto creado pero error al subir la imagen: " + e.getMessage());
+                    return "redirect:/owner/productos?foodtruckId=" + idFoodtruck;
+                }
+            }
             
             redirectAttributes.addFlashAttribute("mensaje", "Producto creado exitosamente");
             return "redirect:/owner/productos?foodtruckId=" + idFoodtruck;
@@ -257,6 +304,7 @@ public class ProductoController {
                                      @RequestParam(required = false) String descripcion,
                                      @RequestParam BigDecimal precio,
                                      @RequestParam(defaultValue = "true") Boolean disponible,
+                                     @RequestParam(required = false) MultipartFile imagen,
                                      RedirectAttributes redirectAttributes) {
         try {
             List<Foodtruck> foodtrucks = obtenerFoodtrucksDelDueno();
@@ -289,6 +337,49 @@ public class ProductoController {
             }
             
             productoService.actualizarProducto(id, idFoodtruck, idMenu, nombre, descripcion, precio, disponible);
+            
+            // Subir nueva imagen si se proporciona
+            if (imagen != null && !imagen.isEmpty()) {
+                try {
+                    Usuario usuario = obtenerUsuarioActual();
+                    String rutaImagen = firebaseStorageService.cargaImagen(imagen, "productos/" + usuario.getIdUsuario() + "/" + idFoodtruck + "/");
+                    
+                    // Desactivar fotos anteriores del producto
+                    List<FotoProducto> fotosAnteriores = fotoProductoRepository.findByProductoIdProductoAndActivoTrue(id);
+                    for (FotoProducto foto : fotosAnteriores) {
+                        foto.setActivo(false);
+                        fotoProductoRepository.save(foto);
+                    }
+                    
+                    // Crear nuevo registro de foto del producto
+                    FotoProducto fotoProducto = new FotoProducto();
+                    fotoProducto.setProducto(producto);
+                    fotoProducto.setUrl(rutaImagen);
+                    fotoProducto.setAltText(nombre);
+                    
+                    // Determinar formato
+                    String nombreArchivo = imagen.getOriginalFilename();
+                    if (nombreArchivo != null) {
+                        String extension = nombreArchivo.substring(nombreArchivo.lastIndexOf('.') + 1).toLowerCase();
+                        try {
+                            fotoProducto.setFormato(FotoProducto.FormatoFoto.valueOf(extension));
+                        } catch (IllegalArgumentException e) {
+                            fotoProducto.setFormato(FotoProducto.FormatoFoto.jpg);
+                        }
+                    } else {
+                        fotoProducto.setFormato(FotoProducto.FormatoFoto.jpg);
+                    }
+                    
+                    fotoProducto.setBytes((int) imagen.getSize());
+                    fotoProducto.setActivo(true);
+                    
+                    fotoProductoRepository.save(fotoProducto);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    redirectAttributes.addFlashAttribute("error", "Producto actualizado pero error al subir la imagen: " + e.getMessage());
+                    return "redirect:/owner/productos?foodtruckId=" + idFoodtruck;
+                }
+            }
             
             redirectAttributes.addFlashAttribute("mensaje", "Producto actualizado exitosamente");
             return "redirect:/owner/productos?foodtruckId=" + idFoodtruck;

@@ -1,0 +1,41 @@
+/* Estilos para Dashboard de Admin */
+.dashboard-title-color {
+    color: #104E43;
+}
+
+.stat-card-primary {
+    border-left: 4px solid #104E43 !important;
+}
+
+.stat-card-primary .stat-value {
+    color: #104E43;
+}
+
+.stat-card-danger {
+    border-left: 4px solid #ED3101 !important;
+}
+
+.stat-card-danger .stat-value {
+    color: #ED3101;
+}
+
+.stat-card-warning {
+    border-left: 4px solid #FFE5B4 !important;
+}
+
+.stat-card-warning .stat-value {
+    color: #104E43;
+}
+
+.stat-card-dark {
+    border-left: 4px solid #1C1C1C !important;
+}
+
+.stat-card-dark .stat-value {
+    color: #1C1C1C;
+}
+
+.main-bg-white {
+    background: white;
+}
+

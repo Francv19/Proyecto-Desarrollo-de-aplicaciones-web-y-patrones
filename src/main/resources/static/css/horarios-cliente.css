@@ -1,0 +1,11 @@
+/* Estilos para Horarios del Cliente */
+.card-header-urban {
+    background-color: #104E43;
+    color: white;
+}
+
+.empty-icon {
+    font-size: 4rem;
+    color: #ddd;
+}
+

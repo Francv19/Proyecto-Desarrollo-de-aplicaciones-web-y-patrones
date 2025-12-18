@@ -82,6 +82,26 @@ public class EventoService {
         return eventoRepository.save(evento);
     }
     
+    public Evento actualizarCotizacion(Integer idEvento, Integer idDueno, BigDecimal montoCotizado,
+                                       String detallesCotizacion) {
+        Evento evento = eventoRepository.findById(idEvento)
+            .orElseThrow(() -> new RuntimeException("Evento no encontrado"));
+        
+        if (!evento.getFoodtruck().getDueno().getIdUsuario().equals(idDueno)) {
+            throw new RuntimeException("No tienes permiso para modificar este evento");
+        }
+        
+        if (evento.getEstado() != Evento.EstadoEvento.cotizado) {
+            throw new RuntimeException("Solo se pueden editar cotizaciones de eventos cotizados");
+        }
+        
+        evento.setMontoCotizado(montoCotizado);
+        evento.setDetallesCotizacion(detallesCotizacion);
+        evento.setFechaCotizacion(LocalDateTime.now());
+        
+        return eventoRepository.save(evento);
+    }
+    
     public Evento actualizarEstadoEvento(Integer idEvento, Evento.EstadoEvento nuevoEstado) {
         Evento evento = eventoRepository.findById(idEvento)
             .orElseThrow(() -> new RuntimeException("Evento no encontrado"));
@@ -102,6 +122,67 @@ public class EventoService {
     @Transactional(readOnly = true)
     public Evento obtenerEventoPorId(Integer idEvento) {
         return eventoRepository.findById(idEvento).orElse(null);
+    }
+    
+    public Evento actualizarEvento(Integer idEvento, Integer idSolicitante, Integer idFoodtruck,
+                                    Evento.TipoServicio tipoServicio, String nombre,
+                                    String descripcion, String direccion, Integer invitados,
+                                    LocalDateTime fechaInicio, LocalDateTime fechaFin,
+                                    BigDecimal latitud, BigDecimal longitud) {
+        Evento evento = eventoRepository.findById(idEvento)
+            .orElseThrow(() -> new RuntimeException("Evento no encontrado"));
+        
+        if (!evento.getSolicitante().getIdUsuario().equals(idSolicitante)) {
+            throw new RuntimeException("No tienes permiso para modificar este evento");
+        }
+        
+        if (evento.getEstado() != Evento.EstadoEvento.pendiente) {
+            throw new RuntimeException("Solo se pueden editar eventos pendientes");
+        }
+        
+        if (fechaFin.isBefore(fechaInicio) || fechaFin.isEqual(fechaInicio)) {
+            throw new RuntimeException("La fecha de fin debe ser posterior a la fecha de inicio");
+        }
+        
+        com.urbanbites.domain.Foodtruck foodtruck = foodtruckRepository.findById(idFoodtruck)
+            .orElseThrow(() -> new RuntimeException("Food truck no encontrado"));
+        
+        evento.setFoodtruck(foodtruck);
+        evento.setTipoServicio(tipoServicio);
+        evento.setNombre(nombre);
+        evento.setDescripcion(descripcion);
+        evento.setDireccion(direccion);
+        evento.setInvitados(invitados);
+        evento.setFechaInicio(fechaInicio);
+        evento.setFechaFin(fechaFin);
+        evento.setLatitud(latitud);
+        evento.setLongitud(longitud);
+        
+        return eventoRepository.save(evento);
+    }
+    
+    public void eliminarEvento(Integer idEvento, Integer idUsuario, boolean esOwner) {
+        Evento evento = eventoRepository.findById(idEvento)
+            .orElseThrow(() -> new RuntimeException("Evento no encontrado"));
+        
+        if (esOwner) {
+            // Owner solo puede eliminar eventos de sus food trucks
+            if (!evento.getFoodtruck().getDueno().getIdUsuario().equals(idUsuario)) {
+                throw new RuntimeException("No tienes permiso para eliminar este evento");
+            }
+        } else {
+            // Cliente solo puede eliminar sus propios eventos
+            if (!evento.getSolicitante().getIdUsuario().equals(idUsuario)) {
+                throw new RuntimeException("No tienes permiso para eliminar este evento");
+            }
+            // Cliente solo puede eliminar eventos pendientes o cancelados
+            if (evento.getEstado() != Evento.EstadoEvento.pendiente && 
+                evento.getEstado() != Evento.EstadoEvento.cancelado) {
+                throw new RuntimeException("Solo se pueden eliminar eventos pendientes o cancelados");
+            }
+        }
+        
+        eventoRepository.delete(evento);
     }
 }
 

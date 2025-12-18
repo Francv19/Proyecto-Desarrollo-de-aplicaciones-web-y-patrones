@@ -20,7 +20,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.context.annotation.Lazy;
+import com.urbanbites.domain.Ruta;
+import com.urbanbites.service.RutaService;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
@@ -88,54 +90,96 @@ public class ProjectConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests((request) -> request
-                .requestMatchers("/", "/landing/**", "/errores/**",
-                        "/pruebas/**", "/registro/**", "/setup/**", "/js/**", "/webjars/**", 
-                        "/css/**", "/images/**", "/img/**", "/menu/**", 
-                        "/promociones", "/promociones/**", "/horarios", "/food-trucks", "/login", "/logout")
-                .permitAll()
-                .requestMatchers(
-                        "/admin/**", "/usuario/**", "/producto/**",
-                        "/categoria/**", "/reportes/**"
-                ).hasRole("admin")
-                .requestMatchers("/admin/horarios/**").hasRole("admin")
-                .requestMatchers(
-                        "/app/owner/**", "/pedidos/owner/**", 
-                        "/pedidos/*/estado", "/pedidos/*/eta", 
-                        "/cotizaciones/**", "/owner/productos/**", "/owner/foodtrucks/**", 
-                        "/owner/reglas-puntos/**", "/owner/promociones/**", "/owner/eventos/**",
-                        "/owner/horarios/**"
-                ).hasAnyRole("dueno", "admin")
-                .requestMatchers(
-                        "/carrito", "/carrito/**",
-                        "/app/cliente/**", "/app/admin/**",
-                        "/resenas", "/resenas/**", "/puntos/**", "/pedidos", "/eventos", "/eventos/**",
-                        "/configuracion", "/configuracion/**"
-                ).authenticated()
-                .anyRequest().authenticated()
-                )
-                .formLogin((form) -> form
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, @Lazy RutaService rutaService) throws Exception {
+        var rutas = rutaService.getRutas();
+        
+        var rutasOrdenadas = rutas.stream()
+            .sorted((r1, r2) -> {
+                String ruta1 = r1.getRuta();
+                String ruta2 = r2.getRuta();
+                
+                boolean tieneWildcard1 = ruta1.contains("*");
+                boolean tieneWildcard2 = ruta2.contains("*");
+                
+                if (tieneWildcard1 && !tieneWildcard2) {
+                    return 1;
+                }
+                if (!tieneWildcard1 && tieneWildcard2) {
+                    return -1;
+                }
+                
+                if (tieneWildcard1 && tieneWildcard2) {
+                    long wildcards1 = ruta1.chars().filter(ch -> ch == '*').count();
+                    long wildcards2 = ruta2.chars().filter(ch -> ch == '*').count();
+                    if (wildcards1 != wildcards2) {
+                        return Long.compare(wildcards1, wildcards2);
+                    }
+                }
+                
+                return Integer.compare(ruta2.length(), ruta1.length());
+            })
+            .collect(java.util.stream.Collectors.toList());
+        
+        http.authorizeHttpRequests(requests -> {
+            // Agrupar rutas por patrón para manejar múltiples roles
+            java.util.Map<String, java.util.Set<String>> rutasPorPatron = new java.util.HashMap<>();
+            java.util.Set<String> rutasPublicas = new java.util.HashSet<>();
+            
+            for (Ruta ruta : rutasOrdenadas) {
+                if (!ruta.getRequiereRol()) {
+                    rutasPublicas.add(ruta.getRuta());
+                } else if (ruta.getRol() != null) {
+                    rutasPorPatron.computeIfAbsent(ruta.getRuta(), k -> new java.util.HashSet<>())
+                        .add(ruta.getRol().getNombre());
+                }
+            }
+            
+            // Aplicar rutas públicas primero
+            for (String rutaPublica : rutasPublicas) {
+                requests.requestMatchers(rutaPublica).permitAll();
+            }
+            
+            // Aplicar rutas con roles (agrupadas)
+            for (java.util.Map.Entry<String, java.util.Set<String>> entry : rutasPorPatron.entrySet()) {
+                String ruta = entry.getKey();
+                java.util.Set<String> roles = entry.getValue();
+                
+                if (roles.size() == 1) {
+                    // Un solo rol, usar hasRole
+                    requests.requestMatchers(ruta).hasRole(roles.iterator().next());
+                } else {
+                    // Múltiples roles, usar hasAnyRole
+                    requests.requestMatchers(ruta).hasAnyRole(roles.toArray(new String[0]));
+                }
+            }
+            
+            // Rutas que requieren autenticación pero sin rol específico
+            for (Ruta ruta : rutasOrdenadas) {
+                if (ruta.getRequiereRol() && ruta.getRol() == null) {
+                    requests.requestMatchers(ruta.getRuta()).authenticated();
+                }
+            }
+            
+            requests.anyRequest().authenticated();
+        });
+
+        http.formLogin(form -> form
                 .loginPage("/login")
-                .successHandler(authenticationSuccessHandler)
-                .permitAll())
-                .logout((logout) -> logout
+                .defaultSuccessUrl("/login/success", true)
+                .failureUrl("/login?error=true")
+                .permitAll()
+        ).logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/")
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
-                .permitAll())
-                .exceptionHandling((ex) -> ex
-                .accessDeniedPage("/errores/403"));
+                .permitAll()
+        ).exceptionHandling(exceptions -> exceptions
+                .accessDeniedPage("/errores/403")
+        );
+        
         return http.build();
     }
-
-    @Autowired
-    private UserDetailsService userDetailsService;
-    
-    @Autowired
-    private AuthenticationSuccessHandler authenticationSuccessHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -143,8 +187,10 @@ public class ProjectConfig implements WebMvcConfigurer {
     }
 
     @Autowired
-    public void configurerGlobal(AuthenticationManagerBuilder build) throws Exception {
-        build.userDetailsService(userDetailsService).passwordEncoder(new BCryptPasswordEncoder());
+    public void configurerGlobal(AuthenticationManagerBuilder build, 
+            @Lazy PasswordEncoder passwordEncoder, 
+            @Lazy UserDetailsService userDetailsService) throws Exception {
+        build.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
     }
 
 }

@@ -64,6 +64,7 @@ public class EventoOwnerController {
             
             model.addAttribute("evento", evento);
             model.addAttribute("page", "eventos");
+            model.addAttribute("esEdicion", evento.getEstado() == Evento.EstadoEvento.cotizado);
             
             return "owner/eventos/cotizar";
         } catch (Exception e) {
@@ -84,8 +85,21 @@ public class EventoOwnerController {
                 return "redirect:/login";
             }
             
-            eventoService.cotizarEvento(idEvento, usuario.getIdUsuario(), montoCotizado, detallesCotizacion);
-            redirectAttributes.addFlashAttribute("mensaje", "Cotización enviada exitosamente");
+            Evento evento = eventoService.obtenerEventoPorId(idEvento);
+            if (evento == null || !evento.getFoodtruck().getDueno().getIdUsuario().equals(usuario.getIdUsuario())) {
+                redirectAttributes.addFlashAttribute("error", "No tienes permiso para modificar este evento");
+                return "redirect:/owner/eventos";
+            }
+            
+            if (evento.getEstado() == Evento.EstadoEvento.cotizado) {
+                // Actualizar cotización existente
+                eventoService.actualizarCotizacion(idEvento, usuario.getIdUsuario(), montoCotizado, detallesCotizacion);
+                redirectAttributes.addFlashAttribute("mensaje", "Cotización actualizada exitosamente");
+            } else {
+                // Crear nueva cotización
+                eventoService.cotizarEvento(idEvento, usuario.getIdUsuario(), montoCotizado, detallesCotizacion);
+                redirectAttributes.addFlashAttribute("mensaje", "Cotización enviada exitosamente");
+            }
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
@@ -97,9 +111,41 @@ public class EventoOwnerController {
                                    @RequestParam String estado,
                                    RedirectAttributes redirectAttributes) {
         try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            Usuario usuario = usuarioRepository.findByUsername(auth.getName());
+            
+            if (usuario == null) {
+                return "redirect:/login";
+            }
+            
+            Evento evento = eventoService.obtenerEventoPorId(idEvento);
+            if (evento == null || !evento.getFoodtruck().getDueno().getIdUsuario().equals(usuario.getIdUsuario())) {
+                redirectAttributes.addFlashAttribute("error", "No tienes permiso para modificar este evento");
+                return "redirect:/owner/eventos";
+            }
+            
             Evento.EstadoEvento nuevoEstado = Evento.EstadoEvento.valueOf(estado);
             eventoService.actualizarEstadoEvento(idEvento, nuevoEstado);
             redirectAttributes.addFlashAttribute("mensaje", "Estado actualizado exitosamente");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/owner/eventos";
+    }
+    
+    @PostMapping("/{idEvento}/eliminar")
+    public String eliminarEvento(@PathVariable Integer idEvento,
+                                RedirectAttributes redirectAttributes) {
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            Usuario usuario = usuarioRepository.findByUsername(auth.getName());
+            
+            if (usuario == null) {
+                return "redirect:/login";
+            }
+            
+            eventoService.eliminarEvento(idEvento, usuario.getIdUsuario(), true);
+            redirectAttributes.addFlashAttribute("mensaje", "Evento eliminado exitosamente");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }

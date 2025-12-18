@@ -1,34 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
     <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <th:block th:replace="admin/configuracion/fragmentos :: adminConfiguracionHead"></th:block>
         <title th:text="${usuario != null ? 'Editar Usuario' : 'Nuevo Usuario'}">Usuario · Urban Bites</title>
-        <th:block th:replace="app/fragmentos :: appHead"></th:block>
-        <style>
-            .form-card {
-                background: white;
-                border: 2px solid #104E43;
-                border-radius: 12px;
-                padding: 2rem;
-                max-width: 600px;
-                margin: 0 auto;
-            }
-            .form-title {
-                color: #104E43;
-                font-weight: bold;
-                margin-bottom: 1.5rem;
-            }
-            .btn-primary-custom {
-                background: #ED3101;
-                border-color: #ED3101;
-                color: white;
-            }
-            .btn-primary-custom:hover {
-                background: #c02801;
-                border-color: #c02801;
-            }
-        </style>
+        <th:block th:replace="admin/configuracion/fragmentos :: adminConfiguracionHeadContent"></th:block>
+        <link rel="stylesheet" th:href="@{/css/common.css}">
     </head>
     <body class="bg-light" th:with="currentPage='configuracion'">
         <th:block th:replace="general/fragmentos :: sidebarStyles"></th:block>
@@ -36,7 +12,7 @@
             <th:block th:replace="general/fragmentos :: sidebarAdmin(${currentPage})"></th:block>
 
             <main class="flex-grow-1 p-4">
-                <div class="form-card">
+                <div class="form-card form-card-medium">
                     <h2 class="form-title" th:text="${usuario != null ? 'Editar Usuario' : 'Crear Nuevo Usuario'}"></h2>
                     
                     <div th:if="${mensaje}" class="alert alert-success" role="alert">
@@ -103,8 +79,7 @@
             </main>
         </div>
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-        <script th:src="@{/js/rutinas.js}"></script>
+        <th:block th:replace="admin/configuracion/fragmentos :: adminConfiguracionScripts"></th:block>
     </body>
 </html>
 

@@ -1,0 +1,22 @@
+/* Estilos para gestión de Horarios */
+.empty-icon {
+    font-size: 4rem;
+    color: #ddd;
+}
+
+.horario-card {
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 1.5rem;
+    background: white;
+    margin-bottom: 1rem;
+}
+
+.dia-badge {
+    background-color: #104E43;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: bold;
+}
+

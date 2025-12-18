@@ -1,8 +1,14 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
-    <head th:fragment="eventosOwnerHead">
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <head>
+        <th:block th:fragment="eventosOwnerHead">
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+            <link rel="stylesheet" th:href="@{/css/common.css}">
+            <link rel="stylesheet" th:href="@{/css/eventos.css}">
+        </th:block>
     </head>
     <body>
         <th:block th:fragment="eventosOwnerAlerts">
@@ -14,6 +20,11 @@
                 <span th:text="${error}"></span>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
+        </th:block>
+        
+        <th:block th:fragment="eventosOwnerScripts">
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+            <script th:src="@{/js/eventos-owner-index.js}"></script>
         </th:block>
     </body>
 </html>

@@ -7,97 +7,13 @@
     </head>
     <body>
         <div th:fragment="sidebarStyles">
-            <style>
-                :root {
-                    --urban-primary: #104E43;
-                    --urban-secondary: #FFE5B4;
-                    --urban-cta: #ED3101;
-                    --urban-light: #F4F4F4;
-                    --urban-ink: #1C1C1C;
-                }
-                .sidebar-urban {
-                    width: 280px;
-                    min-height: 100vh;
-                    height: 100vh;
-                    position: sticky;
-                    top: 0;
-                    background-color: var(--urban-primary);
-                    color: #fff;
-                    display: flex;
-                    flex-direction: column;
-                    padding: 2rem 1.5rem;
-                    overflow-y: auto;
-                }
-                .sidebar-urban .sidebar-brand img {
-                    max-width: 160px;
-                }
-                .sidebar-urban .sidebar-brand-text {
-                    font-size: 1.1rem;
-                    font-weight: 600;
-                    letter-spacing: 0.05em;
-                    text-transform: uppercase;
-                    color: var(--urban-secondary);
-                    margin-top: 0.75rem;
-                }
-                .sidebar-urban nav {
-                    margin-top: 2rem;
-                }
-                .sidebar-urban .nav-link {
-                    color: #fff;
-                    border-radius: 999px;
-                    padding: 0.65rem 0.95rem;
-                    font-weight: 500;
-                    display: flex;
-                    align-items: center;
-                    gap: 0.85rem;
-                    transition: background-color 0.2s ease, color 0.2s ease;
-                }
-                .sidebar-urban .nav-link .icon {
-                    flex-shrink: 0;
-                    width: 1.35rem;
-                    height: 1.35rem;
-                    display: inline-flex;
-                    align-items: center;
-                    justify-content: center;
-                    font-size: 1.15rem;
-                }
-                .sidebar-urban .nav-link:hover {
-                    background-color: rgba(255, 255, 255, 0.08);
-                }
-                .sidebar-urban .nav-link.active {
-                    background-color: var(--urban-cta);
-                    color: #fff;
-                }
-                .sidebar-urban .nav-link.active .icon {
-                    color: var(--urban-secondary);
-                }
-                .sidebar-urban .nav-section {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 0.5rem;
-                }
-                .sidebar-urban .nav-section + .nav-section {
-                    margin-top: 1.4rem;
-                }
-                .sidebar-urban .logout-link {
-                    margin-top: auto;
-                    border-top: 1px solid rgba(255, 255, 255, 0.12);
-                    padding-top: 1.5rem;
-                }
-                @media (max-width: 991px) {
-                    .sidebar-urban {
-                        width: 100%;
-                        min-height: auto;
-                        border-radius: 1.5rem;
-                    }
-                }
-            </style>
+            <link rel="stylesheet" th:href="@{/css/sidebar.css}">
         </div>
 
         <div th:fragment="sidebarOwner (page)">
             <aside class="sidebar-urban">
                 <div class="sidebar-brand text-center">
-                    <img th:src="@{/images/Logo Urban Bites.png}" alt="Urban Bites" class="img-fluid mb-2" style="max-width: 160px; height: auto;" />
+                    <img th:src="@{/images/Logo Urban Bites.png}" alt="Urban Bites" class="img-fluid mb-2 sidebar-logo" />
                     <div class="sidebar-brand-text">Dueño</div>
                 </div>
 
@@ -148,15 +64,15 @@
                         <span>Eventos</span>
                     </a>
                     <a class="nav-link" th:classappend="${page} == 'configuracion' ? ' active'"
-                       th:href="@{/configuracion}">
+                       th:href="@{/configuracion/owner}">
                         <i class="bi bi-sliders icon"></i>
                         <span>Configuración</span>
                     </a>
                 </nav>
 
                 <div class="logout-link">
-                    <form th:action="@{/logout}" method="post" style="margin: 0;">
-                        <button type="submit" class="nav-link border-0 bg-transparent w-100 text-start" style="color: inherit; padding: 0.65rem 0.95rem;">
+                    <form th:action="@{/logout}" method="post" class="logout-form">
+                        <button type="submit" class="nav-link border-0 bg-transparent w-100 text-start logout-button">
                             <i class="bi bi-box-arrow-right icon"></i>
                             <span>Cerrar sesión</span>
                         </button>
@@ -168,7 +84,7 @@
         <div th:fragment="sidebarCliente (page)">
             <aside class="sidebar-urban">
                 <div class="sidebar-brand text-center">
-                    <img th:src="@{/images/Logo Urban Bites.png}" alt="Urban Bites" class="img-fluid mb-2" style="max-width: 160px; height: auto;" />
+                    <img th:src="@{/images/Logo Urban Bites.png}" alt="Urban Bites" class="img-fluid mb-2 sidebar-logo" />
                 </div>
 
                 <nav class="nav flex-column nav-section">
@@ -202,6 +118,11 @@
                         <i class="bi bi-star icon"></i>
                         <span>Puntos</span>
                     </a>
+                    <a class="nav-link" th:classappend="${page} == 'eventos' ? ' active'"
+                       th:href="@{/eventos}">
+                        <i class="bi bi-calendar-event icon"></i>
+                        <span>Eventos</span>
+                    </a>
                     <a class="nav-link" th:classappend="${page} == 'configuracion' ? ' active'"
                     th:href="@{/configuracion}">
                      <i class="bi bi-gear icon"></i>
@@ -210,8 +131,8 @@
                 </nav>
 
                 <div class="logout-link">
-                    <form th:action="@{/logout}" method="post" style="margin: 0;">
-                        <button type="submit" class="nav-link border-0 bg-transparent w-100 text-start" style="color: inherit; padding: 0.65rem 0.95rem;">
+                    <form th:action="@{/logout}" method="post" class="logout-form">
+                        <button type="submit" class="nav-link border-0 bg-transparent w-100 text-start logout-button">
                             <i class="bi bi-box-arrow-right icon"></i>
                             <span>Cerrar sesión</span>
                         </button>
@@ -223,7 +144,7 @@
         <div th:fragment="sidebarAdmin (page)">
             <aside class="sidebar-urban">
                 <div class="sidebar-brand text-center">
-                    <img th:src="@{/images/Logo Urban Bites.png}" alt="Urban Bites" class="img-fluid mb-2" style="max-width: 160px; height: auto;" />
+                    <img th:src="@{/images/Logo Urban Bites.png}" alt="Urban Bites" class="img-fluid mb-2 sidebar-logo" />
                     <div class="sidebar-brand-text">Administrador</div>
                 </div>
 
@@ -256,8 +177,8 @@
                 </nav>
 
                 <div class="logout-link">
-                    <form th:action="@{/logout}" method="post" style="margin: 0;">
-                        <button type="submit" class="nav-link border-0 bg-transparent w-100 text-start" style="color: inherit; padding: 0.65rem 0.95rem;">
+                    <form th:action="@{/logout}" method="post" class="logout-form">
+                        <button type="submit" class="nav-link border-0 bg-transparent w-100 text-start logout-button">
                             <i class="bi bi-box-arrow-right icon"></i>
                             <span>Cerrar sesión</span>
                         </button>
@@ -267,61 +188,7 @@
         </div>
 
         <div th:fragment="landingStyles">
-            <style>
-                :root {
-                    --urban-primary: #104E43;
-                    --urban-secondary: #FFE5B4;
-                    --urban-cta: #ED3101;
-                    --urban-light: #F4F4F4;
-                    --urban-ink: #1C1C1C;
-                }
-                body.landing-page {
-                    font-family: 'Poppins', 'Segoe UI', sans-serif;
-                    color: var(--urban-ink);
-                    margin: 0;
-                    background-color: #fff;
-                }
-                .landing-nav {
-                    background: rgba(255, 255, 255, 0.97);
-                    backdrop-filter: blur(8px);
-                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-                }
-                .landing-hero {
-                    background: linear-gradient(135deg, #0f4b41 0%, #0b362f 60%);
-                    color: #fff;
-                    border-bottom-left-radius: 60px;
-                    border-bottom-right-radius: 60px;
-                    padding: 4rem 0;
-                    position: relative;
-                    overflow: hidden;
-                }
-                .landing-hero .btn-cta {
-                    background-color: var(--urban-cta);
-                    color: #fff;
-                    border-radius: 999px;
-                    padding: 0.75rem 1.5rem;
-                    border: none;
-                    font-weight: 600;
-                }
-                .landing-section {
-                    padding: 4rem 0;
-                }
-                .landing-section h2 {
-                    font-weight: 700;
-                    color: var(--urban-primary);
-                }
-                .landing-card {
-                    border-radius: 1.25rem;
-                    box-shadow: 0 15px 40px rgba(16, 78, 67, 0.1);
-                    padding: 1.5rem;
-                    background-color: #fff;
-                }
-                .landing-footer {
-                    background-color: var(--urban-primary);
-                    color: #fff;
-                    padding: 3rem 0;
-                }
-            </style>
+            <link rel="stylesheet" th:href="@{/css/landing.css}">
         </div>
 
         <header th:fragment="landingHeader">

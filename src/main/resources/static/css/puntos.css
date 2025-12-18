@@ -1,0 +1,40 @@
+/* Estilos para Saldo de Puntos */
+.empty-icon {
+    font-size: 4rem;
+    color: #ddd;
+}
+
+.star-icon-large {
+    font-size: 4rem;
+    opacity: 0.3;
+}
+
+.saldo-card {
+    background: linear-gradient(135deg, #104E43 0%, #0b362f 100%);
+    color: white;
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.saldo-amount {
+    font-size: 3rem;
+    font-weight: bold;
+}
+
+.movimiento-card {
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 1rem;
+    background: white;
+    margin-bottom: 1rem;
+}
+
+.movimiento-positivo {
+    color: #28a745;
+}
+
+.movimiento-negativo {
+    color: #dc3545;
+}
+

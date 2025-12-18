@@ -5,12 +5,14 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Gestión de Horarios · Urban Bites</title>
         <th:block th:replace="app/fragmentos :: appHead"></th:block>
+        <link rel="stylesheet" th:href="@{/css/horarios.css}">
+        <link rel="stylesheet" th:href="@{/css/common.css}">
     </head>
     <body class="bg-light" th:with="currentPage='horarios'">
         <div class="d-flex min-vh-100">
             <th:block th:replace="general/fragmentos :: sidebarOwner(${currentPage})"></th:block>
 
-            <main class="flex-grow-1 p-4" style="overflow-y: auto; background-color: #f5f5f5;">
+            <main class="flex-grow-1 p-4 bg-light-gray">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2 class="fw-bold mb-0">Gestión de Horarios</h2>
                 </div>
@@ -43,7 +45,7 @@
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h4 class="mb-0">Horarios del Food Truck</h4>
                         <a th:href="@{/owner/horarios/nuevo(idFoodtruck=${foodtruckId})}" 
-                           class="btn" style="background-color: #ED3101; color: white;">
+                           class="btn btn-urban-cta">
                             <i class="bi bi-plus-circle"></i> Nuevo Horario
                         </a>
                     </div>
@@ -83,7 +85,7 @@
                                         <td>
                                             <div class="d-flex gap-2">
                                                 <a th:href="@{/owner/horarios/{id}/editar(id=${horario.idHorario})}" 
-                                                   class="btn btn-sm" style="background-color: #104E43; color: white;">
+                                                   class="btn btn-sm btn-urban-primary">
                                                     <i class="bi bi-pencil"></i> Editar
                                                 </a>
                                                 <button type="button" 

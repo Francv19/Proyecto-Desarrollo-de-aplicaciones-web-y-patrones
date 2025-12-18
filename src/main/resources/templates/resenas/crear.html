@@ -5,56 +5,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Crear Reseña · Urban Bites</title>
         <th:block th:replace="app/fragmentos :: appHead"></th:block>
-        <style>
-            .review-form-card {
-                border: 1px solid #104E43;
-                border-radius: 12px;
-                padding: 2rem;
-                background: white;
-                max-width: 600px;
-                margin: 0 auto;
-            }
-            .star-rating-input {
-                display: flex;
-                gap: 0.5rem;
-                justify-content: center;
-                margin: 1.5rem 0;
-            }
-            .star-rating-input input[type="radio"] {
-                display: none;
-            }
-            .star-rating-input label {
-                font-size: 2rem;
-                color: #ddd;
-                cursor: pointer;
-                transition: color 0.2s;
-            }
-            .star-rating-input label:hover {
-                color: #ffc107;
-            }
-            .star-rating-input input[type="radio"]:checked ~ label {
-                color: #ffc107;
-            }
-            .star-rating-input input[type="radio"]:checked + label {
-                color: #ffc107;
-            }
-            .star-rating-input label.active {
-                color: #ffc107;
-            }
-        </style>
+        <link rel="stylesheet" th:href="@{/css/resenas-crear.css}">
+        <link rel="stylesheet" th:href="@{/css/common.css}">
     </head>
     <body class="bg-light" th:with="currentPage='resenas'">
         <div class="d-flex min-vh-100">
             <th:block th:replace="general/fragmentos :: sidebarCliente(${currentPage})"></th:block>
 
-            <main class="flex-grow-1 p-4" style="overflow-y: auto;">
+            <main class="flex-grow-1 p-4">
                 <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
                     <span th:text="${error}"></span>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
 
                 <div class="review-form-card">
-                    <h2 class="fw-bold mb-4" style="color: #104E43;">Crear Reseña</h2>
+                    <h2 class="fw-bold mb-4 review-title-color">Crear Reseña</h2>
                     
                     <div class="mb-4" th:if="${pedido != null}">
                         <h5 class="fw-bold" th:text="${pedido.foodtruck.nombre}">Food Truck</h5>
@@ -88,13 +53,13 @@
                             <small class="text-muted">Máximo 500 caracteres</small>
                         </div>
 
-                        <div class="d-flex gap-2">
-                            <button type="submit" class="btn flex-grow-1" style="background-color: #ED3101; color: white;">
-                                Enviar Reseña
-                            </button>
+                        <div class="d-flex gap-2 justify-content-end">
                             <a th:href="@{/pedidos}" class="btn btn-outline-secondary">
                                 Cancelar
                             </a>
+                            <button type="submit" class="btn btn-urban-cta">
+                                <i class="bi bi-send me-2"></i>Enviar Reseña
+                            </button>
                         </div>
                     </form>
                 </div>

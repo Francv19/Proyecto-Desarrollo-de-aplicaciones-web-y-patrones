@@ -3,6 +3,8 @@ package com.urbanbites.controller;
 import com.urbanbites.domain.Pedido;
 import com.urbanbites.domain.Usuario;
 import com.urbanbites.repository.UsuarioRepository;
+import com.urbanbites.repository.PedidoRepository;
+import com.urbanbites.repository.FoodtruckRepository;
 import com.urbanbites.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -21,6 +23,12 @@ public class AppController {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+    
+    @Autowired
+    private PedidoRepository pedidoRepository;
+    
+    @Autowired
+    private FoodtruckRepository foodtruckRepository;
     
     @Autowired
     private PedidoService pedidoService;
@@ -115,8 +123,36 @@ public class AppController {
     }
 
     @GetMapping("/admin")
-    public String appAdmin() {
-        return "app/admin";
+    public String appAdmin(Model model) {
+        try {
+            // Obtener estadísticas del sistema
+            long totalUsuarios = usuarioRepository.count();
+            long totalFoodtrucks = foodtruckRepository.count();
+            long totalPedidos = pedidoRepository.count();
+            
+            // Contar usuarios activos
+            List<Usuario> todosUsuarios = usuarioRepository.findAll();
+            long usuariosActivos = todosUsuarios != null ? 
+                todosUsuarios.stream()
+                    .filter(Usuario::isActivo)
+                    .count() : 0;
+            
+            model.addAttribute("totalUsuarios", totalUsuarios);
+            model.addAttribute("usuariosActivos", usuariosActivos);
+            model.addAttribute("totalFoodtrucks", totalFoodtrucks);
+            model.addAttribute("totalPedidos", totalPedidos);
+            model.addAttribute("page", "dashboard");
+            
+            return "app/admin";
+        } catch (Exception e) {
+            model.addAttribute("error", "Error al cargar dashboard: " + e.getMessage());
+            model.addAttribute("totalUsuarios", 0);
+            model.addAttribute("usuariosActivos", 0);
+            model.addAttribute("totalFoodtrucks", 0);
+            model.addAttribute("totalPedidos", 0);
+            model.addAttribute("page", "dashboard");
+            return "app/admin";
+        }
     }
 }
 

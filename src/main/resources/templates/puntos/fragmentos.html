@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+    <head th:fragment="puntosHead">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <th:block th:fragment="puntosHeadContent">
+            <th:block th:replace="app/fragmentos :: appHead"></th:block>
+            <link rel="stylesheet" th:href="@{/css/puntos.css}">
+            <link rel="stylesheet" th:href="@{/css/common.css}">
+        </th:block>
+        
+        <th:block th:fragment="puntosScripts">
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+            <script th:src="@{/js/rutinas.js}"></script>
+        </th:block>
+    </body>
+</html>
+

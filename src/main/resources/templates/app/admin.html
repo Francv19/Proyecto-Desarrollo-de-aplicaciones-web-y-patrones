@@ -5,15 +5,17 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Urban Bites · Admin</title>
         <th:block th:replace="app/fragmentos :: appHead"></th:block>
+        <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}">
+        <link rel="stylesheet" th:href="@{/css/common.css}">
     </head>
     <body class="bg-light" th:with="currentPage=${page} ?: 'dashboard'">
         <div class="d-flex min-vh-100">
             <th:block th:replace="general/fragmentos :: sidebarAdmin(${currentPage})"></th:block>
 
-            <main class="flex-grow-1 p-4" style="background: white;">
+            <main class="flex-grow-1 p-4 main-bg-white">
                 <section class="mb-4">
                     <p class="text-uppercase fw-semibold text-secondary mb-1">Panel Administrador</p>
-                    <h1 class="display-6 fw-bold text-dark" style="color: #104E43;">Dashboard</h1>
+                    <h1 class="display-6 fw-bold text-dark dashboard-title-color">Dashboard</h1>
                     <p class="text-muted mb-0">Resumen general del sistema</p>
                 </section>
 
@@ -26,34 +28,34 @@
 
                 <div class="row g-4">
                     <div class="col-md-3 col-sm-6">
-                        <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #104E43 !important;">
+                        <div class="card border-0 shadow-sm h-100 stat-card-primary">
                             <div class="card-body d-flex flex-column">
                                 <h6 class="text-muted text-uppercase mb-2 small">Total Usuarios</h6>
-                                <h2 class="mb-0 flex-grow-1 d-flex align-items-end" style="color: #104E43;" th:text="${totalUsuarios}">0</h2>
+                                <h2 class="mb-0 flex-grow-1 d-flex align-items-end stat-value" th:text="${totalUsuarios}">0</h2>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-3 col-sm-6">
-                        <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #ED3101 !important;">
+                        <div class="card border-0 shadow-sm h-100 stat-card-danger">
                             <div class="card-body d-flex flex-column">
                                 <h6 class="text-muted text-uppercase mb-2 small">Usuarios Activos</h6>
-                                <h2 class="mb-0 flex-grow-1 d-flex align-items-end" style="color: #ED3101;" th:text="${usuariosActivos}">0</h2>
+                                <h2 class="mb-0 flex-grow-1 d-flex align-items-end stat-value" th:text="${usuariosActivos}">0</h2>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-3 col-sm-6">
-                        <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #FFE5B4 !important;">
+                        <div class="card border-0 shadow-sm h-100 stat-card-warning">
                             <div class="card-body d-flex flex-column">
                                 <h6 class="text-muted text-uppercase mb-2 small">Food Trucks</h6>
-                                <h2 class="mb-0 flex-grow-1 d-flex align-items-end" style="color: #104E43;" th:text="${totalFoodtrucks}">0</h2>
+                                <h2 class="mb-0 flex-grow-1 d-flex align-items-end stat-value" th:text="${totalFoodtrucks}">0</h2>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-3 col-sm-6">
-                        <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #1C1C1C !important;">
+                        <div class="card border-0 shadow-sm h-100 stat-card-dark">
                             <div class="card-body d-flex flex-column">
                                 <h6 class="text-muted text-uppercase mb-2 small">Total Pedidos</h6>
-                                <h2 class="mb-0 flex-grow-1 d-flex align-items-end" style="color: #1C1C1C;" th:text="${totalPedidos}">0</h2>
+                                <h2 class="mb-0 flex-grow-1 d-flex align-items-end stat-value" th:text="${totalPedidos}">0</h2>
                             </div>
                         </div>
                     </div>

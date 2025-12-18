@@ -1,0 +1,39 @@
+/* Estilos para gestión de Eventos (Owner) */
+.card-header-urban {
+    background-color: #104E43;
+    color: white;
+}
+
+.filter-btn {
+    border-radius: 20px;
+    padding: 0.5rem 1.25rem;
+    border: 1px solid #ddd;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+    background-color: #f0f0f0;
+    border-color: #104E43;
+}
+
+.filter-btn.active {
+    background-color: #104E43;
+    color: white;
+    border-color: #104E43;
+}
+
+.empty-icon {
+    font-size: 4rem;
+    color: #ddd;
+}
+
+.evento-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.evento-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+

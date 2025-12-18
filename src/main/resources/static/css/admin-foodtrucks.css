@@ -1,0 +1,54 @@
+/* Estilos para administración de Food Trucks */
+.foodtruck-card {
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 1.5rem;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.foodtruck-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.empty-icon {
+    font-size: 4rem;
+    color: #ddd;
+}
+
+.page-title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.title-icon {
+    width: 50px;
+    height: 50px;
+    background-color: #104E43;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.btn-cta {
+    background-color: #ED3101;
+    color: white;
+    border: none;
+}
+
+.btn-cta:hover {
+    background-color: #c42901;
+    color: white;
+}
+

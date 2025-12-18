@@ -185,6 +185,56 @@
                 .auth-link-small a:hover {
                     color: var(--urban-primary);
                 }
+                .alert-auth {
+                    border-radius: 0.75rem;
+                    padding: 1rem 1.25rem;
+                    margin-bottom: 1.5rem;
+                    border: none;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.75rem;
+                    animation: slideDown 0.3s ease-out;
+                }
+                @keyframes slideDown {
+                    from {
+                        opacity: 0;
+                        transform: translateY(-10px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+                .alert-auth-danger {
+                    background-color: #fee;
+                    color: #c33;
+                    border-left: 4px solid var(--urban-cta);
+                }
+                .alert-auth-success {
+                    background-color: #efe;
+                    color: #3c3;
+                    border-left: 4px solid #28a745;
+                }
+                .alert-auth-icon {
+                    font-size: 1.25rem;
+                    flex-shrink: 0;
+                }
+                .alert-auth-message {
+                    flex: 1;
+                    font-weight: 500;
+                    margin: 0;
+                }
+                .form-control.is-invalid {
+                    border-color: var(--urban-cta);
+                    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23ED3101'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath d='m5.8 3.6 .4.4.4-.4m0 4.8h-.8'/%3e%3c/svg%3e");
+                    background-repeat: no-repeat;
+                    background-position: right calc(0.375em + 0.1875rem) center;
+                    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+                }
+                .form-control.is-invalid:focus {
+                    border-color: var(--urban-cta);
+                    box-shadow: 0 0 0 0.2rem rgba(237, 49, 1, 0.25);
+                }
             </style>
         </div>
 
@@ -194,7 +244,7 @@
 
         <div th:fragment="authLogo">
             <div class="auth-logo">
-                <img th:src="@{/images/Logo Urban Bites.png}" alt="Urban Bites" class="img-fluid" style="max-width: 200px; height: auto;">
+                <img th:src="@{/images/Logo Urban Bites.png}" alt="Urban Bites" class="img-fluid auth-logo-img">
             </div>
         </div>
 

@@ -8,10 +8,11 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
         <th:block th:replace="landing/fragmentos :: landingStyles"></th:block>
+        <link rel="stylesheet" th:href="@{/css/landing.css}">
     </head>
     <body class="landing-page">
         <main>
-            <section class="landing-hero">
+            <section id="inicio" class="landing-hero">
                 <img th:src="@{/images/Fondo Landing.png}" alt="" class="landing-hero-wave">
                 <th:block th:replace="landing/fragmentos :: landingHeader"></th:block>
                 <div class="container landing-hero-content">
@@ -22,7 +23,7 @@
                             </h1>
                             <div class="d-flex flex-wrap gap-3 mb-4">
                                 <a class="btn btn-cta btn-lg text-white rounded-pill px-4" href="#foodtrucks">Ver Food Trucks</a>
-                                <a class="btn btn-lg rounded-pill px-4" style="background-color: #104E43; color: white; border: 1px solid white;" th:href="@{/registro}">Registrarse</a>
+                                <a class="btn btn-lg rounded-pill px-4 btn-hero-primary" th:href="@{/registro}">Registrarse</a>
                             </div>
                         </div>
                         <div class="col-lg-6 text-center mt-5 mt-lg-0 landing-hero-illustration">
@@ -35,7 +36,7 @@
             <section class="section-beige">
                 <div class="container">
                     <div class="text-center mb-5">
-                        <h2 class="fw-bold" style="color: #104E43;">Restaurantes Destacados</h2>
+                        <h2 class="fw-bold section-title-primary">Restaurantes Destacados</h2>
                     </div>
                     <div th:if="${foodtrucksDestacados != null and !foodtrucksDestacados.isEmpty()}">
                         <div id="carouselDestacados" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
@@ -81,7 +82,7 @@
             </section>
 
             <!-- Sección de Promociones -->
-            <section class="section-promociones">
+            <section id="promociones" class="section-promociones">
                 <div class="container">
                     <div class="text-center mb-5">
                         <h2 class="fw-bold text-white mb-0">¡Exquisitas Promociones!</h2>
@@ -98,7 +99,7 @@
                                 <div class="promo-landing-content">
                                     <h6 class="fw-bold mb-2" th:text="${promo.foodtruck.nombre}">Header</h6>
                                     <p class="text-muted small mb-2" th:text="${promo.foodtruck.descripcion != null and !#strings.isEmpty(promo.foodtruck.descripcion)} ? promo.foodtruck.descripcion : 'Descripción'">Description</p>
-                                    <p class="promo-price mb-3" style="color: #104E43;">
+                                    <p class="promo-price mb-3 promo-price-color">
                                         <span th:if="${promo.tipoDescuento.name() == 'porcentaje'}" 
                                               th:text="'₡' + ${#numbers.formatDecimal(promo.valor, 0, 'COMMA', 0, 'POINT')} + '% de Descuento'">₡10% de Descuento</span>
                                         <span th:if="${promo.tipoDescuento.name() == 'monto_fijo'}" 
@@ -122,9 +123,9 @@
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <div class="d-flex align-items-center gap-2">
                             <h2 class="fw-bold mb-0">Food Trucks</h2>
-                            <i class="bi bi-arrow-right-circle-fill" style="color: #ED3101; font-size: 1.5rem;"></i>
+                            <i class="bi bi-arrow-right-circle-fill arrow-icon-cta"></i>
                         </div>
-                        <a href="#" class="text-decoration-none" style="color: #104E43;">ver todos</a>
+                        <a href="#" class="text-decoration-none link-primary-color">ver todos</a>
                     </div>
                     <div class="row g-4" th:if="${todosFoodtrucks != null and !todosFoodtrucks.isEmpty()}">
                         <div class="col-md-4 col-lg-3" th:each="foodtruck : ${todosFoodtrucks}">
@@ -147,7 +148,7 @@
                                         <span th:unless="${foodtruck.descripcion != null and !#strings.isEmpty(foodtruck.descripcion)}">Descripción</span>
                                     </p>
                                     <div class="d-flex align-items-center gap-2 text-muted small">
-                                        <span>0.0 <i class="bi bi-star-fill" style="color: #FFD700;"></i></span>
+                                        <span>0.0 <i class="bi bi-star-fill star-gold"></i></span>
                                         <span>|</span>
                                         <span>00 min</span>
                                         <span>|</span>
@@ -170,28 +171,28 @@
                             <img th:src="@{/images/Ilustracion Como Funciona.png}" alt="Cómo funciona UrbanBites" class="img-fluid como-funciona-illustration">
                         </div>
                         <div class="col-lg-6">
-                            <h2 class="fw-bold mb-3" style="color: #ED3101;">¿Como Funciona?</h2>
-                            <p class="mb-4" style="color: #333;">
-                                Con <span style="color: #ED3101; font-weight: 600;">UrbanBites</span> pedir tu comida favorita es rápido y sencillo. Solo sigue estos pasos y disfruta la experiencia.
+                            <h2 class="fw-bold mb-3 como-funciona-title">¿Como Funciona?</h2>
+                            <p class="mb-4 text-dark-gray">
+                                Con <span class="highlight-cta">UrbanBites</span> pedir tu comida favorita es rápido y sencillo. Solo sigue estos pasos y disfruta la experiencia.
                             </p>
                             <div class="d-flex flex-column gap-3 mb-4">
                                 <div class="d-flex align-items-center gap-3">
                                     <div class="como-funciona-number">1</div>
-                                    <span class="fw-bold" style="color: #104E43; font-size: 1.1rem;">Elige tu Food Truck</span>
+                                    <span class="fw-bold step-title-color">Elige tu Food Truck</span>
                                 </div>
                                 <div class="d-flex align-items-center gap-3">
                                     <div class="como-funciona-number">2</div>
-                                    <span class="fw-bold" style="color: #104E43; font-size: 1.1rem;">Haz tu pedido</span>
+                                    <span class="fw-bold step-title-color">Haz tu pedido</span>
                                 </div>
                                 <div class="d-flex align-items-center gap-3">
                                     <div class="como-funciona-number">3</div>
-                                    <span class="fw-bold" style="color: #104E43; font-size: 1.1rem;">Disfruta tu comida.</span>
+                                    <span class="fw-bold step-title-color">Disfruta tu comida.</span>
                                 </div>
                             </div>
                             <div class="d-flex flex-wrap gap-3">
-                                <a class="btn btn-cta text-white rounded-pill px-4" href="#foodtrucks" style="background-color: #ED3101 !important; color: white !important; border: none !important; display: inline-block !important; visibility: visible !important; opacity: 1 !important;">Explorar Food Trucks</a>
-                                <a class="btn rounded-pill px-4" th:href="@{/registro}" style="background-color: white !important; color: #333 !important; border: 1px solid #ddd !important; display: inline-block !important; visibility: visible !important; opacity: 1 !important;">Crear Cuenta</a>
-                                <a class="btn rounded-pill px-4" th:href="@{/login}" style="background-color: #104E43 !important; color: white !important; border: 1px solid #104E43 !important; display: inline-block !important; visibility: visible !important; opacity: 1 !important;">Iniciar Sesión</a>
+                                <a class="btn btn-cta text-white rounded-pill px-4 btn-cta-override" href="#foodtrucks">Explorar Food Trucks</a>
+                                <a class="btn rounded-pill px-4 btn-white-override" th:href="@{/registro}">Crear Cuenta</a>
+                                <a class="btn rounded-pill px-4 btn-primary-override" th:href="@{/login}">Iniciar Sesión</a>
                             </div>
                         </div>
                     </div>
@@ -222,15 +223,15 @@
             </section>
 
             <!-- Sección de Mapa y Registro -->
-            <section class="section-mapa-registro">
+            <section id="contacto" class="section-mapa-registro">
                 <div class="container">
                     <!-- Sección del Mapa -->
                     <div class="mapa-section mb-5">
-                        <h2 class="text-center fw-bold mb-3" style="color: #333; font-size: 2.5rem;">
+                        <h2 class="text-center fw-bold mb-3 section-title-large">
                             Tu próximo antojo está más cerca de lo que crees.
                         </h2>
                         <p class="text-center mb-4">
-                            <a href="#foodtrucks" class="fw-bold text-decoration-none" style="color: #ED3101; font-size: 1.25rem;">¡Ubícanos aquí!</a>
+                            <a href="#foodtrucks" class="fw-bold text-decoration-none link-cta-color">¡Ubícanos aquí!</a>
                         </p>
                         <div class="mapa-wrapper position-relative">
                             <img th:src="@{/images/Figmap.png}" alt="Mapa de ubicación" class="img-fluid mapa-image">
@@ -247,14 +248,14 @@
                                 <img th:src="@{/images/burger floating.png}" alt="Hamburguesa" class="img-fluid food-illustration">
                             </div>
                             <div class="col-lg-6 text-center">
-                                <h2 class="fw-bold mb-4" style="color: #333; font-size: 2.5rem;">
+                                <h2 class="fw-bold mb-4 section-title-large">
                                     ¿Listo para tu próxima experiencia foodie?
                                 </h2>
-                                <p class="mb-4" style="color: #666; font-size: 1.1rem; line-height: 1.6;">
-                                    En <span class="fw-bold" style="color: #ED3101;">UrbanBites</span> reunimos lo mejor de la comida urbana en un solo lugar digital. Explora food trucks de todo tipo, descubre promociones exclusivas, gana puntos de lealtad en cada pedido y disfruta de una experiencia rápida, sencilla y deliciosa.
+                                <p class="mb-4 text-medium-gray landing-description-text">
+                                    En <span class="fw-bold highlight-cta">UrbanBites</span> reunimos lo mejor de la comida urbana en un solo lugar digital. Explora food trucks de todo tipo, descubre promociones exclusivas, gana puntos de lealtad en cada pedido y disfruta de una experiencia rápida, sencilla y deliciosa.
                                 </p>
                                 <div class="mt-4">
-                                    <a class="btn btn-cta btn-lg text-white rounded-pill px-5 py-3" th:href="@{/registro}" style="font-size: 1.1rem; background-color: #ED3101 !important; color: white !important; border: none !important; display: inline-block !important; visibility: visible !important; opacity: 1 !important; position: relative; z-index: 11;">
+                                    <a class="btn btn-cta btn-lg text-white rounded-pill px-5 py-3 btn-cta-lg-override" th:href="@{/registro}">
                                         Regístrate en UrbanBites
                                     </a>
                                 </div>

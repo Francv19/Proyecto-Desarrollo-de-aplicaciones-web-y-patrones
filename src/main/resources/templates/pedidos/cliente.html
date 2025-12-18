@@ -1,34 +1,15 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
     <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <th:block th:replace="pedidos/fragmentos :: pedidosHead"></th:block>
         <title>Mis Pedidos · Urban Bites</title>
-        <th:block th:replace="app/fragmentos :: appHead"></th:block>
-        <style>
-            .order-card {
-                border: 1px solid #ddd;
-                border-radius: 12px;
-                padding: 1.5rem;
-                background: white;
-                transition: all 0.3s ease;
-            }
-            .order-card:hover {
-                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            }
-            .status-badge {
-                padding: 0.5rem 1rem;
-                border-radius: 20px;
-                font-size: 0.85rem;
-                font-weight: 600;
-            }
-        </style>
+        <th:block th:replace="pedidos/fragmentos :: pedidosHeadContent"></th:block>
     </head>
     <body class="bg-light" th:with="currentPage='pedidos'">
         <div class="d-flex min-vh-100">
             <th:block th:replace="general/fragmentos :: sidebarCliente(${currentPage})"></th:block>
 
-            <main class="flex-grow-1 p-4" style="overflow-y: auto;">
+            <main class="flex-grow-1 p-4">
                 <div th:if="${mensaje}" class="alert alert-success alert-dismissible fade show" role="alert">
                     <span th:text="${mensaje}"></span>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -75,12 +56,12 @@
 
                             <!-- Puntos ganados -->
                             <div class="mb-3" th:if="${pedido.estado != null and pedido.estado.name() == 'entregado' and puntosPorPedido != null and puntosPorPedido.containsKey(pedido.idPedido)}">
-                                <div class="alert alert-light border" style="background-color: #fff3cd; border-color: #ffc107 !important;">
+                                <div class="alert alert-light border points-alert-warning">
                                     <div class="d-flex align-items-center">
                                         <i class="bi bi-star-fill text-warning me-2"></i>
                                         <div>
                                             <strong class="text-dark">Puntos ganados:</strong>
-                                            <span class="ms-2 fw-bold" style="color: #104E43;" 
+                                            <span class="ms-2 fw-bold points-value-green" 
                                                   th:text="${puntosPorPedido.get(pedido.idPedido).puntos}">0</span>
                                             <span class="text-muted small"> puntos</span>
                                         </div>
@@ -95,8 +76,7 @@
                                 </div>
                                 <div th:if="${pedido.estado != null and pedido.estado.name() == 'entregado'}">
                                     <a th:href="@{/resenas/crear(idPedido=${pedido.idPedido})}" 
-                                       class="btn btn-sm" 
-                                       style="background-color: #ED3101; color: white;">
+                                       class="btn btn-sm btn-urban-cta">
                                         Dejar Reseña
                                     </a>
                                 </div>
@@ -106,9 +86,9 @@
                 </div>
                 <div th:if="${pedidos == null or pedidos.isEmpty()}">
                     <div class="text-center py-5">
-                        <i class="bi bi-inbox" style="font-size: 4rem; color: #ddd;"></i>
+                        <i class="bi bi-inbox empty-icon"></i>
                         <p class="text-muted mt-3">No tienes pedidos aún</p>
-                        <a th:href="@{/menu}" class="btn" style="background-color: #ED3101; color: white;">
+                        <a th:href="@{/menu}" class="btn btn-urban-cta">
                             Ver Menú
                         </a>
                     </div>
@@ -116,8 +96,7 @@
             </main>
         </div>
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-        <script th:src="@{/js/rutinas.js}"></script>
+        <th:block th:replace="pedidos/fragmentos :: pedidosScripts"></th:block>
     </body>
 </html>
 

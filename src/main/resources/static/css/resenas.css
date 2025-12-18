@@ -1,0 +1,112 @@
+/* Estilos para Reseñas */
+.review-card {
+    border: 1px solid #104E43;
+    border-radius: 12px;
+    padding: 1.5rem;
+    background: white;
+    margin-bottom: 1.5rem;
+}
+
+.review-card-header {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+
+.review-item-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    background: white;
+}
+
+.star-rating {
+    color: #ffc107;
+}
+
+.star-rating .bi-star {
+    color: #ddd;
+}
+
+.background-overlay {
+    position: relative;
+    background-image: url('/images/foodtruck-festival.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    min-height: 100vh;
+}
+
+.background-overlay::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.95);
+    z-index: 0;
+}
+
+.background-overlay > * {
+    position: relative;
+    z-index: 1;
+}
+
+.review-title-color {
+    color: #104E43;
+}
+
+.comment-text {
+    white-space: pre-wrap;
+}
+
+.comment-text-bg {
+    white-space: pre-wrap;
+    background-color: #f8f9fa;
+    padding: 0.75rem;
+    border-radius: 6px;
+}
+
+.arrow-icon-red {
+    color: #ED3101;
+    font-size: 1.5rem;
+}
+
+.empty-icon {
+    font-size: 4rem;
+    color: #ddd;
+}
+
+.filter-btn {
+    border-radius: 20px;
+    padding: 0.5rem 1.25rem;
+    border: 1px solid #ddd;
+    background: white;
+    transition: all 0.2s;
+}
+
+.filter-btn.active {
+    background-color: #FFE5B4;
+    border-color: #ED3101;
+    color: #ED3101;
+}
+
+.review-card-owner {
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 1.5rem;
+    background: white;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.review-card-owner:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.badge-sm {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+}
+

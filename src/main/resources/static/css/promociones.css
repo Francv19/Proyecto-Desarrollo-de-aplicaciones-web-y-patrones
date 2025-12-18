@@ -1,0 +1,208 @@
+/* Estilos para Promociones (Cliente) */
+:root {
+    --urban-primary: #104E43;
+    --urban-secondary: #FFE5B4;
+    --urban-cta: #ED3101;
+    --urban-light: #F4F4F4;
+    --urban-ink: #1C1C1C;
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.section-title-icon {
+    color: var(--urban-cta);
+    font-size: 1.5rem;
+}
+
+.promo-card {
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    height: 100%;
+    min-height: 400px;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.promo-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.promo-image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 250px;
+    overflow: hidden;
+}
+
+.promo-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.promo-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background-color: var(--urban-cta);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 0.85rem;
+    z-index: 2;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.promo-content {
+    padding: 1.5rem;
+}
+
+.promo-title {
+    color: #333;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 0.75rem;
+}
+
+.promo-description {
+    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    min-height: 60px;
+}
+
+.promo-btn {
+    background-color: var(--urban-cta);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+.promo-btn:hover {
+    background-color: #c02801;
+    color: white;
+}
+
+.coupon-card {
+    border-radius: 12px;
+    padding: 1.5rem;
+    height: 100%;
+    position: relative;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.coupon-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.coupon-card.bg-danger {
+    background: linear-gradient(135deg, var(--urban-primary) 0%, #0b362f 100%);
+    color: white;
+    border-color: var(--urban-primary);
+}
+
+.coupon-card.bg-white {
+    background: var(--urban-secondary);
+    color: var(--urban-ink);
+    border-color: var(--urban-primary);
+    border-width: 2px;
+}
+
+.coupon-card.bg-dark {
+    background: linear-gradient(135deg, var(--urban-primary) 0%, #0b362f 100%);
+    color: white;
+    border-color: var(--urban-primary);
+}
+
+.coupon-card.bg-dark .discount-display,
+.coupon-card.bg-danger .discount-display {
+    color: var(--urban-secondary);
+}
+
+.coupon-card.bg-white .discount-display {
+    color: var(--urban-cta);
+}
+
+.coupon-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.coupon-title {
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.coupon-date {
+    font-size: 0.8rem;
+    opacity: 0.9;
+}
+
+.discount-display {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--urban-cta);
+    line-height: 1;
+}
+
+.coupon-image-wrapper {
+    width: 100%;
+    height: 150px;
+    overflow: hidden;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.coupon-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.coupon-description {
+    flex-grow: 1;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* Estilos para gestión de Promociones (Owner) */
+.card-header-urban {
+    background-color: #104E43;
+    color: white;
+}
+
+.promocion-card {
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 1.5rem;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.promocion-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+

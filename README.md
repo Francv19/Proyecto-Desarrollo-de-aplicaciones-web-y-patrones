@@ -130,13 +130,13 @@ Si deseas usar Firebase Storage para subir imágenes:
 
 ---
 
-## 👤 Usuarios/Administradores
+## 👤 Usuarios Iniciales
 
-Después de ejecutar el script SQL, puedes crear un usuario administrador accediendo a:
+Después de ejecutar el script SQL, puedes iniciar sesión con los siguientes usuarios (contraseña: `1234`):
 
-```
-http://localhost:8085/setup/admin
-```
+- **Cliente**: `cliente@urbanbites.com`
+- **Dueño**: `dueno@urbanbites.com`
+- **Administrador**: `admin@urbanbites.com`
 
 ---
 
@@ -146,25 +146,33 @@ http://localhost:8085/setup/admin
 - ✅ Registro e inicio de sesión
 - ✅ Visualización de menús de food trucks
 - ✅ Agregar productos al carrito
+- ✅ Canjear puntos en el carrito
 - ✅ Realizar pedidos
 - ✅ Ver historial de pedidos
 - ✅ Dejar reseñas de pedidos entregados
-- ✅ Ver saldo de puntos
+- ✅ Ver saldo de puntos y movimientos
 - ✅ Ver promociones activas
+- ✅ Solicitar eventos (catering, delivery)
+- ✅ Aceptar/rechazar cotizaciones de eventos
 
 ### Para Dueños de Food Trucks 🚚
-- ✅ Panel de administración
-- ✅ Gestión de food trucks (CRUD)
-- ✅ Gestión de productos/menú (CRUD)
+- ✅ Panel de administración con estadísticas
+- ✅ Gestión de food trucks (CRUD) con imágenes
+- ✅ Gestión de productos/menú (CRUD) con imágenes
 - ✅ Visualización y actualización de pedidos
 - ✅ Establecer tiempo estimado (ETA)
 - ✅ Ver y moderar reseñas
 - ✅ Gestionar promociones
+- ✅ Configurar reglas de puntos
+- ✅ Gestionar horarios y ubicaciones
+- ✅ Recibir y cotizar solicitudes de eventos
+- ✅ Aceptar/rechazar eventos cotizados
 
 ### Para Administradores 🔐
-- ✅ Dashboard con estadísticas
+- ✅ Dashboard con estadísticas del sistema
 - ✅ Gestión de usuarios y roles
-- ✅ Visualización de todos los food trucks
+- ✅ Gestión de food trucks (CRUD)
+- ✅ Gestión de horarios de food trucks
 - ✅ Control completo del sistema
 
 ---
@@ -177,20 +185,29 @@ UrbanBitesApp/
 │   ├── main/
 │   │   ├── java/
 │   │   │   └── com/urbanbites/
-│   │   │       ├── config/          # Configuraciones (Security, MVC)
-│   │   │       ├── controller/      # Controladores REST/MVC
-│   │   │       ├── domain/          # Entidades JPA
-│   │   │       ├── repository/      # Repositorios Spring Data JPA
-│   │   │       ├── service/         # Lógica de negocio
+│   │   │       ├── controller/      # Controladores MVC
+│   │   │       ├── domain/         # Entidades JPA
+│   │   │       ├── repository/     # Repositorios Spring Data JPA
+│   │   │       ├── service/        # Lógica de negocio
 │   │   │       └── UrbanBitesApplication.java
 │   │   └── resources/
-│   │       ├── static/              # Archivos estáticos (CSS, JS, imágenes)
-│   │       ├── templates/           # Plantillas Thymeleaf
-│   │       ├── firebase/            # Credenciales Firebase (no incluido en git)
+│   │       ├── static/
+│   │       │   ├── css/            # Estilos CSS separados por módulo
+│   │       │   ├── js/             # Scripts JavaScript separados
+│   │       │   └── images/         # Imágenes estáticas
+│   │       ├── templates/          # Plantillas Thymeleaf
+│   │       │   ├── admin/         # Vistas de administrador
+│   │       │   ├── owner/         # Vistas de dueño
+│   │       │   ├── auth/          # Autenticación
+│   │       │   ├── carrito/       # Carrito de compras
+│   │       │   ├── eventos/       # Eventos (cliente)
+│   │       │   ├── general/       # Fragmentos compartidos
+│   │       │   └── ...           # Otras vistas
+│   │       ├── firebase/          # Credenciales Firebase (no incluido en git)
 │   │       ├── application.properties
-│   │       └── UrbanBites.sql       # Script de base de datos
-│   └── test/                        # Pruebas unitarias
-├── pom.xml                          # Configuración Maven
+│   │       └── UrbanBites.sql     # Script completo de base de datos
+│   └── test/                      # Pruebas unitarias
+├── pom.xml                        # Configuración Maven
 ├── .gitignore
 └── README.md
 ```
@@ -201,9 +218,10 @@ UrbanBitesApp/
 
 El proyecto utiliza Spring Security para:
 - Autenticación basada en formularios
+- **Autorización dinámica basada en rutas desde base de datos** - Las rutas y permisos se gestionan desde la tabla `ruta`
 - Autorización basada en roles (cliente, dueño, admin)
 - Encriptación de contraseñas con BCrypt
-- Protección CSRF
+- Protección CSRF en todos los formularios
 - Redirección automática según rol después del login
 
 ---
@@ -214,16 +232,24 @@ El esquema de la base de datos incluye las siguientes entidades principales:
 
 - `usuario` - Usuarios del sistema
 - `rol` - Roles de usuario
+- `usuario_rol` - Relación muchos a muchos entre usuarios y roles
+- `ruta` - **Rutas y permisos dinámicos del sistema**
 - `foodtrucks` - Food trucks registrados
 - `productos` - Productos del menú
 - `menu` - Menús de food trucks
+- `fotos_productos` - Imágenes de productos
 - `pedidos` - Pedidos realizados
 - `detalle_pedido` - Detalles de cada pedido
 - `carritos` - Carritos de compra
 - `detalle_carrito` - Detalles del carrito
 - `resenas` - Reseñas de clientes
 - `promociones` - Promociones activas
-- `puntos_cliente` - Sistema de puntos
+- `puntos_cliente` - Sistema de puntos (acumulados y redimidos)
+- `reglas_puntos` - Reglas de puntos por food truck
+- `eventos` - Solicitudes de eventos con cotizaciones
+- `horarios_foodtruck` - Horarios y ubicaciones de food trucks
+
+**Nota**: Todas las relaciones tienen `ON DELETE CASCADE` para permitir eliminaciones en cascada.
 
 ---
 
@@ -254,5 +280,18 @@ El esquema de la base de datos incluye las siguientes entidades principales:
 - ⚠️ **No subir el archivo SQL** con datos sensibles al repositorio público
 - ✅ El proyecto está configurado para desarrollo local
 - ✅ Las imágenes se pueden subir a Firebase Storage o usar rutas locales
+- ✅ **Rutas dinámicas**: Las rutas y permisos se gestionan desde la tabla `ruta` en la base de datos
+- ✅ **Modularización**: CSS y JavaScript están separados en archivos externos
+- ✅ **Fragmentos Thymeleaf**: Cada módulo tiene su propio archivo `fragmentos.html` para head y scripts
+- ✅ **Mejores prácticas UX**: Modales Bootstrap para confirmaciones, filtros interactivos, estados visuales
+
+## 🎨 Características de Diseño
+
+- **Bootstrap 5** para componentes UI
+- **Bootstrap Icons** para iconografía
+- **CSS modular** - Estilos separados por funcionalidad
+- **JavaScript modular** - Scripts separados por página
+- **Responsive design** - Adaptable a diferentes tamaños de pantalla
+- **Tema consistente** - Colores Urban Bites (#104E43 verde, #ED3101 rojo)
 
 ---

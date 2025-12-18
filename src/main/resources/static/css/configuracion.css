@@ -1,0 +1,280 @@
+/* Estilos para Configuración */
+:root {
+    --urban-primary: #104E43;
+    --urban-secondary: #FFE5B4;
+    --urban-cta: #ED3101;
+    --urban-light: #F4F4F4;
+    --urban-ink: #1C1C1C;
+}
+
+.config-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+.config-tab {
+    padding: 0.75rem 1.5rem;
+    border: 2px solid #104E43;
+    background: white;
+    color: #104E43;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.config-tab:hover {
+    background: #104E43;
+    color: white;
+}
+
+.config-tab.active {
+    background: #104E43;
+    color: white;
+}
+
+.config-card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+.config-section-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--urban-primary);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--urban-light);
+}
+
+.config-form-group {
+    margin-bottom: 1.5rem;
+}
+
+.config-label {
+    font-weight: 600;
+    color: var(--urban-ink);
+    margin-bottom: 0.5rem;
+}
+
+.config-input {
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    width: 100%;
+    transition: border-color 0.3s ease;
+}
+
+.config-input:focus {
+    border-color: var(--urban-primary);
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(16, 78, 67, 0.15);
+}
+
+.config-btn {
+    background-color: var(--urban-cta);
+    color: white;
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.config-btn:hover {
+    background-color: #c02801;
+    color: white;
+}
+
+.config-btn-secondary {
+    background-color: white;
+    color: var(--urban-cta);
+    border: 2px solid var(--urban-cta);
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.config-btn-secondary:hover {
+    background-color: var(--urban-cta);
+    color: white;
+}
+
+.page-title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.page-title h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #104E43;
+    margin: 0;
+}
+
+.config-section {
+    background: white;
+    border: 2px solid #104E43;
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.config-section h3 {
+    color: #104E43;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.config-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.config-item:last-child {
+    border-bottom: none;
+}
+
+.config-label {
+    font-weight: 500;
+    color: #1C1C1C;
+}
+
+.config-value {
+    color: #666;
+}
+
+.config-title {
+    color: var(--urban-primary);
+    font-weight: bold;
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.form-label {
+    color: var(--urban-ink);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.form-control {
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    padding: 0.75rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--urban-primary);
+    box-shadow: 0 0 0 0.2rem rgba(16, 78, 67, 0.25);
+}
+
+.btn-save {
+    background-color: var(--urban-cta);
+    color: white;
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.btn-save:hover {
+    background-color: #c02801;
+    color: white;
+}
+
+.info-text {
+    color: #666;
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+}
+
+.title-icon {
+    width: 50px;
+    height: 50px;
+    background: #ED3101;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.user-card {
+    border: 2px solid #104E43;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    background: white;
+}
+
+.user-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.user-name {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #104E43;
+    margin: 0;
+}
+
+.user-role {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 0.25rem 0;
+}
+
+.user-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.btn-action {
+    padding: 0.5rem 1.25rem;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    background: #ED3101;
+    color: white;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+}
+
+.btn-action:hover {
+    background: #c02801;
+    color: white;
+}
+
+.btn-action.secondary {
+    background: #104E43;
+}
+
+.btn-action.secondary:hover {
+    background: #0a3d35;
+}
+
+.users-section {
+    margin-top: 2rem;
+}
+

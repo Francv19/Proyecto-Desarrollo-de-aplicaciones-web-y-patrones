@@ -1,0 +1,68 @@
+/* Estilos para Pedidos */
+.empty-icon {
+    font-size: 4rem;
+    color: #ddd;
+}
+
+.points-alert-warning {
+    background-color: #fff3cd;
+    border-color: #ffc107 !important;
+}
+
+.points-value-green {
+    color: #104E43;
+}
+
+.order-card {
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 1.5rem;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.order-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.filter-btn {
+    border-radius: 20px;
+    padding: 0.5rem 1.25rem;
+    border: 1px solid #ddd;
+    background: white;
+    transition: all 0.2s;
+}
+
+.filter-btn.active {
+    background-color: #FFE5B4;
+    border-color: #ED3101;
+    color: #ED3101;
+}
+
+.btn-action {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-cancel {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-confirm {
+    background-color: #104E43;
+    color: white;
+}
+

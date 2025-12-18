@@ -5,12 +5,14 @@
         <title>Reglas de Puntos · Urban Bites</title>
         <th:block th:replace="app/fragmentos :: appHead"></th:block>
         <th:block th:replace="owner/reglas-puntos/fragmentos :: reglasPuntosStyles"></th:block>
+        <link rel="stylesheet" th:href="@{/css/reglas-puntos.css}">
+        <link rel="stylesheet" th:href="@{/css/common.css}">
     </head>
     <body class="bg-light" th:with="currentPage='reglas-puntos'">
         <div class="d-flex min-vh-100">
             <th:block th:replace="general/fragmentos :: sidebarOwner(${currentPage})"></th:block>
 
-            <main class="flex-grow-1 p-4" style="overflow-y: auto; background-color: #f5f5f5;">
+            <main class="flex-grow-1 p-4 bg-light-gray">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <div>
                         <h2 class="fw-bold mb-0">Reglas de Puntos</h2>
@@ -24,7 +26,7 @@
                            class="btn btn-outline-secondary">
                             <i class="bi bi-x-circle"></i> Quitar Filtro
                         </a>
-                        <a th:href="@{/owner/foodtrucks}" class="btn" style="background-color: #104E43; color: white;">
+                        <a th:href="@{/owner/foodtrucks}" class="btn btn-urban-primary">
                             <i class="bi bi-arrow-left"></i> Volver a Food Trucks
                         </a>
                     </div>
@@ -34,7 +36,7 @@
 
                 <div th:if="${foodtrucks != null and !foodtrucks.isEmpty()}">
                     <div class="card mb-4" th:each="foodtruck : ${foodtrucks}">
-                        <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #104E43; color: white;">
+                        <div class="card-header d-flex justify-content-between align-items-center card-header-urban">
                             <div>
                                 <h5 class="mb-0" th:text="${foodtruck.nombre}">Food Truck</h5>
                                 <small class="text-light">
@@ -42,7 +44,7 @@
                                 </small>
                             </div>
                             <a th:href="@{/owner/reglas-puntos/nuevo(idFoodtruck=${foodtruck.idFoodtruck})}" 
-                               class="btn btn-sm" style="background-color: #ED3101; color: white;">
+                               class="btn btn-sm btn-urban-cta">
                                 <i class="bi bi-plus-circle"></i> Nueva Regla
                             </a>
                         </div>
@@ -81,13 +83,15 @@
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <form th:action="@{/owner/reglas-puntos/{id}/eliminar(id=${regla.idRegla})}" 
-                                                          method="post" class="d-inline">
-                                                        <button type="submit" class="btn btn-sm btn-danger" 
-                                                                onclick="return confirm('¿Estás seguro de eliminar esta regla?')">
-                                                            <i class="bi bi-trash"></i>
-                                                        </button>
-                                                    </form>
+                                                    <button type="button" 
+                                                            class="btn btn-sm btn-danger"
+                                                            th:data-bs-toggle="'modal'"
+                                                            th:data-bs-target="'#modalEliminarRegla'"
+                                                            th:data-regla-id="${regla.idRegla}"
+                                                            th:data-regla-porcentaje="${regla.porcentaje}"
+                                                            onclick="abrirModalEliminarRegla(this)">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
                                                     <form th:if="${regla.activo}" 
                                                           th:action="@{/owner/reglas-puntos/{id}/desactivar(id=${regla.idRegla})}" 
                                                           method="post" class="d-inline">
@@ -110,8 +114,41 @@
             </main>
         </div>
 
+        <!-- Modal de confirmación de eliminación -->
+        <div class="modal fade" id="modalEliminarRegla" tabindex="-1" aria-labelledby="modalEliminarReglaLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalEliminarReglaLabel">Confirmar Eliminación</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="mb-0">¿Estás seguro de eliminar la regla de <strong id="porcentajeReglaEliminar"></strong>%?</p>
+                        <p class="text-danger mb-0 mt-2"><small>Esta acción no se puede deshacer.</small></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <form id="formEliminarRegla" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-danger">Eliminar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <script th:src="@{/js/rutinas.js}"></script>
+        <script>
+            function abrirModalEliminarRegla(button) {
+                const reglaId = button.getAttribute('data-regla-id');
+                const reglaPorcentaje = button.getAttribute('data-regla-porcentaje');
+                
+                document.getElementById('porcentajeReglaEliminar').textContent = reglaPorcentaje;
+                
+                const form = document.getElementById('formEliminarRegla');
+                form.action = '/owner/reglas-puntos/' + reglaId + '/eliminar';
+            }
+        </script>
     </body>
 </html>
 

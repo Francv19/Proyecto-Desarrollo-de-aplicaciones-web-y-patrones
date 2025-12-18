@@ -1,123 +1,17 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
     <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <th:block th:replace="admin/configuracion/fragmentos :: adminConfiguracionHead"></th:block>
         <title>Gestión de Roles · Urban Bites</title>
-        <th:block th:replace="app/fragmentos :: appHead"></th:block>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-        <style>
-            .config-tabs {
-                display: flex;
-                gap: 0.5rem;
-                margin-bottom: 2rem;
-            }
-            .config-tab {
-                padding: 0.75rem 1.5rem;
-                border: 2px solid #104E43;
-                background: white;
-                color: #104E43;
-                border-radius: 50px;
-                text-decoration: none;
-                font-weight: 600;
-                transition: all 0.2s;
-            }
-            .config-tab.active {
-                background: #104E43;
-                color: white;
-            }
-            .config-tab:hover {
-                background: #104E43;
-                color: white;
-            }
-            .page-title {
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-                margin-bottom: 2rem;
-            }
-            .page-title h1 {
-                font-size: 2.5rem;
-                font-weight: bold;
-                color: #104E43;
-                margin: 0;
-            }
-            .title-icon {
-                width: 50px;
-                height: 50px;
-                background: #ED3101;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: white;
-                font-size: 1.5rem;
-            }
-            .user-card {
-                border: 2px solid #104E43;
-                border-radius: 12px;
-                padding: 1.5rem;
-                margin-bottom: 1rem;
-                background: white;
-            }
-            .user-card-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 0.5rem;
-            }
-            .user-name {
-                font-size: 1.5rem;
-                font-weight: bold;
-                color: #104E43;
-                margin: 0;
-            }
-            .user-role {
-                color: #666;
-                font-size: 0.9rem;
-                margin: 0.25rem 0;
-            }
-            .user-actions {
-                display: flex;
-                gap: 0.75rem;
-            }
-            .btn-action {
-                padding: 0.5rem 1.25rem;
-                border-radius: 8px;
-                border: none;
-                font-weight: 600;
-                font-size: 0.9rem;
-                background: #ED3101;
-                color: white;
-                text-decoration: none;
-                display: inline-block;
-                transition: all 0.2s;
-            }
-            .btn-action:hover {
-                background: #c02801;
-                color: white;
-            }
-            .btn-action.secondary {
-                background: #104E43;
-            }
-            .btn-action.secondary:hover {
-                background: #0a3d35;
-            }
-            .users-section {
-                margin-top: 2rem;
-            }
-            .alert {
-                border-radius: 8px;
-                margin-bottom: 1.5rem;
-            }
-        </style>
+        <th:block th:replace="admin/configuracion/fragmentos :: adminConfiguracionHeadContent"></th:block>
+        <link rel="stylesheet" th:href="@{/css/configuracion.css}">
     </head>
     <body class="bg-light" th:with="currentPage=${page} ?: 'configuracion'">
         <th:block th:replace="general/fragmentos :: sidebarStyles"></th:block>
         <div class="d-flex min-vh-100">
             <th:block th:replace="general/fragmentos :: sidebarAdmin(${currentPage})"></th:block>
 
-            <main class="flex-grow-1 p-4" style="background: white;">
+            <main class="flex-grow-1 p-4 main-bg-white">
                 <div class="page-title">
                     <h1>Gestion de Roles</h1>
                     <div class="title-icon">
@@ -156,8 +50,9 @@
                                 <a th:href="@{/admin/configuracion/usuarios/{id}/editar(id=${usuario.idUsuario})}" 
                                    class="btn-action secondary">EDITAR</a>
                                 <form th:action="@{/admin/configuracion/usuarios/{id}/eliminar(id=${usuario.idUsuario})}" 
-                                      method="post" style="display: inline;"
-                                      onsubmit="return confirm('¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.');">
+                                      method="post" class="d-inline"
+                                      th:onsubmit="'return confirm(\'¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.\');'">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                                     <button type="submit" class="btn-action">ELIMINAR</button>
                                 </form>
                             </div>
@@ -167,8 +62,7 @@
             </main>
         </div>
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-        <script th:src="@{/js/rutinas.js}"></script>
+        <th:block th:replace="admin/configuracion/fragmentos :: adminConfiguracionScripts"></th:block>
     </body>
 </html>
 

@@ -1,0 +1,48 @@
+/* Estilos para Crear Reseña */
+.review-form-card {
+    border: 1px solid #104E43;
+    border-radius: 12px;
+    padding: 2rem;
+    background: white;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.star-rating-input {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    margin: 1.5rem 0;
+}
+
+.star-rating-input input[type="radio"] {
+    display: none;
+}
+
+.star-rating-input label {
+    font-size: 2rem;
+    color: #ddd;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.star-rating-input label:hover {
+    color: #ffc107;
+}
+
+.star-rating-input input[type="radio"]:checked ~ label {
+    color: #ffc107;
+}
+
+.star-rating-input input[type="radio"]:checked + label {
+    color: #ffc107;
+}
+
+.star-rating-input label.active {
+    color: #ffc107;
+}
+
+.review-title-color {
+    color: #104E43;
+}
+

@@ -1,0 +1,18 @@
+/* Estilos para gestión de Reglas de Puntos */
+.card-header-urban {
+    background-color: #104E43;
+    color: white;
+}
+
+.regla-card {
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 1.5rem;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.regla-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+

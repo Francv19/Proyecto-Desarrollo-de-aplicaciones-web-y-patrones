@@ -19,7 +19,7 @@ public class FotoProducto implements Serializable {
     @JoinColumn(name = "id_producto")
     private Producto producto;
 
-    @Column(length = 500)
+    @Column(columnDefinition = "TEXT")
     private String url;
 
     @Column(name = "alt_text", length = 150)

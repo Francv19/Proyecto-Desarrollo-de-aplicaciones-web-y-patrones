@@ -1,225 +1,15 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
     <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <th:block th:replace="menu/fragmentos :: menuHead"></th:block>
         <title>Menú · Urban Bites</title>
-        <th:block th:replace="app/fragmentos :: appHead"></th:block>
-        <style>
-            :root {
-                --urban-primary: #104E43;
-                --urban-secondary: #FFE5B4;
-                --urban-cta: #ED3101;
-                --urban-light: #F4F4F4;
-                --urban-ink: #1C1C1C;
-            }
-            .foodtruck-card {
-                border: 2px solid #ddd;
-                border-radius: 16px;
-                transition: all 0.3s ease;
-                cursor: pointer;
-                background: white;
-                overflow: hidden;
-                position: relative;
-            }
-            .foodtruck-card:hover {
-                box-shadow: 0 8px 24px rgba(16, 78, 67, 0.15);
-                transform: translateY(-4px);
-                border-color: var(--urban-primary);
-            }
-            .foodtruck-card.selected {
-                background-color: var(--urban-secondary);
-                border-color: var(--urban-cta);
-                border-width: 3px;
-            }
-            .foodtruck-image-wrapper {
-                width: 100%;
-                height: 180px;
-                overflow: hidden;
-                background: var(--urban-light);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            .foodtruck-image {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                transition: transform 0.3s ease;
-            }
-            .foodtruck-card:hover .foodtruck-image {
-                transform: scale(1.05);
-            }
-            .foodtruck-info {
-                padding: 1.25rem;
-            }
-            .foodtruck-name {
-                color: var(--urban-primary);
-                font-weight: bold;
-                font-size: 1.1rem;
-                margin-bottom: 0.5rem;
-            }
-            .foodtruck-description {
-                color: #666;
-                font-size: 0.9rem;
-                margin: 0;
-                display: -webkit-box;
-                -webkit-line-clamp: 2;
-                line-clamp: 2;
-                -webkit-box-orient: vertical;
-                overflow: hidden;
-            }
-            .producto-card {
-                border: 1px solid #ddd;
-                border-radius: 12px;
-                overflow: hidden;
-                background: white;
-                transition: all 0.3s ease;
-            }
-            .producto-card:hover {
-                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-                transform: translateY(-2px);
-            }
-            .producto-card.hidden {
-                display: none !important;
-            }
-            .producto-card.fade-out {
-                opacity: 0;
-                transform: scale(0.95);
-                transition: opacity 0.2s ease, transform 0.2s ease;
-            }
-            .producto-card.fade-in {
-                opacity: 1;
-                transform: scale(1);
-                transition: opacity 0.3s ease, transform 0.3s ease;
-            }
-            .producto-img {
-                width: 100%;
-                height: 200px;
-                object-fit: cover;
-                background-color: var(--urban-light);
-            }
-            .producto-img-placeholder {
-                width: 100%;
-                height: 200px;
-                background-color: var(--urban-light);
-                background-image: url('/images/placeholder-truck.png');
-                background-size: cover;
-                background-position: center;
-                background-repeat: no-repeat;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: #999;
-                font-size: 0.9rem;
-            }
-            .filter-btn {
-                border-radius: 20px;
-                padding: 0.5rem 1.25rem;
-                border: 2px solid #ddd;
-                background: white;
-                transition: all 0.2s;
-                font-weight: 500;
-            }
-            .filter-btn:hover {
-                border-color: var(--urban-primary);
-                color: var(--urban-primary);
-            }
-            .filter-btn.active {
-                background-color: var(--urban-cta);
-                color: white;
-                border-color: var(--urban-cta);
-            }
-            .search-input-group {
-                position: relative;
-            }
-            .search-btn {
-                background-color: var(--urban-cta);
-                border: none;
-                border-radius: 0 8px 8px 0;
-                color: white;
-                padding: 0.5rem 1rem;
-                transition: background-color 0.3s ease;
-            }
-            .search-btn:hover {
-                background-color: #c02801;
-            }
-            .section-title {
-                color: var(--urban-primary);
-                font-weight: bold;
-                margin-bottom: 1.5rem;
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-            }
-            .section-title i {
-                color: var(--urban-cta);
-            }
-            .btn-add-cart {
-                background-color: var(--urban-cta);
-                color: white;
-                border: none;
-                border-radius: 8px;
-                padding: 0.75rem;
-                font-weight: 600;
-                transition: background-color 0.3s ease;
-                width: 100%;
-            }
-            .btn-add-cart:hover {
-                background-color: #c02801;
-                color: white;
-            }
-            .quantity-controls {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 0.5rem;
-                margin-bottom: 1rem;
-            }
-            .quantity-btn {
-                width: 36px;
-                height: 36px;
-                border: 2px solid var(--urban-primary);
-                background: white;
-                color: var(--urban-primary);
-                border-radius: 8px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-weight: bold;
-                font-size: 1.2rem;
-                cursor: pointer;
-                transition: all 0.2s ease;
-            }
-            .quantity-btn:hover {
-                background-color: var(--urban-primary);
-                color: white;
-            }
-            .quantity-btn:disabled {
-                opacity: 0.5;
-                cursor: not-allowed;
-            }
-            .quantity-input {
-                width: 60px;
-                height: 36px;
-                text-align: center;
-                border: 2px solid var(--urban-primary);
-                border-radius: 8px;
-                font-weight: 600;
-                font-size: 1rem;
-            }
-            .quantity-input:focus {
-                outline: none;
-                border-color: var(--urban-cta);
-                box-shadow: 0 0 0 0.2rem rgba(237, 49, 1, 0.25);
-            }
-        </style>
+        <th:block th:replace="menu/fragmentos :: menuHeadContent"></th:block>
     </head>
     <body class="bg-light" th:with="currentPage='menu'">
         <div class="d-flex min-vh-100">
             <th:block th:replace="general/fragmentos :: sidebarCliente(${currentPage})"></th:block>
 
-            <main class="flex-grow-1 p-4" style="overflow-y: auto;">
+            <main class="flex-grow-1 p-4">
                 <div th:if="${mensaje}" class="alert alert-success alert-dismissible fade show" role="alert">
                     <span th:text="${mensaje}"></span>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -277,10 +67,10 @@
                     <h2 class="section-title">
                         <i class="bi bi-journal-text"></i>
                         Menú
-                        <span id="selectedFoodtruckBadge" class="badge bg-secondary ms-2" style="display: none;">
-                            <span id="selectedFoodtruckName"></span>
+                        <span id="selectedFoodtruckBadge" class="badge bg-secondary ms-2 hidden-element">
+                        <span id="selectedFoodtruckName"></span>
                         </span>
-                        <button id="clearFilterBtn" class="btn btn-sm btn-outline-secondary ms-2" style="display: none;" onclick="clearFoodtruckFilter()">
+                        <button id="clearFilterBtn" class="btn btn-sm btn-outline-secondary ms-2 hidden-element" onclick="clearFoodtruckFilter()">
                             <i class="bi bi-x-circle me-1"></i>Limpiar filtro
                         </button>
                     </h2>
@@ -310,7 +100,7 @@
                                      class="producto-img-placeholder">
                                     <i class="bi bi-image"></i>
                                 </div>
-                                <div class="producto-img-placeholder" style="display: none;">
+                                <div class="producto-img-placeholder hidden-element">
                                     <i class="bi bi-image"></i>
                                 </div>
                                 <div class="p-3">
@@ -320,10 +110,10 @@
                                         Descripción del producto
                                     </p>
                                     <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <span class="fw-bold fs-5" style="color: var(--urban-primary);">
+                                        <span class="fw-bold fs-5 producto-price">
                                             ₡<span th:text="${#numbers.formatDecimal(producto.precio, 0, 'COMMA', 2, 'POINT')}">3,500.00</span>
                                         </span>
-                                        <span class="badge" style="background-color: var(--urban-secondary); color: var(--urban-ink);" 
+                                        <span class="badge producto-badge" 
                                               th:text="${producto.foodtruck.nombre}">Grill & Go</span>
                                     </div>
                                     <form th:action="@{/carrito/agregar}" method="post" class="d-inline w-100" th:id="'form-producto-' + ${producto.idProducto}">
@@ -353,12 +143,12 @@
                             </div>
                         </div>
                     </div>
-                    <div id="noProductsMessage" class="text-center py-5" style="display: none;">
-                        <i class="bi bi-inbox" style="font-size: 3rem; color: #ccc;"></i>
+                    <div id="noProductsMessage" class="text-center py-5 hidden-element">
+                        <i class="bi bi-inbox empty-icon"></i>
                         <p class="text-muted mt-3">No hay productos disponibles para este food truck.</p>
                     </div>
                     <div th:if="${productos == null or productos.isEmpty()}" class="text-center py-5">
-                        <i class="bi bi-inbox" style="font-size: 3rem; color: #ccc;"></i>
+                        <i class="bi bi-inbox empty-icon"></i>
                         <p class="text-muted mt-3">No hay productos disponibles en este momento.</p>
                     </div>
                 </section>
@@ -367,192 +157,8 @@
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <script th:src="@{/js/rutinas.js}"></script>
-        <script>
-            let selectedFoodtruckId = null;
-            let currentProductSearch = '';
-
-            // Inicializar con food truck seleccionado desde la URL (si existe)
-            document.addEventListener('DOMContentLoaded', function() {
-                const urlParams = new URLSearchParams(window.location.search);
-                const foodtruckParam = urlParams.get('foodtruck');
-                if (foodtruckParam) {
-                    selectFoodtruck(parseInt(foodtruckParam), false);
-                }
-            });
-
-            function selectFoodtruck(id, updateUrl = true) {
-                selectedFoodtruckId = id;
-                
-                // Actualizar selección visual en las tarjetas
-                document.querySelectorAll('.foodtruck-card').forEach(card => {
-                    const cardId = parseInt(card.getAttribute('data-foodtruck-id'));
-                    if (cardId === id) {
-                        card.classList.add('selected');
-                    } else {
-                        card.classList.remove('selected');
-                    }
-                });
-
-                // Obtener nombre del food truck seleccionado
-                const selectedCard = document.querySelector(`.foodtruck-card[data-foodtruck-id="${id}"]`);
-                const foodtruckName = selectedCard?.querySelector('.foodtruck-name')?.textContent || 'Food Truck';
-                
-                // Actualizar badge y botón de limpiar
-                const badge = document.getElementById('selectedFoodtruckBadge');
-                const badgeName = document.getElementById('selectedFoodtruckName');
-                const clearBtn = document.getElementById('clearFilterBtn');
-                
-                if (badge && badgeName && clearBtn) {
-                    badgeName.textContent = foodtruckName;
-                    badge.style.display = 'inline-block';
-                    clearBtn.style.display = 'inline-block';
-                }
-
-                // Filtrar productos
-                filterProductosByFoodtruck(id);
-                
-                // Actualizar URL sin recargar
-                if (updateUrl) {
-                    const newUrl = new URL(window.location);
-                    newUrl.searchParams.set('foodtruck', id);
-                    window.history.pushState({foodtruck: id}, '', newUrl);
-                }
-
-                // Scroll suave hacia la sección de productos
-                document.getElementById('productosContainer')?.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'start' 
-                });
-            }
-
-            function clearFoodtruckFilter() {
-                selectedFoodtruckId = null;
-                
-                // Remover selección visual
-                document.querySelectorAll('.foodtruck-card').forEach(card => {
-                    card.classList.remove('selected');
-                });
-
-                // Ocultar badge y botón
-                const badge = document.getElementById('selectedFoodtruckBadge');
-                const clearBtn = document.getElementById('clearFilterBtn');
-                if (badge) badge.style.display = 'none';
-                if (clearBtn) clearBtn.style.display = 'none';
-
-                // Mostrar todos los productos
-                filterProductosByFoodtruck(null);
-                
-                // Actualizar URL
-                const newUrl = new URL(window.location);
-                newUrl.searchParams.delete('foodtruck');
-                window.history.pushState({}, '', newUrl);
-            }
-
-            function filterProductosByFoodtruck(id) {
-                const productos = document.querySelectorAll('.producto-item');
-                const noProductsMessage = document.getElementById('noProductsMessage');
-                let visibleCount = 0;
-
-                productos.forEach(item => {
-                    const itemFoodtruckId = parseInt(item.getAttribute('data-foodtruck-id'));
-                    const productoCard = item.querySelector('.producto-card');
-                    
-                    // Aplicar filtro de food truck
-                    const matchesFoodtruck = id === null || itemFoodtruckId === id;
-                    
-                    // Aplicar filtro de búsqueda
-                    const matchesSearch = currentProductSearch === '' || 
-                        item.textContent.toLowerCase().includes(currentProductSearch.toLowerCase());
-                    
-                    const shouldShow = matchesFoodtruck && matchesSearch;
-                    
-                    if (shouldShow) {
-                        productoCard.classList.remove('fade-out', 'hidden');
-                        productoCard.classList.add('fade-in');
-                        item.style.display = '';
-                        visibleCount++;
-                    } else {
-                        productoCard.classList.add('fade-out');
-                        setTimeout(() => {
-                            productoCard.classList.add('hidden');
-                            item.style.display = 'none';
-                        }, 200);
-                    }
-                });
-
-                // Mostrar/ocultar mensaje de no productos
-                if (noProductsMessage) {
-                    if (visibleCount === 0 && id !== null) {
-                        noProductsMessage.style.display = 'block';
-                    } else {
-                        noProductsMessage.style.display = 'none';
-                    }
-                }
-            }
-
-            // Búsqueda de food trucks
-            document.getElementById('searchFoodtruck')?.addEventListener('input', function(e) {
-                const searchTerm = e.target.value.toLowerCase();
-                document.querySelectorAll('.foodtruck-card').forEach(card => {
-                    const name = card.querySelector('.foodtruck-name')?.textContent.toLowerCase() || '';
-                    const description = card.querySelector('.foodtruck-description')?.textContent.toLowerCase() || '';
-                    const parent = card.closest('.col-md-4, .col-lg-3');
-                    if (name.includes(searchTerm) || description.includes(searchTerm)) {
-                        parent.style.display = '';
-                    } else {
-                        parent.style.display = 'none';
-                    }
-                });
-            });
-
-            // Búsqueda de productos
-            document.getElementById('searchProducto')?.addEventListener('input', function(e) {
-                currentProductSearch = e.target.value;
-                // Re-aplicar filtro de food truck con la nueva búsqueda
-                filterProductosByFoodtruck(selectedFoodtruckId);
-            });
-
-            // Funciones para control de cantidad
-            function increaseQuantity(productId) {
-                const input = document.getElementById('quantity-' + productId);
-                const currentValue = parseInt(input.value) || 1;
-                if (currentValue < 99) {
-                    input.value = currentValue + 1;
-                    updateQuantityButtons(productId);
-                }
-            }
-
-            function decreaseQuantity(productId) {
-                const input = document.getElementById('quantity-' + productId);
-                const currentValue = parseInt(input.value) || 1;
-                if (currentValue > 1) {
-                    input.value = currentValue - 1;
-                    updateQuantityButtons(productId);
-                }
-            }
-
-            function updateQuantityButtons(productId) {
-                const input = document.getElementById('quantity-' + productId);
-                const value = parseInt(input.value) || 1;
-                const decreaseBtn = document.getElementById('btn-decrease-' + productId);
-                const increaseBtn = document.getElementById('btn-increase-' + productId);
-                
-                if (decreaseBtn) {
-                    decreaseBtn.disabled = value <= 1;
-                }
-                if (increaseBtn) {
-                    increaseBtn.disabled = value >= 99;
-                }
-            }
-
-            // Inicializar botones de cantidad al cargar la página
-            document.addEventListener('DOMContentLoaded', function() {
-                document.querySelectorAll('.quantity-input').forEach(input => {
-                    const productId = input.id.replace('quantity-', '');
-                    updateQuantityButtons(productId);
-                });
-            });
-        </script>
+        <script th:src="@{/js/menu.js}"></script>
+        <th:block th:replace="menu/fragmentos :: menuScripts"></th:block>
     </body>
 </html>
 

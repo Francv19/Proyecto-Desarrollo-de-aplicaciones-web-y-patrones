@@ -46,6 +46,18 @@ CREATE TABLE usuario_rol (
   CONSTRAINT fk_ur_rol FOREIGN KEY (id_rol) REFERENCES rol(id_rol)
 ) ENGINE=InnoDB;
 
+CREATE TABLE ruta (
+  id_ruta       INT NOT NULL AUTO_INCREMENT,
+  ruta          VARCHAR(255) NOT NULL,
+  id_rol        INT NULL,
+  requiere_rol  BOOLEAN NOT NULL DEFAULT TRUE,
+  fecha_creacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  fecha_modificacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id_ruta),
+  CONSTRAINT fk_ruta_rol FOREIGN KEY (id_rol) REFERENCES rol(id_rol),
+  CHECK (id_rol IS NOT NULL OR requiere_rol = FALSE)
+) ENGINE=InnoDB;
+
 /* ---------- 2) Foodtrucks, menús y productos (HU 4–6, 15–16) ---------- */
 CREATE TABLE foodtrucks (
   id_foodtruck       INT NOT NULL AUTO_INCREMENT,
@@ -73,7 +85,7 @@ CREATE TABLE menu (
   activo         BOOLEAN NOT NULL DEFAULT TRUE,
   PRIMARY KEY (id_menu),
   KEY ndx_menu_food (id_foodtruck),
-  CONSTRAINT fk_menu_food FOREIGN KEY (id_foodtruck) REFERENCES foodtrucks(id_foodtruck)
+  CONSTRAINT fk_menu_food FOREIGN KEY (id_foodtruck) REFERENCES foodtrucks(id_foodtruck) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE productos (
@@ -88,21 +100,21 @@ CREATE TABLE productos (
   PRIMARY KEY (id_producto),
   KEY ndx_prod_food (id_foodtruck),
   KEY ndx_prod_menu (id_menu),
-  CONSTRAINT fk_prod_food FOREIGN KEY (id_foodtruck) REFERENCES foodtrucks(id_foodtruck),
-  CONSTRAINT fk_prod_menu FOREIGN KEY (id_menu) REFERENCES menu(id_menu)
+  CONSTRAINT fk_prod_food FOREIGN KEY (id_foodtruck) REFERENCES foodtrucks(id_foodtruck) ON DELETE CASCADE,
+  CONSTRAINT fk_prod_menu FOREIGN KEY (id_menu) REFERENCES menu(id_menu) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE fotos_productos (
   id_foto      INT NOT NULL AUTO_INCREMENT,
   id_producto  INT NOT NULL,
-  url          VARCHAR(500) NOT NULL,
+  url          TEXT,
   alt_text     VARCHAR(150),
   formato      ENUM('jpg','jpeg','png','webp') NOT NULL DEFAULT 'jpg',
   bytes        INT UNSIGNED,
   activo       BOOLEAN NOT NULL DEFAULT TRUE,
   PRIMARY KEY (id_foto),
   KEY ndx_foto_prod (id_producto),
-  CONSTRAINT fk_foto_producto FOREIGN KEY (id_producto) REFERENCES productos(id_producto)
+  CONSTRAINT fk_foto_producto FOREIGN KEY (id_producto) REFERENCES productos(id_producto) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 /* ---------- 3) Carritos y pedidos (HU 7–9) ---------- */
@@ -128,7 +140,7 @@ CREATE TABLE detalle_carrito (
   KEY ndx_dcart_producto (id_producto),
   KEY idx_carrito_producto (id_carrito, id_producto),
   CONSTRAINT fk_dcart_carrito FOREIGN KEY (id_carrito) REFERENCES carritos(id_carrito) ON DELETE CASCADE,
-  CONSTRAINT fk_dcart_producto FOREIGN KEY (id_producto) REFERENCES productos(id_producto)
+  CONSTRAINT fk_dcart_producto FOREIGN KEY (id_producto) REFERENCES productos(id_producto) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE pedidos (
@@ -147,7 +159,7 @@ CREATE TABLE pedidos (
   KEY ndx_pedido_user (id_usuario),
   KEY ndx_pedido_food (id_foodtruck),
   CONSTRAINT fk_pedido_user FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario),
-  CONSTRAINT fk_pedido_food FOREIGN KEY (id_foodtruck) REFERENCES foodtrucks(id_foodtruck)
+  CONSTRAINT fk_pedido_food FOREIGN KEY (id_foodtruck) REFERENCES foodtrucks(id_foodtruck) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE detalle_pedido (
@@ -162,7 +174,7 @@ CREATE TABLE detalle_pedido (
   KEY ndx_dped_pedido (id_pedido),
   KEY ndx_dped_producto (id_producto),
   CONSTRAINT fk_dped_pedido FOREIGN KEY (id_pedido) REFERENCES pedidos(id_pedido),
-  CONSTRAINT fk_dped_producto FOREIGN KEY (id_producto) REFERENCES productos(id_producto)
+  CONSTRAINT fk_dped_producto FOREIGN KEY (id_producto) REFERENCES productos(id_producto) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 /* ---------- 4) Horarios y ubicaciones (HU 10–11) ---------- */
@@ -178,7 +190,7 @@ CREATE TABLE horarios_foodtruck (
   activo         BOOLEAN NOT NULL DEFAULT TRUE,
   PRIMARY KEY (id_horario),
   KEY ndx_horario_food (id_foodtruck, dia_semana),
-  CONSTRAINT fk_horario_food FOREIGN KEY (id_foodtruck) REFERENCES foodtrucks(id_foodtruck)
+  CONSTRAINT fk_horario_food FOREIGN KEY (id_foodtruck) REFERENCES foodtrucks(id_foodtruck) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 /* ---------- 5) Promociones (HU 15–16) ---------- */
@@ -193,7 +205,7 @@ CREATE TABLE promociones (
   activo        BOOLEAN NOT NULL DEFAULT TRUE,
   PRIMARY KEY (id_promocion),
   KEY ndx_promo_food (id_foodtruck, fecha_inicio, fecha_fin),
-  CONSTRAINT fk_promo_food FOREIGN KEY (id_foodtruck) REFERENCES foodtrucks(id_foodtruck)
+  CONSTRAINT fk_promo_food FOREIGN KEY (id_foodtruck) REFERENCES foodtrucks(id_foodtruck) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 /* ---------- 6) Reseñas y moderación (HU 17–18) ---------- */
@@ -210,8 +222,8 @@ CREATE TABLE resenas (
   KEY ndx_resena_estado (estado),
   KEY ndx_resena_food (id_foodtruck),
   CONSTRAINT fk_resena_usuario FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario),
-  CONSTRAINT fk_resena_food FOREIGN KEY (id_foodtruck) REFERENCES foodtrucks(id_foodtruck),
-  CONSTRAINT fk_resena_pedido FOREIGN KEY (id_pedido) REFERENCES pedidos(id_pedido)
+  CONSTRAINT fk_resena_food FOREIGN KEY (id_foodtruck) REFERENCES foodtrucks(id_foodtruck) ON DELETE CASCADE,
+  CONSTRAINT fk_resena_pedido FOREIGN KEY (id_pedido) REFERENCES pedidos(id_pedido) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 /* ---------- 7) Puntos y reglas (HU 12–14) ---------- */
@@ -228,8 +240,8 @@ CREATE TABLE puntos_cliente (
   KEY ndx_pts_user (id_usuario),
   KEY ndx_pts_food (id_foodtruck),
   CONSTRAINT fk_pts_user FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario),
-  CONSTRAINT fk_pts_food FOREIGN KEY (id_foodtruck) REFERENCES foodtrucks(id_foodtruck),
-  CONSTRAINT fk_pts_pedido FOREIGN KEY (id_pedido) REFERENCES pedidos(id_pedido)
+  CONSTRAINT fk_pts_food FOREIGN KEY (id_foodtruck) REFERENCES foodtrucks(id_foodtruck) ON DELETE CASCADE,
+  CONSTRAINT fk_pts_pedido FOREIGN KEY (id_pedido) REFERENCES pedidos(id_pedido) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE reglas_puntos (
@@ -241,7 +253,7 @@ CREATE TABLE reglas_puntos (
   activo         BOOLEAN NOT NULL DEFAULT TRUE,
   PRIMARY KEY (id_regla),
   KEY ndx_regla_rango (id_foodtruck, fecha_inicio, fecha_fin),
-  CONSTRAINT fk_regla_food FOREIGN KEY (id_foodtruck) REFERENCES foodtrucks(id_foodtruck)
+  CONSTRAINT fk_regla_food FOREIGN KEY (id_foodtruck) REFERENCES foodtrucks(id_foodtruck) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 /* ---------- 8) Eventos con cotización embebida (HU 19–20) ---------- */
@@ -272,7 +284,7 @@ CREATE TABLE eventos (
   KEY ndx_evento_food (id_foodtruck),
   KEY ndx_evento_estado (estado),
   KEY ndx_evento_fecha (fecha_inicio),
-  CONSTRAINT fk_evento_food FOREIGN KEY (id_foodtruck) REFERENCES foodtrucks(id_foodtruck),
+  CONSTRAINT fk_evento_food FOREIGN KEY (id_foodtruck) REFERENCES foodtrucks(id_foodtruck) ON DELETE CASCADE,
   CONSTRAINT fk_evento_solicitante FOREIGN KEY (id_solicitante) REFERENCES usuario(id_usuario),
   CONSTRAINT fk_evento_dueno_cotizador FOREIGN KEY (id_dueno_cotizador) REFERENCES usuario(id_usuario),
   CHECK (fecha_fin > fecha_inicio)
@@ -288,96 +300,80 @@ INSERT INTO rol (nombre, descripcion) VALUES
 ('dueno','Dueño de food truck'),
 ('admin','Administrador del sistema');
 
-/* Usuarios */
+/* Usuarios - Contraseña para todos: 1234 */
 INSERT INTO usuario (username,password,nombre,apellidos,correo,telefono,activo) VALUES 
-('cliente1','clavecliente1','Julian','Castillo Mendez','jcastillo@gmail.com','4556-8978',TRUE),
-('dueno1','clavefoodtr1','Pedro','Sanchez Valle','pedro.sv@gmail.com','4789-1245',TRUE),
-('dueno2','clavefoodtr2','Abigail','Villalobos Vega','abigail.vv@gmail.com','4789-1246',TRUE),
-('dueno3','clavefoodtr3','Miguel','Solano Lopez','miguel.sl@gmail.com','4789-1247',TRUE),
-('admin1','claveadmin1','Karla','Flores Vega','kflores@gmail.com','4574-8756',TRUE);
+('cliente@urbanbites.com','$2a$10$Hj2VE26rWukC.H.5fTXvee.rDEgJz8.0ZJG1ZXUaHTw6RI8xMaMA6','Julian','Castillo Mendez','cliente@urbanbites.com','4556-8978',TRUE),
+('dueno@urbanbites.com','$2a$10$tvvr.0sKBSHxjnxsD.59De5tVKexmr2LvClQW7LKUZ2EThI2BIMCi','Pedro','Sanchez Valle','dueno@urbanbites.com','4789-1245',TRUE),
+('admin@urbanbites.com','$2a$10$0c0teXWoPTO2LG9vLM3qQ.jYx.RWZKD/eVj.JCkW7y22/CE71mMYS','Karla','Flores Vega','admin@urbanbites.com','4574-8756',TRUE);
 
 /* Mapear roles */
 INSERT INTO usuario_rol (id_usuario, id_rol) VALUES
-(1,1),(2,2),(3,2),(4,2),(5,3);
+((SELECT id_usuario FROM usuario WHERE username = 'cliente@urbanbites.com'), (SELECT id_rol FROM rol WHERE nombre = 'cliente')),
+((SELECT id_usuario FROM usuario WHERE username = 'dueno@urbanbites.com'), (SELECT id_rol FROM rol WHERE nombre = 'dueno')),
+((SELECT id_usuario FROM usuario WHERE username = 'admin@urbanbites.com'), (SELECT id_rol FROM rol WHERE nombre = 'admin'));
 
-/* Foodtrucks (dueños = usuarios 2,3,4) */
-INSERT INTO foodtrucks (id_dueno,nombre,descripcion,telefono,email,porcentaje_puntos,activo) VALUES 
-(2,'Grill_Go','Hamburguesas Artesanales','2222-8745','burgersgrillgo@gmail.com',5,TRUE),
-(3,'La Taqueria 506','Tacos','2756-8125','tacos@gmail.com',4,TRUE),
-(4,'Frosty Van','Helados','2468-1032','frosty@gmail.com',7,TRUE);
+/* Rutas públicas (no requieren autenticación) */
+INSERT INTO ruta (ruta, requiere_rol) VALUES
+('/', FALSE),
+('/landing/**', FALSE),
+('/errores/**', FALSE),
+('/registro/**', FALSE),
+('/login', FALSE),
+('/logout', FALSE),
+('/js/**', FALSE),
+('/webjars/**', FALSE),
+('/css/**', FALSE),
+('/images/**', FALSE),
+('/img/**', FALSE),
+('/menu', FALSE),
+('/menu/**', FALSE),
+('/promociones', FALSE),
+('/promociones/**', FALSE),
+('/horarios', FALSE),
+('/food-trucks', FALSE);
 
-/* Menús */
-INSERT INTO menu (id_foodtruck,nombre,descripcion,orden,activo) VALUES
-(1,'Hamburguesas Artesanales','Diferentes tipos',1,TRUE),
-(2,'Tacos','Diferentes tipos de carne',1,TRUE),
-(3,'Helados','Diferentes sabores',1,TRUE);
+/* Rutas para ADMIN (id_rol = 3) */
+INSERT INTO ruta (ruta, id_rol) VALUES
+('/admin/horarios/**', 3),
+('/configuracion', 3),
+('/configuracion/**', 3),
+('/admin/**', 3),
+('/usuario/**', 3),
+('/producto/**', 3),
+('/categoria/**', 3),
+('/reportes/**', 3);
 
-/* Productos */
-INSERT INTO productos (id_foodtruck,id_menu,nombre,descripcion,precio,disponible) VALUES
-(1,1,'Burger Tica','Torta de res, tomate, lechuga, queso',3500,TRUE),
-(2,2,'Tacos de Birria','Tortilla de maíz, birria, cebolla, culantro',4500,TRUE),
-(3,3,'Copa de Helados','Fresa con topping de fresas',2300,TRUE);
+/* Rutas para DUEÑO (id_rol = 2) */
+INSERT INTO ruta (ruta, id_rol) VALUES
+('/resenas/owner', 2),
+('/resenas/owner/**', 2),
+('/pedidos/*/estado', 2),
+('/pedidos/*/eta', 2),
+('/configuracion/owner', 2),
+('/configuracion/owner/**', 2),
+('/app/owner/**', 2),
+('/pedidos/owner/**', 2),
+('/cotizaciones/**', 2),
+('/owner/productos/**', 2),
+('/owner/foodtrucks/**', 2),
+('/owner/reglas-puntos/**', 2),
+('/owner/promociones/**', 2),
+('/owner/eventos/**', 2),
+('/owner/horarios/**', 2);
 
-INSERT INTO fotos_productos (id_producto,url,alt_text,formato,bytes,activo) VALUES
-(1,'https://cdn.example.com/img/burger_tica.jpg','Burger Tica','jpg',125000,TRUE),
-(2,'https://cdn.example.com/img/tacos_birria.jpg','Tacos de Birria','jpg',112000,TRUE),
-(3,'https://cdn.example.com/img/copa_helados.webp','Copa de Helados','webp',98000,TRUE);
-
-/* Carrito y detalles */
-INSERT INTO carritos (id_usuario,estado) VALUES (1,'abierto');
-INSERT INTO detalle_carrito (id_carrito,id_producto,cantidad,precio_unit,notas) VALUES
-(1,1,2,3500,'Sin cebolla'),
-(1,2,1,4500,'Sin culantro');
-
-/* Pedido + detalle */
-INSERT INTO pedidos (id_usuario,id_foodtruck,estado,eta_minutos,total_bruto,descuento,total_neto,notas)
-VALUES (1,2,'recibido',15,9000,0,9000,'Sin nota');
-
-INSERT INTO detalle_pedido (id_pedido,id_producto,nombre_producto,cantidad,precio_unit,subtotal)
-VALUES (1,2,'Tacos de Birria',2,4500,9000);
-
-/* Horarios */
-INSERT INTO horarios_foodtruck (id_foodtruck,dia_semana,direccion,latitud,longitud,hora_apertura,hora_cierre,activo) VALUES
-(3,2,'Sabana Urbanites',9.933883,-84.100830,'10:00:00','18:00:00',TRUE),
-(2,3,'Sabana Urbanites',9.933883,-84.100830,'09:00:00','18:00:00',TRUE),
-(1,5,'Sabana Urbanites',9.933883,-84.100830,'11:00:00','19:00:00',TRUE);
-
-/* Promociones */
-INSERT INTO promociones (id_foodtruck,tipo_descuento,valor,fecha_inicio,fecha_fin,activo) VALUES
-(3,'porcentaje',15.00,'2025-11-15 00:00:00','2025-11-21 23:59:59',TRUE),
-(2,'porcentaje',5.00,'2025-11-01 00:00:00','2025-12-01 23:59:59',TRUE),
-(1,'porcentaje',10.00,'2025-11-15 00:00:00','2025-11-30 23:59:59',TRUE);
-
-/* Regla de puntos */
-INSERT INTO reglas_puntos (id_foodtruck,porcentaje,fecha_inicio,fecha_fin,activo) VALUES
-(2,6,'2025-11-01 00:00:00','2025-12-31 23:59:59',TRUE);
-
-/* Entregar pedido (sin trigger; luego insertas puntos manuales) */
-UPDATE pedidos SET estado='entregado' WHERE id_pedido=1;
-
-/* Reseña */
-INSERT INTO resenas (id_usuario,id_foodtruck,id_pedido,calificacion,comentario,estado)
-VALUES (1,2,1,5,'Excelente comida y servicio rápido','aprobada');
-
-/* Puntos manuales */
-INSERT INTO puntos_cliente (id_usuario,id_foodtruck,id_pedido,tipo,puntos,motivo)
-VALUES (1,2,1,'acumulados',8,'Promo bienvenida');
-
-/* Evento*/
-INSERT INTO eventos (
-  id_foodtruck, id_solicitante, id_dueno_cotizador, estado, tipo_servicio,
-  nombre, descripcion, direccion, invitados,
-  fecha_inicio, fecha_fin, latitud, longitud,
-  monto_cotizado, detalles_cotizacion, fecha_cotizacion
-)
-VALUES (
-  1, 1, 2, 'cotizado', 'catering',
-  'Evento Empresa BAC','Almuerzo corporativo con 25 personas',
-  'Oficinas BAC ESCAZÚ, San José',25,
-  '2025-12-05 14:00:00','2025-12-05 17:00:00',9.920000,-84.082400,
-  275000.00,'Menú premium con bebidas incluidas', NOW()
-);
-
+/* Rutas para CLIENTE (id_rol = 1) - autenticado */
+INSERT INTO ruta (ruta, id_rol) VALUES
+('/carrito', 1),
+('/carrito/**', 1),
+('/resenas', 1),
+('/resenas/**', 1),
+('/configuracion', 1),
+('/configuracion/**', 1),
+('/app/cliente/**', 1),
+('/puntos/**', 1),
+('/pedidos', 1),
+('/eventos', 1),
+('/eventos/**', 1);
 /* ============================================================
    FIN DEL SCRIPT
    ============================================================ */

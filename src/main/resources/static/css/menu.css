@@ -1,0 +1,259 @@
+/* Estilos para Menú */
+:root {
+    --urban-primary: #104E43;
+    --urban-secondary: #FFE5B4;
+    --urban-cta: #ED3101;
+    --urban-light: #F4F4F4;
+    --urban-ink: #1C1C1C;
+}
+
+.foodtruck-card {
+    border: 2px solid #ddd;
+    border-radius: 16px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    background: white;
+    overflow: hidden;
+    position: relative;
+}
+
+.foodtruck-card:hover {
+    box-shadow: 0 8px 24px rgba(16, 78, 67, 0.15);
+    transform: translateY(-4px);
+    border-color: var(--urban-primary);
+}
+
+.foodtruck-card.selected {
+    background-color: var(--urban-secondary);
+    border-color: var(--urban-cta);
+    border-width: 3px;
+}
+
+.foodtruck-image-wrapper {
+    width: 100%;
+    height: 180px;
+    overflow: hidden;
+    background: var(--urban-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.foodtruck-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.foodtruck-card:hover .foodtruck-image {
+    transform: scale(1.05);
+}
+
+.foodtruck-info {
+    padding: 1.25rem;
+}
+
+.foodtruck-name {
+    color: var(--urban-primary);
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.foodtruck-description {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.producto-card {
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    overflow: hidden;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.producto-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+.producto-card.hidden {
+    display: none !important;
+}
+
+.producto-card.fade-out {
+    opacity: 0;
+    transform: scale(0.95);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.producto-card.fade-in {
+    opacity: 1;
+    transform: scale(1);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.producto-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    background-color: var(--urban-light);
+}
+
+.producto-img-placeholder {
+    width: 100%;
+    height: 200px;
+    background-color: var(--urban-light);
+    background-image: url('/images/placeholder-truck.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    font-size: 0.9rem;
+}
+
+.filter-btn {
+    border-radius: 20px;
+    padding: 0.5rem 1.25rem;
+    border: 2px solid #ddd;
+    background: white;
+    transition: all 0.2s;
+    font-weight: 500;
+}
+
+.filter-btn:hover {
+    border-color: var(--urban-primary);
+    color: var(--urban-primary);
+}
+
+.filter-btn.active {
+    background-color: var(--urban-cta);
+    color: white;
+    border-color: var(--urban-cta);
+}
+
+.search-input-group {
+    position: relative;
+}
+
+.search-btn {
+    background-color: var(--urban-cta);
+    border: none;
+    border-radius: 0 8px 8px 0;
+    color: white;
+    padding: 0.5rem 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.search-btn:hover {
+    background-color: #c02801;
+}
+
+.section-title {
+    color: var(--urban-primary);
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.section-title i {
+    color: var(--urban-cta);
+}
+
+.btn-add-cart {
+    background-color: var(--urban-cta);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+    width: 100%;
+}
+
+.btn-add-cart:hover {
+    background-color: #c02801;
+    color: white;
+}
+
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.quantity-btn {
+    width: 36px;
+    height: 36px;
+    border: 2px solid var(--urban-primary);
+    background: white;
+    color: var(--urban-primary);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.quantity-btn:hover {
+    background-color: var(--urban-primary);
+    color: white;
+}
+
+.quantity-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.quantity-input {
+    width: 60px;
+    height: 36px;
+    text-align: center;
+    border: 2px solid var(--urban-primary);
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.quantity-input:focus {
+    outline: none;
+    border-color: var(--urban-cta);
+    box-shadow: 0 0 0 0.2rem rgba(237, 49, 1, 0.25);
+}
+
+.producto-price {
+    color: var(--urban-primary);
+}
+
+.producto-badge {
+    background-color: var(--urban-secondary);
+    color: var(--urban-ink);
+}
+
+.empty-icon {
+    font-size: 3rem;
+    color: #ccc;
+}
+
+.hidden-element {
+    display: none;
+}
+

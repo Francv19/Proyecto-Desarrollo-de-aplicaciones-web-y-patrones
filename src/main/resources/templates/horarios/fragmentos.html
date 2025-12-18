@@ -5,23 +5,19 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
+        <th:block th:fragment="horariosHeadContent">
+            <th:block th:replace="app/fragmentos :: appHead"></th:block>
+            <link rel="stylesheet" th:href="@{/css/horarios.css}">
+            <link rel="stylesheet" th:href="@{/css/common.css}">
+        </th:block>
+        
+        <th:block th:fragment="horariosScripts">
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+            <script th:src="@{/js/rutinas.js}"></script>
+        </th:block>
+        
         <th:block th:fragment="horariosStyles">
-            <style>
-                .horario-card {
-                    border: 1px solid #ddd;
-                    border-radius: 12px;
-                    padding: 1.5rem;
-                    background: white;
-                    margin-bottom: 1rem;
-                }
-                .dia-badge {
-                    background-color: #104E43;
-                    color: white;
-                    padding: 0.5rem 1rem;
-                    border-radius: 20px;
-                    font-weight: bold;
-                }
-            </style>
+            <link rel="stylesheet" th:href="@{/css/horarios.css}">
         </th:block>
     </body>
 </html>

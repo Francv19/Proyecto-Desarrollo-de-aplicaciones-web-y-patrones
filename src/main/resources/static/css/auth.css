@@ -1,0 +1,202 @@
+:root {
+    --urban-primary: #104E43;
+    --urban-secondary: #FFE5B4;
+    --urban-cta: #ED3101;
+    --urban-light: #F4F4F4;
+    --urban-ink: #1C1C1C;
+}
+
+body.auth-page {
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.auth-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('/images/login image.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: blur(8px);
+    transform: scale(1.1);
+    z-index: -1;
+}
+
+.auth-background::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(16, 78, 67, 0.3);
+}
+
+.auth-card {
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 1.5rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    padding: 3rem;
+    max-width: 450px;
+    width: 100%;
+    margin: 2rem;
+}
+
+.auth-logo {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.auth-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--urban-ink);
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.auth-form-label {
+    font-weight: 600;
+    color: var(--urban-ink);
+    margin-bottom: 0.5rem;
+}
+
+.auth-form-control {
+    border: 2px solid #e0e0e0;
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.auth-form-control:focus {
+    border-color: var(--urban-primary);
+    box-shadow: 0 0 0 0.2rem rgba(16, 78, 67, 0.15);
+}
+
+.btn-auth-primary {
+    background-color: var(--urban-cta);
+    color: white;
+    border: none;
+    border-radius: 0.75rem;
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    width: 100%;
+    margin-top: 1rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-auth-primary:hover {
+    background-color: #c42901;
+    transform: translateY(-2px);
+    color: white;
+}
+
+.btn-auth-secondary {
+    background-color: white;
+    color: var(--urban-cta);
+    border: 2px solid var(--urban-cta);
+    border-radius: 0.75rem;
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    width: 100%;
+    margin-top: 0.75rem;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-auth-secondary:hover {
+    background-color: var(--urban-cta);
+    color: white;
+}
+
+.auth-link {
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+.auth-link a {
+    color: var(--urban-primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.auth-link a:hover {
+    color: var(--urban-cta);
+    text-decoration: underline;
+}
+
+.alert-auth {
+    border-radius: 0.75rem;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.alert-auth-danger {
+    background-color: #fee;
+    color: #c33;
+    border-left: 4px solid var(--urban-cta);
+}
+
+.alert-auth-success {
+    background-color: #efe;
+    color: #3c3;
+    border-left: 4px solid #28a745;
+}
+
+.alert-auth-icon {
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.alert-auth-message {
+    flex: 1;
+    font-weight: 500;
+    margin: 0;
+}
+
+.form-control.is-invalid {
+    border-color: var(--urban-cta);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23ED3101'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath d='m5.8 3.6 .4.4.4-.4m0 4.8h-.8'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+.form-control.is-invalid:focus {
+    border-color: var(--urban-cta);
+    box-shadow: 0 0 0 0.2rem rgba(237, 49, 1, 0.25);
+}
+
+.auth-logo-img {
+    max-width: 200px;
+    height: auto;
+}
+

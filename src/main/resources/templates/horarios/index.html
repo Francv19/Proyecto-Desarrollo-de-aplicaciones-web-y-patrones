@@ -5,18 +5,20 @@
         <title>Horarios y Ubicaciones · Urban Bites</title>
         <th:block th:replace="app/fragmentos :: appHead"></th:block>
         <th:block th:replace="horarios/fragmentos :: horariosStyles"></th:block>
+        <link rel="stylesheet" th:href="@{/css/horarios-cliente.css}">
+        <link rel="stylesheet" th:href="@{/css/common.css}">
     </head>
     <body class="bg-light" th:with="currentPage='horarios'">
         <div class="d-flex min-vh-100">
             <th:block th:replace="general/fragmentos :: sidebarCliente(${currentPage})"></th:block>
 
-            <main class="flex-grow-1 p-4" style="overflow-y: auto;">
+            <main class="flex-grow-1 p-4">
                 <h2 class="fw-bold mb-4">Horarios y Ubicaciones</h2>
 
                 <div th:if="${horariosAgrupados != null and !horariosAgrupados.isEmpty()}">
                     <div th:each="entry : ${horariosAgrupados}">
                         <div class="card mb-4">
-                            <div class="card-header" style="background-color: #104E43; color: white;">
+                            <div class="card-header card-header-urban">
                                 <h5 class="mb-0" th:text="${entry.value[0].foodtruck.nombre}">Food Truck</h5>
                             </div>
                             <div class="card-body">
@@ -52,7 +54,7 @@
                 
                 <div th:if="${horariosAgrupados == null or horariosAgrupados.isEmpty()}">
                     <div class="text-center py-5">
-                        <i class="bi bi-calendar-x" style="font-size: 4rem; color: #ddd;"></i>
+                        <i class="bi bi-calendar-x empty-icon"></i>
                         <p class="text-muted mt-3">No hay horarios disponibles en este momento</p>
                     </div>
                 </div>

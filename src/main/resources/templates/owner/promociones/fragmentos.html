@@ -6,18 +6,7 @@
     </head>
     <body>
         <th:block th:fragment="promocionesStyles">
-            <style>
-                .promocion-card {
-                    border: 1px solid #ddd;
-                    border-radius: 12px;
-                    padding: 1.5rem;
-                    background: white;
-                    transition: all 0.3s ease;
-                }
-                .promocion-card:hover {
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-                }
-            </style>
+            <link rel="stylesheet" th:href="@{/css/promociones.css}">
         </th:block>
         
         <th:block th:fragment="promocionesAlerts">

@@ -1,0 +1,57 @@
+/* Estilos para Páginas de Error */
+body.error-page {
+    background: linear-gradient(135deg, #104E43);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.error-container {
+    background: white;
+    border-radius: 20px;
+    padding: 3rem;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    max-width: 500px;
+}
+
+.error-icon {
+    font-size: 5rem;
+    color: #ED3101;
+    margin-bottom: 1rem;
+}
+
+.error-title {
+    color: #104E43;
+    font-weight: bold;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.error-message {
+    color: #666;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+}
+
+.btn-home {
+    background-color: #104E43;
+    color: white;
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 25px;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s;
+}
+
+.btn-home:hover {
+    background-color: #0d3d35;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(16, 78, 67, 0.3);
+}
+
