@@ -98,7 +98,10 @@
                                 </div>
                                 <div class="promo-landing-content">
                                     <h6 class="fw-bold mb-2" th:text="${promo.foodtruck.nombre}">Header</h6>
-                                    <p class="text-muted small mb-2" th:text="${promo.foodtruck.descripcion != null and !#strings.isEmpty(promo.foodtruck.descripcion)} ? promo.foodtruck.descripcion : 'Descripción'">Description</p>
+                                    <p class="text-muted small mb-2">
+                                        <span th:if="${promo.descripcion != null and !#strings.isEmpty(promo.descripcion)}" th:text="${promo.descripcion}">Description</span>
+                                        <span th:unless="${promo.descripcion != null and !#strings.isEmpty(promo.descripcion)}">Descripción de la promoción</span>
+                                    </p>
                                     <p class="promo-price mb-3 promo-price-color">
                                         <span th:if="${promo.tipoDescuento.name() == 'porcentaje'}" 
                                               th:text="'₡' + ${#numbers.formatDecimal(promo.valor, 0, 'COMMA', 0, 'POINT')} + '% de Descuento'">₡10% de Descuento</span>
